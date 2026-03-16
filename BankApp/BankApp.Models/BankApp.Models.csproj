@@ -6,10 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\Auth\" />
-    <Folder Include="DTOs\Dashboard\" />
-    <Folder Include="DTOs\Profile\" />
-  </ItemGroup>
-
 </Project>
