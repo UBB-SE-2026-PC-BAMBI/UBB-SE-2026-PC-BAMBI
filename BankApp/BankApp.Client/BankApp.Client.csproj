@@ -43,8 +43,6 @@
     <ProjectReference Include="..\BankApp.Models\BankApp.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
-    <Folder Include="ViewModels\Base\" />
     <Folder Include="Views\" />
   </ItemGroup>
 

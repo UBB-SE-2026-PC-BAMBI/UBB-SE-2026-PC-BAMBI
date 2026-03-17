@@ -17,13 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="DataAccess\Implementations\" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="Utilities\" />
-    <Folder Include="Repositories\Interfaces\" />
     <Folder Include="Repositories\Implementations\" />
-    <Folder Include="Services\Interfaces\" />
     <Folder Include="Services\Implementations\" />
   </ItemGroup>
 
