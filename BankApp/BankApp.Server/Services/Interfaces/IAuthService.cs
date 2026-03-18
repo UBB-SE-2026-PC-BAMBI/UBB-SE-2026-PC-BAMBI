@@ -4,10 +4,12 @@ namespace BankApp.Server.Services.Interfaces
     public interface IAuthService
     {
         LoginResponse Login(LoginRequest request);
+        LoginResponse OAuthLogin(OAuthLoginRequest request);
         RegisterResponse Register(RegisterRequest request);
+        RegisterResponse OAuthRegister(OAuthRegisterRequest request);
         LoginResponse VerifyOTP(VerifyOTPRequest request);
         void ResendOTP(int userId, string method);
         void RequestPasswordReset(string email);
-        bool ResetPassword(string token, string newPassword);
+        bool ResetPassword(string token, string newPasswordHash);
     }
 }
