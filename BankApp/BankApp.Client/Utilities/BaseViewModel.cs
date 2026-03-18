@@ -9,7 +9,10 @@ namespace BankApp.Client.Utilities
             throw new NotImplementedException();
         }
 
-        protected abstract void SetState<T>(Observable<T> observable, T value);
+        protected void SetState<T>(Observable<T> observable, T value)
+        {
+            throw new NotImplementedException();
+        }
         public abstract void Dispose();
     }
 }
