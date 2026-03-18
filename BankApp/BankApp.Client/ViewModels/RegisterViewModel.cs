@@ -23,17 +23,6 @@ namespace BankApp.Client.ViewModels
         {
             throw new NotImplementedException();
         }
-
-        public bool OpenLogin()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool OpenForgotPassword()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void Dispose()
         {
             throw new NotImplementedException();

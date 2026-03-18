@@ -17,17 +17,6 @@ namespace BankApp.Client.ViewModels
         {
             throw new System.NotImplementedException();
         }
-
-        public bool OpenLogin()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public bool OpenDashboard()
-        {
-            throw new System.NotImplementedException();
-        }
-
         public override void Dispose()
         {
             throw new System.NotImplementedException();

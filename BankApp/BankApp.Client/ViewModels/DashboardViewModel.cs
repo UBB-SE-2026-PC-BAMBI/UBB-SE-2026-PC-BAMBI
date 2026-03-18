@@ -34,29 +34,6 @@ namespace BankApp.Client.ViewModels
         {
             throw new NotImplementedException();
         }
-
-        public bool OpenProfile()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool OpenTransfers()
-        {
-            throw new NotImplementedException();
-        }
-        public bool OpenPayBill()
-        {
-            throw new NotImplementedException();
-        }
-        public bool OpenExchange()
-        {
-            throw new NotImplementedException();
-        }
-        public bool OpenTransactionHistory()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void Dispose()
         {
             throw new NotImplementedException();
