@@ -24,12 +24,12 @@ namespace BankApp.Client.ViewModels
             throw new NotImplementedException();
         }
 
-        public void OpenLogin()
+        public bool OpenLogin()
         {
             throw new NotImplementedException();
         }
 
-        public void OpenForgotPassword()
+        public bool OpenForgotPassword()
         {
             throw new NotImplementedException();
         }

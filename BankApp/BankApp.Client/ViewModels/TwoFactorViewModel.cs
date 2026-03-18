@@ -18,12 +18,12 @@ namespace BankApp.Client.ViewModels
             throw new System.NotImplementedException();
         }
 
-        public void OpenLogin()
+        public bool OpenLogin()
         {
             throw new System.NotImplementedException();
         }
 
-        public void OpenDashboard()
+        public bool OpenDashboard()
         {
             throw new System.NotImplementedException();
         }
