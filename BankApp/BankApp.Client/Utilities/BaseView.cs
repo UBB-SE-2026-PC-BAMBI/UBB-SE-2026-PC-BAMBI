@@ -7,7 +7,6 @@
             OnStateChanged(value);
         }
 
-        public abstract void BindViewModel(BaseViewModel viewModel);
         public abstract void OnStateChanged(T state);
         public abstract void ShowError(string msg);
         public abstract void ShowLoading();
