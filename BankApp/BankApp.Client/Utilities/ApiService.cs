@@ -1,4 +1,4 @@
-﻿namespace BankApp.Client.Services
+﻿namespace BankApp.Client.Utilities
 {
     public class ApiService
     {

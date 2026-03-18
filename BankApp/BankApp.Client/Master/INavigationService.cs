@@ -1,0 +1,15 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BankApp.Client.Master
+{
+    public interface INavigationService
+    {
+        void NavigateTo<Page>();
+        void GoBack();
+        bool CanGoBack();
+    }
+}
