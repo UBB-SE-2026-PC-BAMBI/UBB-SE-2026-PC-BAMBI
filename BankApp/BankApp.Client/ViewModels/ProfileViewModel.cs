@@ -10,10 +10,10 @@ namespace BankApp.Client.ViewModels
     public class ProfileViewModel : BaseViewModel
     {
         public Observable<ProfileState> State { get; private set; }
-        public Observable<User> CurrentUser { get; private set; }
-        public Observable<List<OAuthLink>> OAuthLinks { get; private set; }
-        public Observable<List<Session>> ActiveSessions { get; private set; }
-        public Observable<List<NotificationPreference>> NotificationPreferences { get; private set; }
+        public User CurrentUser { get; private set; }
+        public List<OAuthLink> OAuthLinks { get; private set; }
+        public List<Session> ActiveSessions { get; private set; }
+        public List<NotificationPreference> NotificationPreferences { get; private set; }
 
         public bool UpdatePersonalInfo(string phone, string address, string password)
         {

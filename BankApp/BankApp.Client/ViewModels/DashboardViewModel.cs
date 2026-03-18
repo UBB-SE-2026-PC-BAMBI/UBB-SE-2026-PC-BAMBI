@@ -10,10 +10,10 @@ namespace BankApp.Client.ViewModels
     public class DashboardViewModel : BaseViewModel
     {
         public Observable<DashboardState> State { get; private set; }
-        public Observable<User> User { get; private set; }
-        public Observable<List<Card>> Cards { get; private set; }
-        public Observable<List<Transaction>> RecentTransactions { get; private set; }
-        public Observable<int> UnreadNotificationCount { get; private set; }
+        public User CurrentUser { get; private set; }
+        public List<Card> Cards { get; private set; }
+        public List<Transaction> RecentTransactions { get; private set; }
+        public int UnreadNotificationCount { get; private set; }
 
         public void LoadDashboard()
         {
