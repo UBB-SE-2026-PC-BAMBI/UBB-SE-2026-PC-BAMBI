@@ -3,6 +3,9 @@ namespace BankApp.Server.DataAccess
 {
     public class AppDbContext : IDisposable
     {
+        // Content deprecated: Should implement IDbContext interface and behave according to 
+        // the UML diagram
+
         // TODO: implement
         public AppDbContext(string connectionString) { }
         public SqlConnection GetConnection() { throw new NotImplementedException(); }
