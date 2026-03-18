@@ -10,6 +10,8 @@ namespace BankApp.Server.Services.Interfaces
         bool Enable2FA(int userId, TwoFactorMethod method);
         bool Disable2FA(int userId, TwoFactorMethod method);
         List<OAuthLink> GetOAuthLinks(int userId);
+        bool LinkOAuth(int userId, string provider);
+        bool UnlinkOAuth(int userId, string provider);
         List<NotificationPreference> GetNotificationPreferences(int userId);
         bool UpdateNotificationPreferences(int userId, List<NotificationPreference> prefs);
     }
