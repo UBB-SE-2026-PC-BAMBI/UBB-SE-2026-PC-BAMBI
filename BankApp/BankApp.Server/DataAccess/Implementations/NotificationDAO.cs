@@ -26,7 +26,7 @@ namespace BankApp.Server.DataAccess.Implementations
         public List<Notification> FindByUserId(int userId)
         {
             var notifications = new List<Notification>();
-            var query = @"SELECT * FROM Card where UserId = @p0";
+            var query = @"SELECT * FROM Notification where UserId = @p0";
             using var reader = _dbContext.ExecuteQuery(query, new object[] { userId });
             if (reader.Read())
             {
