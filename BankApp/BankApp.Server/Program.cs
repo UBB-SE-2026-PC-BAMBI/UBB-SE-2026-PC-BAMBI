@@ -1,5 +1,8 @@
 using BankApp.Server.DataAccess.Interfaces;
 using BankApp.Server.DataAccess;
+using BankApp.Server.DataAccess.Implementations;
+using BankApp.Server.Services.Infrastructure.Implementations;
+using BankApp.Server.Services.Infrastructure.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,19 @@ builder.Services.AddSwaggerGen();
 // Allow the WinUI client to connect
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+// Database
+var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddScoped<AppDbContext>(_ => new AppDbContext(connStr!));
+
+// DAOs
+builder.Services.AddScoped<IUserDAO, UserDAO>();
+builder.Services.AddScoped<ISessionDAO, SessionDAO>();
+
+// Infrastructure Services
+builder.Services.AddScoped<IHashService, HashService>();
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+builder.Services.AddScoped<IJWTService>(_ => new JWTService(jwtSecret!));
 
 var app = builder.Build();
 
