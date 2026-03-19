@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="DataAccess\Implementations\" />
     <Folder Include="Infrastructure\" />
     <Folder Include="Repositories\Implementations\" />
     <Folder Include="Services\Implementations\" />
