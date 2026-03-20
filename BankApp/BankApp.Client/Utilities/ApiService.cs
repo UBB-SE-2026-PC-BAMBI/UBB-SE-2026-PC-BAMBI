@@ -1,7 +1,55 @@
-﻿namespace BankApp.Client.Utilities
+﻿using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System;
+
+namespace BankApp.Client.Utilities
 {
     public class ApiService
     {
-        public ApiService(string baseUrl = "https://localhost:5001") { }
+        private readonly HttpClient _httpClient;
+        private string? _token;
+
+        public ApiService(string baseUrl = "http://localhost:5024")
+        {
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(baseUrl)
+            };
+        }
+
+        public void SetToken(string token)
+        {
+            _token = token;
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public void ClearToken()
+        {
+            _token = null;
+            _httpClient.DefaultRequestHeaders.Authorization = null;
+        }
+
+        public string? GetToken()
+        {
+            return _token;
+        }
+
+        public async Task<TResponse?> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
+        {
+            var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<TResponse>();
+
+            // Try to read error response
+            return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
+
+        public async Task<TResponse?> GetAsync<TResponse>(string endpoint)
+        {
+            var response = await _httpClient.GetAsync(endpoint);
+            return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
     }
 }

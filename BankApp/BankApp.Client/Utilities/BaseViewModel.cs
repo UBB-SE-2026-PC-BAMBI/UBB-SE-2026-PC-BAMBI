@@ -6,12 +6,12 @@ namespace BankApp.Client.Utilities
     {
         public void OnPropertyChanged(string propertyName)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         protected void SetState<T>(Observable<T> observable, T value)
         {
-            throw new NotImplementedException();
+            observable.SetValue(value);
         }
         public abstract void Dispose();
     }
