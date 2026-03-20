@@ -2,6 +2,7 @@
 using BankApp.Server.Services.Interfaces;
 using BankApp.Models.DTOs.Auth;
 using BankApp.Server.DataAccess;
+using Microsoft.AspNetCore.Connections.Features;
 
 namespace BankApp.Server.Controllers
 {
@@ -15,13 +16,27 @@ namespace BankApp.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            throw new NotImplementedException();
+            LoginResponse response = _authService.Login(request);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            throw new NotImplementedException();
+            RegisterResponse response = _authService.Register(request);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("verify-otp")]
