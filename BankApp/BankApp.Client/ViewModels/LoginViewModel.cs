@@ -1,9 +1,9 @@
-﻿using BankApp.Client.ViewModels.Base;
+﻿using BankApp.Client.Utilities;
+using BankApp.Client.ViewModels.Base;
 using BankApp.Models.Enums;
-using BankApp.Client.Utilities;
 using BankApp.Models.DTOs.Auth;
 using System;
-using Windows.Services.Maps;
+using System.Threading.Tasks;
 namespace BankApp.Client.ViewModels
 {
     public class LoginViewModel : BaseViewModel
@@ -51,14 +51,20 @@ namespace BankApp.Client.ViewModels
                 }
 
                 // Login successful
-                // Store the token for future requests
+                // Store the token and userId for future requests
                 _apiService.SetToken(response.Token!);
+                _apiService.SetCurrentUserId(response.UserId!.Value);
                 SetState(State, LoginState.Success);
             }
             catch (Exception)
             {
                 SetState(State, LoginState.Error);
             }
+        }
+
+        public async void OAuthLogin(string email, string provider)
+        {
+            throw new NotImplementedException();
         }
 
         private void HandleLoginError(LoginResponse response)
@@ -71,11 +77,6 @@ namespace BankApp.Client.ViewModels
             {
                 SetState(State, LoginState.InvalidCredentials);
             }
-        }
-
-        public void OAuthLogin(string email, string provider)
-        {
-            throw new NotImplementedException();
         }
 
         public override void Dispose()

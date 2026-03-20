@@ -9,6 +9,7 @@ namespace BankApp.Client.Utilities
     {
         private readonly HttpClient _httpClient;
         private string? _token;
+        private int? _currentUserId;
 
         public ApiService(string baseUrl = "http://localhost:5024")
         {
@@ -25,9 +26,20 @@ namespace BankApp.Client.Utilities
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         }
 
+        public void SetCurrentUserId(int userId)
+        {
+            _currentUserId = userId;
+        }
+
+        public int? GetCurrentUserId()
+        {
+            return _currentUserId;
+        }
+
         public void ClearToken()
         {
             _token = null;
+            _currentUserId = null;
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
 
