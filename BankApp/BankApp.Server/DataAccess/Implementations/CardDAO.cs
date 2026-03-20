@@ -15,7 +15,7 @@ namespace BankApp.Server.DataAccess.Implementations
             var query = @"SELECT * FROM Card where Id = @p0";
             using var reader = _dbContext.ExecuteQuery(query, new object[] { id });
             if (reader.Read())
-                return MapToEntity(reader);
+                return MapToCard(reader);
             return null;
         }
 

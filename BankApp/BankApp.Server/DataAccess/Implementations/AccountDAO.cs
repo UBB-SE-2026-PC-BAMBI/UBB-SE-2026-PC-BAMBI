@@ -20,7 +20,7 @@ namespace BankApp.Server.DataAccess.Implementations
                 @"SELECT Id, UserId, AccountName, IBAN, Currency, Balance, AccountType, Status, CreatedAt from Account where Id = @p0";
             using var reader = _dbContext.ExecuteQuery(query, new object[] { id });
             if (reader.Read())
-                return MapToEntity(reader);
+                return MapToAccount(reader);
             return null;
         }
 
