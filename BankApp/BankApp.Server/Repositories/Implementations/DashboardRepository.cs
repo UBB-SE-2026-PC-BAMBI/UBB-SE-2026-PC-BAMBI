@@ -1,4 +1,5 @@
 using BankApp.Models.Entities;
+using BankApp.Server.Repositories.Interfaces;
 
 namespace BankApp.Server.Repositories.Implementations
 {
