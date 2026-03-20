@@ -30,13 +30,13 @@ namespace BankApp.Server.DataAccess.Implementations
             using var reader = _dbContext.ExecuteQuery(query, new object[] { userId });
             while (reader.Read())
             {
-                notifications.Add(MapToEntity(reader));
+                notifications.Add(MapToNotification(reader));
             }
 
             return notifications;
         }
 
-        private Notification MapToEntity(System.Data.IDataReader r)
+        private Notification MapToNotification(System.Data.IDataReader r)
         {
             return new Notification
             {

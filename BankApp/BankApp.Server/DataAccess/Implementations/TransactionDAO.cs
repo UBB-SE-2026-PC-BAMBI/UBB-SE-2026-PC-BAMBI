@@ -22,13 +22,13 @@ namespace BankApp.Server.DataAccess.Implementations
 
             while (reader.Read())
             {
-                transactions.Add(MapToEntity(reader));
+                transactions.Add(MapToTransaction(reader));
             }
 
             return transactions;
         }
 
-        private Transaction MapToEntity(IDataReader r)
+        private Transaction MapToTransaction(IDataReader r)
         {
             return new Transaction
             {

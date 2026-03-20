@@ -26,13 +26,13 @@ namespace BankApp.Server.DataAccess.Implementations
             using var reader = _dbContext.ExecuteQuery(query, new object[] { userId });
             while (reader.Read())
             {
-                cards.Add(MapToEntity(reader));
+                cards.Add(MapToCard(reader));
             }
 
             return cards;
         }
 
-        private Card MapToEntity(System.Data.IDataReader r)
+        private Card MapToCard(System.Data.IDataReader r)
         {
             return new Card
             {

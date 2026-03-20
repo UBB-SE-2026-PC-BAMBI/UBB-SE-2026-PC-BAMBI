@@ -32,13 +32,13 @@ namespace BankApp.Server.DataAccess.Implementations
             using var reader = _dbContext.ExecuteQuery(query, new object[] { userId });
             while (reader.Read())
             {
-                accounts.Add(MapToEntity(reader));
+                accounts.Add(MapToAccount(reader));
             }
 
             return accounts;
         }
 
-        private Account MapToEntity(IDataReader r)
+        private Account MapToAccount(IDataReader r)
         {
             return new Account
             {
