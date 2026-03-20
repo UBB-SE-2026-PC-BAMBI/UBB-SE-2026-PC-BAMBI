@@ -56,5 +56,25 @@ namespace BankApp.Server.Controllers
         {
             throw new NotImplementedException();
         }
+
+        [HttpPost("logout")]
+        public IActionResult Logout([FromHeader(Name = "Authorization")] string authorization)
+        {
+            // Bogdan: this implementation is not enough, still need to invalidate JWT, but this is not on original diagram
+            // can expand in the future.
+            if (string.IsNullOrWhiteSpace(authorization) || !authorization.StartsWith("Bearer "))
+            {
+                return BadRequest(new { error = "No token provided." });
+            }
+
+            string token = authorization.Substring("Bearer ".Length);
+
+            if (!_authService.Logout(token))
+            {
+                return BadRequest(new { error = "Invalid session." });
+            }
+
+            return Ok(new { message = "Logged out successfully." });
+        }
     }
 }

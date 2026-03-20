@@ -216,5 +216,15 @@ namespace BankApp.Server.Services.Implementations
                 FailedLoginAttempts = 0
             };
         }
+        public bool Logout(string token)
+        {
+            Session? session = _authRepository.FindSessionByToken(token);
+            if (session == null)
+            {
+                return false;
+            }
+            _authRepository.UpdateSessionToken(session.Id);
+            return true;
+        }
     }
 }
