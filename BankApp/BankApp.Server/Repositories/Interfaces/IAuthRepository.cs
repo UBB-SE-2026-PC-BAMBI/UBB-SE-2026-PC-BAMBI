@@ -16,5 +16,8 @@ namespace BankApp.Server.Repositories.Interfaces
         // Additional methods for session management (could be removed if not needed)
         List<Session> FindSessionsByUserId(int userId);
         bool UpdateSessionToken(int sessionId);
+        void IncrementFailedAttempts(int userId);
+        void ResetFailedAttempts(int userId);
+        void LockAccount(int userId, DateTime lockoutEnd);
     }
 }
