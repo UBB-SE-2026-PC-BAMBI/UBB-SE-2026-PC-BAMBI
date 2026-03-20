@@ -13,26 +13,26 @@ namespace BankApp.Server.Services.Implementations
 {
     public class DashboardService : IDashboardService
     {
-        private readonly IDashboardRepository dashboardRepository;
-        private readonly IUserRepository userRepository;
+        private readonly IDashboardRepository _dashboardRepository;
+        private readonly IUserRepository _userRepository;
 
         public DashboardService(IDashboardRepository dashboardRepository, IUserRepository userRepository)
         {
-            this.dashboardRepository = dashboardRepository;
-            this.userRepository = userRepository;
+            _dashboardRepository = dashboardRepository;
+            _userRepository = userRepository;
         }
 
         public DashboardResponse GetDashboardData(int id)
         {
             /// if there is no ID returns null, otherwise returns the dashboard data for the user with the given ID
-            if (userRepository.FindById(id) == null)
+            if (_userRepository.FindById(id) == null)
             {
                 return null;
             }
             return new DashboardResponse { 
-                Cards = this.dashboardRepository.GetCardsByUser(id),
-                RecentTransactions = this.dashboardRepository.GetRecentTransactions(id, 10),
-                UnreadNotificationCount = this.dashboardRepository.GetUnreadNotificationCount(id)
+                Cards = _dashboardRepository.GetCardsByUser(id),
+                RecentTransactions = _dashboardRepository.GetRecentTransactions(id, 10),
+                UnreadNotificationCount = _dashboardRepository.GetUnreadNotificationCount(id)
                 };
         }
     }
