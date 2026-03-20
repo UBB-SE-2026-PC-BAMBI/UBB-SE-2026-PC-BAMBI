@@ -27,9 +27,9 @@ namespace BankApp.Server.Repositories.Implementations
 		{
 			return this.cardDAO.FindByUserId(userId);
 		}
-		public List<Transaction> GetRecentTransactions(int userId, int limit = 10)
+		public List<Transaction> GetRecentTransactions(int accountId, int limit = 10)
 		{
-			return this.transactionDAO.FindRecentByAccountId(userId, limit);
+			return this.transactionDAO.FindRecentByAccountId(accountId, limit);
 		}
 		public int GetUnreadNotificationCount(int userId)
 		{
