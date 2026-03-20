@@ -82,5 +82,21 @@ namespace BankApp.Server.Repositories.Implementations
         {
             return _passwordResetTokenDao.FindByToken(tokenHash);
         }
+
+        // ACCOUNT SECURITY
+        public void IncrementFailedAttempts(int userId)
+        {
+            _userDao.IncrementFailedAttempts(userId);
+        }
+
+        public void ResetFailedAttempts(int userId)
+        {
+            _userDao.ResetFailedAttempts(userId);
+        }
+
+        public void LockAccount(int userId, DateTime lockoutEnd)
+        {
+            _userDao.LockAccount(userId, lockoutEnd);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace BankApp.Server.Services.Interfaces
         void ResendOTP(int userId, string method);
         void RequestPasswordReset(string email);
         bool ResetPassword(string token, string newPasswordHash);
+        bool Logout(string token);
     }
 }

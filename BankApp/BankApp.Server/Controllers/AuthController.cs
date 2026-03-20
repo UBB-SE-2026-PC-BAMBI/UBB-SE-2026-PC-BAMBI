@@ -2,6 +2,7 @@
 using BankApp.Server.Services.Interfaces;
 using BankApp.Models.DTOs.Auth;
 using BankApp.Server.DataAccess;
+using Microsoft.AspNetCore.Connections.Features;
 
 namespace BankApp.Server.Controllers
 {
@@ -15,13 +16,27 @@ namespace BankApp.Server.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            throw new NotImplementedException();
+            LoginResponse response = _authService.Login(request);
+            
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            throw new NotImplementedException();
+            RegisterResponse response = _authService.Register(request);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPost("verify-otp")]
@@ -40,6 +55,26 @@ namespace BankApp.Server.Controllers
         public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
         {
             throw new NotImplementedException();
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout([FromHeader(Name = "Authorization")] string authorization)
+        {
+            // Bogdan: this implementation is not enough, still need to invalidate JWT, but this is not on original diagram
+            // can expand in the future.
+            if (string.IsNullOrWhiteSpace(authorization) || !authorization.StartsWith("Bearer "))
+            {
+                return BadRequest(new { error = "No token provided." });
+            }
+
+            string token = authorization.Substring("Bearer ".Length);
+
+            if (!_authService.Logout(token))
+            {
+                return BadRequest(new { error = "Invalid session." });
+            }
+
+            return Ok(new { message = "Logged out successfully." });
         }
     }
 }
