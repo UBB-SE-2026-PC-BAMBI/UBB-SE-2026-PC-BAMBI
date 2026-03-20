@@ -20,7 +20,9 @@ namespace BankApp.Server.DataAccess.Implementations
 
             using var reader = _db.ExecuteQuery(sql, new object[] { email });
             if (reader.Read())
+            {
                 return MapUser(reader);
+            }
             return null;
         }
 
@@ -33,7 +35,9 @@ namespace BankApp.Server.DataAccess.Implementations
 
             using var reader = _db.ExecuteQuery(sql, new object[] { id });
             if (reader.Read())
+            {
                 return MapUser(reader);
+            }
             return null;
         }
 

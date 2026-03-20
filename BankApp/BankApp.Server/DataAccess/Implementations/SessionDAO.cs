@@ -41,7 +41,9 @@ namespace BankApp.Server.DataAccess
 
             using var reader = _db.ExecuteQuery(sql, new object[] { token });
             if (reader.Read())
+            {
                 return MapSession(reader);
+            }
             return null;
         }
 
@@ -54,7 +56,9 @@ namespace BankApp.Server.DataAccess
             using var reader = _db.ExecuteQuery(sql, new object[] { userId });
             var sessions = new List<Session>();
             while (reader.Read())
+            {
                 sessions.Add(MapSession(reader));
+            }
             return sessions;
         }
 
