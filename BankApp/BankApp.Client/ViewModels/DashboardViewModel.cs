@@ -1,9 +1,10 @@
 ﻿using BankApp.Client.Utilities;
 using BankApp.Client.ViewModels.Base;
+using BankApp.Models.DTOs.Dashboard;
 using BankApp.Models.Entities;
 using BankApp.Models.Enums;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace BankApp.Client.ViewModels
 {
@@ -28,26 +29,56 @@ namespace BankApp.Client.ViewModels
 
         public async void LoadDashboard()
         {
-            throw new NotImplementedException();
+            SetState(State, DashboardState.Loading);
+            try
+            {
+                int? userId = _apiService.GetCurrentUserId();
+                if (userId == null)
+                {
+                    SetState(State, DashboardState.Error);
+                    return;
+                }
+
+                // We use the Get endpoint to fetch all dashboard data in one go
+
+                DashboardResponse? response = await _apiService.GetAsync<DashboardResponse>(
+                    $"/api/dashboard/{userId}");
+
+                if (response == null)
+                {
+                    SetState(State, DashboardState.Error);
+                    return;
+                }
+
+                Cards = response.Cards;
+                RecentTransactions = response.RecentTransactions;
+                UnreadNotificationCount = response.UnreadNotificationCount;
+                SetState(State, DashboardState.Success);
+            }
+            catch (Exception)
+            {
+                SetState(State, DashboardState.Error);
+            }
+
         }
 
-        public async void LoadCards() 
+        public void LoadCards() 
         {
-            throw new NotImplementedException(); 
+            LoadDashboard();
         }
 
-        public async void LoadRecentTransactions()
+        public void LoadRecentTransactions()
         {
-            throw new NotImplementedException();
+            LoadDashboard();
         }
 
-        public async void LoadUnreadNotificationCount()
+        public void LoadUnreadNotificationCount()
         {
-            throw new NotImplementedException();
+            LoadDashboard();
         }
         public override void Dispose()
         {
-            throw new NotImplementedException();
+            //no disposable resources for now
         }
     }
 }
