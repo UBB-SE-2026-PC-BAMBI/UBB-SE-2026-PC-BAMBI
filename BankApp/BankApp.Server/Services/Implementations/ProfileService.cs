@@ -3,6 +3,8 @@ using BankApp.Models.Entities;
 using BankApp.Models.Enums;
 using BankApp.Server.Repositories;
 using BankApp.Server.Repositories.Interfaces;
+using BankApp.Server.Services.Infrastructure.Implementations;
+using BankApp.Server.Services.Infrastructure.Interfaces;
 using BankApp.Server.Services.Interfaces;
 using BankApp.Server.Utilities;
 
@@ -11,10 +13,12 @@ namespace BankApp.Server.Services.Implementations
     public class ProfileService : IProfileService
     {
         private readonly IUserRepository _userRepository;
+        private readonly IHashService _hashService;
 
-        public ProfileService()
+        public ProfileService(IUserRepository userRepository, IHashService hashService)
         {
-            _userRepository = new UserRepository();
+            _userRepository = userRepository;
+            _hashService = hashService;
         }
 
         public User? GetUserById(int userId)
@@ -57,9 +61,26 @@ namespace BankApp.Server.Services.Implementations
             return new UpdateProfileResponse(true, "User profile updated successfully.");
         }
 
-        public bool ChangePassword(int userId, string currentPassword, string newPassword)
+        public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(request.UserId);
+
+            if (user == null)
+            {
+                // Just making sure, should never happen though
+                return new ChangePasswordResponse(false, "User not found.");
+            }
+
+            if (_hashService.Verify(request.CurrentPassword, user.PasswordHash))
+            {
+                user.PasswordHash = _hashService.GetHash(request.NewPassword);
+                _userRepository.UpdateUser(user);
+                return new ChangePasswordResponse(true, "Password changed successfully.");
+            }
+            else
+            {
+                return new ChangePasswordResponse(false, "Current password is incorrect. Please try again.");
+            }
         }
 
         public bool Enable2FA(int userId, TwoFactorMethod method)
