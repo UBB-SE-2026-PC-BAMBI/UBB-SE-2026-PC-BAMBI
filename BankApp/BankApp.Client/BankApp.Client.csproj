@@ -16,6 +16,9 @@
     <None Remove="Views\LoginView.xaml" />
     <None Remove="Views\RegisterView.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Remove="views\DashboardView.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -45,6 +48,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BankApp.Models\BankApp.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="views\DashboardView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\RegisterView.xaml">
