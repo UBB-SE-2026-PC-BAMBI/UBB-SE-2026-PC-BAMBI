@@ -94,6 +94,8 @@ namespace BankApp.Client.Views
                 {
                     Width = i == _currentCardIndex ? 18 : 8,
                     Height = 8,
+                    RadiusX = 4,
+                    RadiusY = 4,
                     Fill = new SolidColorBrush(i == _currentCardIndex
                         ? Color.FromArgb(255, 78, 205, 196)
                         : Color.FromArgb(100, 78, 205, 196))
@@ -138,17 +140,14 @@ namespace BankApp.Client.Views
 
         private async void PayBillButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Pay Bill", "Pay Bill feature works!");
         }
 
         private async void ExchangeButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works!");
         }
 
         private async void TxHistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transaction History", "Transaction History feature works!");
         }
 
         // ─── NAV + LOGOUT ─────────────────────────────────────────────

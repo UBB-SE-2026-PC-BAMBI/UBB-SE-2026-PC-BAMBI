@@ -17,6 +17,9 @@
     <None Remove="Views\LoginView.xaml" />
     <None Remove="Views\RegisterView.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Remove="views\DashboardView.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="Assets\SplashScreen.scale-200.png" />
