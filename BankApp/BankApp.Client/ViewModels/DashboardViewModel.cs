@@ -62,17 +62,17 @@ namespace BankApp.Client.ViewModels
 
         }
 
-        public void LoadCards() 
+        public async void LoadCards() 
         {
             LoadDashboard();
         }
 
-        public void LoadRecentTransactions()
+        public async void LoadRecentTransactions()
         {
             LoadDashboard();
         }
 
-        public void LoadUnreadNotificationCount()
+        public async void LoadUnreadNotificationCount()
         {
             LoadDashboard();
         }
