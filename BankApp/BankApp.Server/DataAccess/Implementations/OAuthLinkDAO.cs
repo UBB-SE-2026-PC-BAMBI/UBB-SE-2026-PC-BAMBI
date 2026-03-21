@@ -7,8 +7,8 @@ namespace BankApp.Server.DataAccess.Implementations
 {
     public class OAuthLinkDAO : IOAuthLinkDAO
     {
-        private readonly IDbContext _context;
-        public OAuthLinkDAO(IDbContext context)
+        private readonly AppDbContext _context;
+        public OAuthLinkDAO(AppDbContext context)
         {
             _context = context;
         }
@@ -29,7 +29,7 @@ namespace BankApp.Server.DataAccess.Implementations
         public OAuthLink? FindByProvider(string provider, string providerUserId)
         {
             string sql = "SELECT Id, UserId, Provider, ProviderUserId, ProviderEmail FROM OAuthLink WHERE Provider = @p0 AND ProviderUserId = @p1";
-            using var reader = _context.ExecuteQuery(sql, new object[] { provider, providerUserId });
+            using IDataReader reader = _context.ExecuteQuery(sql, new object[] { provider, providerUserId });
 
             if (reader.Read())
             {
@@ -41,8 +41,8 @@ namespace BankApp.Server.DataAccess.Implementations
         public List<OAuthLink> FindByUserId(int userId)
         {
             string sql = "SELECT Id, UserId, Provider, ProviderUserId, ProviderEmail FROM OAuthLink WHERE UserId = @p0";
-            var links = new List<OAuthLink>();
-            using var reader = _context.ExecuteQuery(sql, new object[] { userId });
+            List<OAuthLink> links = new List<OAuthLink>();
+            using IDataReader reader = _context.ExecuteQuery(sql, new object[] { userId });
 
             while (reader.Read())
             {
