@@ -1,27 +1,69 @@
-﻿using BankApp.Server.Services.Infrastructure.Interfaces;
+﻿using System.Net;
+using System.Net.Mail;
+using BankApp.Server.Services.Infrastructure.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace BankApp.Server.Services.Infrastructure.Implementations
 {
     public class EmailService : IEmailService
     {
+        private readonly IConfiguration _config;
+        public EmailService(IConfiguration config)
+        {
+            _config = config;
+        }
+
         public void sendLockNotification(string email)
         {
-            //throw new NotImplementedException();
+            string subject = "BankApp - Account Locked";
+            string body = "Hello,\n\nYour account has been temporarily locked due to multiple failed login attempts. Please try again later or reset your password.";
+            SendEmail(email, subject, body);
         }
 
         public void SendLoginAlert(string email)
         {
-            //throw new NotImplementedException();
+            string subject = "BankApp - New Login Detected";
+            string body = "Hello,\n\nWe detected a new login to your BankApp account. If this was you, no action is needed. If this wasn't you, please change your password immediately.";
+            SendEmail(email, subject, body);
         }
 
         public void sendOTPCode(string email, string code)
         {
-            //throw new NotImplementedException();
+            string subject = "Your BankApp Login Code";
+            string body = $"Hello,\n\nYour One-Time Password (OTP) is: {code}\n\nThis code is valid for 5 minutes. Do not share it with anyone.";
+            SendEmail(email, subject, body);
         }
 
         public void sendPasswordResetLink(string email, string token)
         {
-            //throw new NotImplementedException();
+            string resetLink = $"http://localhost:5000/reset-password?token={token}";
+            string subject = "BankApp - Password Reset Request";
+            string body = $"Hello,\n\nYou requested a password reset. Click the link below to set a new password:\n{resetLink}\n\nIf you did not request this, please ignore this email.";
+            SendEmail(email, subject, body);
+        }
+
+        private void SendEmail(string toEmail, string subject, string body)
+        {
+            try
+            {
+                string host = "smtp.gmail.com";
+                int port = 587;
+                string user = "pcbambisupport@gmail.com";
+                string pass = "bebcumczrocgfeqq";
+                string from = "pcbambisupport@gmail.com";
+                using var client = new SmtpClient(host, port)
+                {
+                    Credentials = new NetworkCredential(user, pass),
+                    EnableSsl = true,
+                    UseDefaultCredentials = false
+                };
+                using var mailMessage = new MailMessage(from, toEmail, subject, body);
+                client.Send(mailMessage);
+            }
+            catch (Exception ex)
+            {
+                // Maybe log the error ?
+            }
         }
     }
 }
