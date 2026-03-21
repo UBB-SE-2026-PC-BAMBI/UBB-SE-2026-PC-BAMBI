@@ -46,11 +46,11 @@ namespace BankApp.Server.Services.Infrastructure.Implementations
         {
             try
             {
-                string host = "smtp.gmail.com";
-                int port = 587;
-                string user = "pcbambisupport@gmail.com";
-                string pass = "bebcumczrocgfeqq";
-                string from = "pcbambisupport@gmail.com";
+                string host = _config["Email:SmtpHost"] ?? throw new Exception("SMTP Host is missing.");
+                int port = int.Parse(_config["Email:SmtpPort"] ?? "587");
+                string user = _config["Email:SmtpUser"] ?? throw new Exception("SMTP User is missing.");
+                string pass = _config["Email:SmtpPass"] ?? throw new Exception("SMTP Password is missing.");
+                string from = _config["Email:FromAddress"] ?? user;
                 using var client = new SmtpClient(host, port)
                 {
                     Credentials = new NetworkCredential(user, pass),
