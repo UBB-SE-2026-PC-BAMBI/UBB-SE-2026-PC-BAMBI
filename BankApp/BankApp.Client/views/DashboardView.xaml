@@ -43,7 +43,6 @@
                     <Border x:Name="NavDashboard" CornerRadius="8" Background="#16213E"
                             BorderBrush="#4ECDC4" BorderThickness="1.5" Padding="12,10">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="🏠" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Dashboard" Foreground="White" FontSize="13"
                                        FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -53,7 +52,6 @@
                     <Border x:Name="NavTransfers" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="🔀" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Transfers" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -63,7 +61,6 @@
                     <Border x:Name="NavBillPayments" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="💰" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Bill Payments" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -73,7 +70,6 @@
                     <Border x:Name="NavCards" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="💳" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Cards" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -83,7 +79,6 @@
                     <Border x:Name="NavTransferHistory" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="🔃" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Transfer History" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -93,7 +88,6 @@
                     <Border x:Name="NavCurrencyExchange" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="🪙" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Currency Exchange" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -103,7 +97,6 @@
                     <Border x:Name="NavSavings" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="🐖" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Savings &amp; Loans" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -113,7 +106,6 @@
                     <Border x:Name="NavInvestments" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="📈" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Investments &amp; Trading" Foreground="#AAA" FontSize="12"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -123,7 +115,6 @@
                     <Border x:Name="NavStatistics" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="📊" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Statistics" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -133,7 +124,6 @@
                     <Border x:Name="NavSupport" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="💬" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Support" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -143,7 +133,6 @@
                     <Border x:Name="NavProfile" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="😁" FontSize="16" VerticalAlignment="Center"/>
                             <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -158,7 +147,6 @@
                         HorizontalAlignment="Stretch" Background="Transparent"
                         BorderThickness="0" Padding="12,10">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="🚪" FontSize="16" VerticalAlignment="Center"/>
                         <TextBlock Text="Log out" Foreground="#FF6B6B" FontSize="13"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
@@ -291,8 +279,8 @@
                                 <ThemeShadow/>
                             </Button.Shadow>
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="🔀" FontSize="24"
-                                           HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8AB;" FontSize="24" Foreground="Black"
+                                          HorizontalAlignment="Center"/>
                                 <TextBlock Text="Transfer" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -303,8 +291,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="💰" FontSize="24"
-                                           HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C7;" FontSize="24" Foreground="Black"
+                                          HorizontalAlignment="Center"/>
                                 <TextBlock Text="Pay Bill" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -315,8 +303,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="🪙" FontSize="24"
-                                           HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C0;" FontSize="24" Foreground="Black"
+                                          HorizontalAlignment="Center"/>
                                 <TextBlock Text="Exchange" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -327,9 +315,9 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="🔃" FontSize="24"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="History" FontSize="11"
+                                <FontIcon Glyph="&#xE81C;" FontSize="24" Foreground="Black"
+                                          HorizontalAlignment="Center"/>
+                                <TextBlock Text="History" FontSize="11" 
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
