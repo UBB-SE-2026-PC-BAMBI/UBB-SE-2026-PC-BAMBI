@@ -164,6 +164,12 @@ namespace BankApp.Client.Views
             App.NavigationService.NavigateTo<LoginView>();
         }
 
+        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            await ShowAlertAsync("Profile", "WE GOING TO PROFILE VIEW YOOHOOO!!!");
+            App.NavigationService.NavigateTo<DashboardView>();  // TODO: CHANGE DASHBOARDVIEW WITH PROFILE lelele
+        }
+
         // ─── HELPER ──────────────────────────────────────────────────
 
         private void ShowError(string msg)

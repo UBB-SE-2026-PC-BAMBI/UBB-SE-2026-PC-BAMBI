@@ -130,13 +130,17 @@
                     </Border>
 
                     <!-- Profile -->
-                    <Border x:Name="NavProfile" CornerRadius="8" Padding="12,10"
+                    <Border x:Name="NavProfile" CornerRadius="8"
                             PointerPressed="NavItem_PointerPressed">
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
+                        <Button x:Name="ProfileButton" Click="ProfileButton_Click"
+                                HorizontalAlignment="Stretch" Background="Transparent"
+                                   BorderThickness="0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
+                            </StackPanel>
+                        </Button>
+                </Border>
 
                 </StackPanel>
             </ScrollViewer>
