@@ -15,22 +15,33 @@ namespace BankApp.Client.ViewModels
         public List<Transaction> RecentTransactions { get; private set; }
         public int UnreadNotificationCount { get; private set; }
 
-        public void LoadDashboard()
+        private readonly ApiService _apiService;
+
+        public DashboardViewModel(ApiService apiService)
+        {
+            _apiService = apiService;
+            State = new Observable<DashboardState>(DashboardState.Loading);
+            Cards = new List<Card>();
+            RecentTransactions = new List<Transaction>();
+            UnreadNotificationCount = 0;
+        }
+
+        public async void LoadDashboard()
         {
             throw new NotImplementedException();
         }
 
-        public void LoadCards() 
+        public async void LoadCards() 
         {
             throw new NotImplementedException(); 
         }
 
-        public void LoadRecentTransactions()
+        public async void LoadRecentTransactions()
         {
             throw new NotImplementedException();
         }
 
-        public void LoadUnreadNotificationCount()
+        public async void LoadUnreadNotificationCount()
         {
             throw new NotImplementedException();
         }
