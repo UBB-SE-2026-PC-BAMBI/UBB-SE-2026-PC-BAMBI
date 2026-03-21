@@ -30,7 +30,6 @@ namespace BankApp.Server.Services.Implementations
         public UpdateProfileResponse UpdatePersonalInfo(UpdateProfileRequest request)
         {
             User? user = _userRepository.FindById(request.UserId);
-
             if (user == null)
             {
                 return new UpdateProfileResponse(false, "User not found.");
@@ -65,7 +64,6 @@ namespace BankApp.Server.Services.Implementations
         public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
             User? user = _userRepository.FindById(request.UserId);
-
             if (user == null)
             {
                 // Just making sure, should never happen though
@@ -97,7 +95,6 @@ namespace BankApp.Server.Services.Implementations
         public List<OAuthLink> GetOAuthLinks(int userId)
         {
             User? user = _userRepository.FindById(userId);
-
             if (user == null)
             {
                 // Just making sure, should never happen though
@@ -119,12 +116,26 @@ namespace BankApp.Server.Services.Implementations
 
         public List<NotificationPreference> GetNotificationPreferences(int userId)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                // AGAIN just making sure, should never happen
+                return new List<NotificationPreference>();
+            }
+
+            return _userRepository.GetNotificationPreferences(userId);
         }
 
         public bool UpdateNotificationPreferences(int userId, List<NotificationPreference> prefs)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                // Last time just making sure, should never happen
+                return false;
+            }
+
+            return _userRepository.UpdateNotificationPreferences(userId, prefs);
         }
     }
 }
