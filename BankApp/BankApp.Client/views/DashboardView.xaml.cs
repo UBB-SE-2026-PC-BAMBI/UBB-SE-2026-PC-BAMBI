@@ -133,22 +133,22 @@ namespace BankApp.Client.Views
 
         private async void TransferButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transfer", "Transfer feature works! ✅");
+            await ShowAlertAsync("Transfer", "Transfer feature works!");
         }
 
         private async void PayBillButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Pay Bill", "Pay Bill feature works! ✅");
+            await ShowAlertAsync("Pay Bill", "Pay Bill feature works!");
         }
 
         private async void ExchangeButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works! ✅");
+            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works!");
         }
 
         private async void TxHistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transaction History", "Transaction History feature works! ✅");
+            await ShowAlertAsync("Transaction History", "Transaction History feature works!");
         }
 
         // ─── NAV + LOGOUT ─────────────────────────────────────────────
