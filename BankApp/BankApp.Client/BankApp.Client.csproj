@@ -13,11 +13,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="views\DashboardView.xaml" />
     <None Remove="Views\LoginView.xaml" />
     <None Remove="Views\RegisterView.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Remove="views\DashboardView.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,9 +48,9 @@
     <ProjectReference Include="..\BankApp.Models\BankApp.Models.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="views\DashboardView.xaml">
+    <Page Update="views\DashboardView.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </None>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\RegisterView.xaml">

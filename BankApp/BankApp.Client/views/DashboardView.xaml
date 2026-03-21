@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
-    x:Class="BankApp.Client.views.DashboardView"
+    x:Class="BankApp.Client.Views.DashboardView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:entities="using:BankApp.Models.Entities"
@@ -237,7 +237,7 @@
                                 <TextBlock x:Name="CardNumberText" Grid.Row="2"
                                            Text="**** **** **** 6767"
                                            FontSize="16" FontWeight="SemiBold"
-                                           Foreground="White" LetterSpacing="3"
+                                           Foreground="White" CharacterSpacing="300"
                                            Margin="0,0,0,12"/>
 
                                 <!-- Cardholder + Expiry -->
@@ -246,7 +246,7 @@
                                         <TextBlock Text="CARD HOLDER" FontSize="9"
                                                    Foreground="White" Opacity="0.7"/>
                                         <TextBlock x:Name="CardHolderText"
-                                                   Text="COSHIN MOCANU"
+                                                   Text="COSMHIN MOCANU"
                                                    FontSize="13" FontWeight="SemiBold"
                                                    Foreground="White"/>
                                     </StackPanel>
