@@ -94,8 +94,6 @@ namespace BankApp.Client.Views
                 {
                     Width = i == _currentCardIndex ? 18 : 8,
                     Height = 8,
-                    RadiusX = 4,
-                    RadiusY = 4,
                     Fill = new SolidColorBrush(i == _currentCardIndex
                         ? Color.FromArgb(255, 78, 205, 196)
                         : Color.FromArgb(100, 78, 205, 196))
