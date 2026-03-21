@@ -37,7 +37,7 @@ namespace BankApp.Server.DataAccess
                     PushEnabled = Convert.ToBoolean(data["PushEnabled"]),
                     EmailEnabled = Convert.ToBoolean(data["EmailEnabled"]),
                     SmsEnabled = Convert.ToBoolean(data["SmsEnabled"]),
-                    MinAmountThreshold = Convert.ToDecimal(data["MinAmountThreshold"])
+                    MinAmountThreshold = data["MinAmountThreshold"] == DBNull.Value ? null : Convert.ToDecimal(data["MinAmountThreshold"])
                 };
 
                 result.Add(notificationPreference);
