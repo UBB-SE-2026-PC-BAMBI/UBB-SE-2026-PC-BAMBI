@@ -1,4 +1,5 @@
-﻿using BankApp.Models.DTOs.Profile;
+﻿using Azure.Core;
+using BankApp.Models.DTOs.Profile;
 using BankApp.Models.Entities;
 using BankApp.Models.Enums;
 using BankApp.Server.Repositories;
@@ -95,7 +96,15 @@ namespace BankApp.Server.Services.Implementations
 
         public List<OAuthLink> GetOAuthLinks(int userId)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(userId);
+
+            if (user == null)
+            {
+                // Just making sure, should never happen though
+                return new List<OAuthLink>();
+            }
+
+            return _userRepository.GetLinkedProviders(userId);
         }
 
         public bool LinkOAuth(int userId, string provider)
