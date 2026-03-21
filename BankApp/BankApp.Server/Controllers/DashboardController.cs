@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BankApp.Models.DTOs.Dashboard;
+using Microsoft.AspNetCore.Mvc;
 using BankApp.Server.Services.Interfaces;
 
 namespace BankApp.Server.Controllers
@@ -15,7 +16,7 @@ namespace BankApp.Server.Controllers
         {
             try
             {
-                var dashboardData = _dashService.GetDashboardData(userId);
+                DashboardResponse dashboardData = _dashService.GetDashboardData(userId);
                 if (dashboardData == null)
                 {
                     return NotFound(new { message = $"User with Id = {userId} was not found." });
