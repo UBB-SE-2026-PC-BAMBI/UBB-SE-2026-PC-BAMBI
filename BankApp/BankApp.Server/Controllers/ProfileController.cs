@@ -46,10 +46,24 @@ namespace BankApp.Server.Controllers
             return Ok(response);
         }
 
+        // PUT: api/profile/{userId}/password
+        // Serializes: ChangePasswordResponse
         [HttpPut("{userId}/password")]
         public IActionResult ChangePassword(int userId, [FromBody] ChangePasswordRequest request)
         {
-            throw new NotImplementedException();
+            if (userId != request.UserId)
+            {
+                return BadRequest(new UpdateProfileResponse(false, "URL user id and current user mismatch."));
+            }
+
+            ChangePasswordResponse response = _profileService.ChangePassword(request);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpGet("{userId}/notifications/preferences")]
