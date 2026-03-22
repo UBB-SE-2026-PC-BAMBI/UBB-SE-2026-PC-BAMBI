@@ -273,7 +273,7 @@
                 <StackPanel Spacing="12">
                     <TextBlock Text="Quick Actions" FontSize="16" FontWeight="SemiBold"
                                Foreground="#555"/>
-                    <StackPanel Orientation="Horizontal" Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center">
 
                         <!-- Transfer -->
                         <Button x:Name="TransferButton" Click="TransferButton_Click"
@@ -295,7 +295,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE8C7;" FontSize="24" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C7;" FontSize="24" 
+                                          Foreground ="Black" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Pay Bill" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -306,7 +307,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE8C0;" FontSize="24" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C0;" FontSize="24" 
+                                          Foreground ="Black" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Exchange" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -317,7 +319,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE81C;" FontSize="24" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE81C;" FontSize="24"
+                                          Foreground ="Black" HorizontalAlignment="Center"/>
                                 <TextBlock Text="History" FontSize="11" 
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
