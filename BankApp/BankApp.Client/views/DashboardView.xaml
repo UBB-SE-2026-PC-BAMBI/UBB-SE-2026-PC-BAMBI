@@ -132,11 +132,15 @@
                     <!-- Profile -->
                     <Border x:Name="NavProfile" CornerRadius="8"
                             PointerPressed="NavItem_PointerPressed">
-                        <StackPanel Orientation="Horizontal" Spacing="12">
-                            <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
+                        <Button x:Name="ProfileButton" Click="ProfileButton_Click"
+                                HorizontalAlignment="Stretch" Background="Transparent"
+                                   BorderThickness="0" HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal" Spacing="12">
+                                <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
+                            </StackPanel>
+                        </Button>
+                </Border>
 
                 </StackPanel>
             </ScrollViewer>
@@ -291,8 +295,7 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="💰" FontSize="24"
-                                           HorizontalAlignment="Center"/>
+                                          HorizontalAlignment="Center"/>
                                 <TextBlock Text="Pay Bill" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -303,8 +306,7 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="🪙" FontSize="24"
-                                           HorizontalAlignment="Center"/>
+                                          HorizontalAlignment="Center"/>
                                 <TextBlock Text="Exchange" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -315,9 +317,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <TextBlock Text="🔃" FontSize="24"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="History" FontSize="11"
+                                          HorizontalAlignment="Center"/>
+                                <TextBlock Text="History" FontSize="11" 
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
