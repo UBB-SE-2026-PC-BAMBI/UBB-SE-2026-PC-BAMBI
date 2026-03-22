@@ -66,16 +66,33 @@ namespace BankApp.Server.Controllers
             return Ok(response);
         }
 
+        // GET: api/profile/{userId}/notifications/preferences
+        // Serializes: List<NotificationPreference>
         [HttpGet("{userId}/notifications/preferences")]
         public IActionResult GetNotificationPreferences(int userId)
         {
-            throw new NotImplementedException();
+            List<NotificationPreference> prefs = _profileService.GetNotificationPreferences(userId);
+
+            if (prefs.Count == 0)
+            {
+                return NotFound(prefs);
+            }
+
+            return Ok(prefs);
         }
 
+        // PUT: api/profile/{userId}/notifications/preferences
+        // Serializes: -
         [HttpPut("{userId}/notifications/preferences")]
         public IActionResult UpdateNotificationPreferences(int userId, [FromBody] List<NotificationPreference> prefs)
         {
-            throw new NotImplementedException();
+            bool success = _profileService.UpdateNotificationPreferences(userId, prefs);
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
     }
 }
