@@ -87,38 +87,160 @@ namespace BankApp.Server.Services.Implementations
 
         public LoginResponse OAuthLogin(OAuthLoginRequest request)
         {
-            // TODO: Marius, OAuthLinkDAO
-            throw new NotImplementedException();
+            OAuthLink? link = _authRepository.FindOAuthLink(request.Provider, request.ProviderToken);
+            if (link == null)
+            {
+                return new LoginResponse { Success = false, Error = "OAuth account not linked or not found. Please register." };
+            }
+
+            User? user = _authRepository.FindUserById(link.UserId);
+            if (user == null)
+            {
+                return new LoginResponse { Success = false, Error = "Linked user account no longer exists." };
+            }
+
+            LoginResponse? lockCheck = CheckAccountLock(user);
+            if (lockCheck != null)
+            {
+                return lockCheck;
+            }
+
+            return CompleteLogin(user);
         }
 
         public RegisterResponse OAuthRegister(OAuthRegisterRequest request)
         {
-            // TODO: Marius, OAuthLinkDAO
-            throw new NotImplementedException();
+            if (!ValidationUtil.IsValidEmail(request.Email))
+            {
+                return new RegisterResponse { Success = false, Error = "Invalid email format." };
+            }
+
+            OAuthLink? existingLink = _authRepository.FindOAuthLink(request.Provider, request.ProviderToken);
+            if (existingLink != null)
+            {
+                return new RegisterResponse { Success = false, Error = "This OAuth account is already registered. Please login." };
+            }
+
+            User? existingUser = _authRepository.FindUserByEmail(request.Email);
+            int targetUserId;
+            if (existingUser != null)
+            {
+                targetUserId = existingUser.Id;
+            }
+            else
+            {
+                string randomPassword = Guid.NewGuid().ToString() + "A1a!";
+                User newUser = new User
+                {
+                    Email = request.Email,
+                    PasswordHash = _hashService.GetHash(randomPassword),
+                    FullName = request.FullName,
+                    PreferredLanguage = "en",
+                    Is2FAEnabled = false,
+                    IsLocked = false,
+                    FailedLoginAttempts = 0
+                };
+
+                bool created = _authRepository.CreateUser(newUser);
+                if (!created)
+                {
+                    return new RegisterResponse { Success = false, Error = "Failed to create user account." };
+                }
+
+                User? savedUser = _authRepository.FindUserByEmail(request.Email);
+                if (savedUser == null)
+                {
+                    return new RegisterResponse { Success = false, Error = "Error retrieving created user." };
+                }
+
+                targetUserId = savedUser.Id;
+            }
+
+            OAuthLink newLink = new OAuthLink
+            {
+                UserId = targetUserId,
+                Provider = request.Provider,
+                ProviderUserId = request.ProviderToken,
+                ProviderEmail = request.Email
+            };
+
+            bool linkCreated = _authRepository.CreateOAuthLink(newLink);
+            if (!linkCreated)
+            {
+                return new RegisterResponse { Success = false, Error = "Failed to link OAuth account to user." };
+            }
+
+            return new RegisterResponse { Success = true };
         }
 
         public LoginResponse VerifyOTP(VerifyOTPRequest request)
         {
-            // TODO: Marius
-            throw new NotImplementedException();
+            User? user = _authRepository.FindUserById(request.UserId);
+            if (user == null)
+            {
+                return new LoginResponse { Success = false, Error = "User not found." };
+            }
+            bool isValid = _otpService.VerifyTOTP(request.UserId, request.OTPCode);
+            if (!isValid)
+            {
+                return new LoginResponse { Success = false, Error = "Invalid or expired OTP code." };
+            }
+            _otpService.InvalidateOTP(user.Id);
+            return CompleteLogin(user);
         }
 
         public void ResendOTP(int userId, string method)
         {
-            // TODO: Marius
-            throw new NotImplementedException();
+            User? user = _authRepository.FindUserById(userId);
+            if (user == null) return;
+            string otp = _otpService.GenerateTOTP(user.Id);
+            if (method == "email" || user.Preferred2FAMethod == "email")
+            {
+                _emailService.sendOTPCode(user.Email, otp);
+            }
         }
 
         public void RequestPasswordReset(string email)
         {
-            // TODO: Marius
-            throw new NotImplementedException();
+            User? user = _authRepository.FindUserByEmail(email);
+            if (user == null) return;
+
+            string rawToken = Guid.NewGuid().ToString();
+            string tokenHash = _hashService.GetHash(rawToken);
+            PasswordResetToken resetToken = new PasswordResetToken
+            {
+                UserId = user.Id,
+                TokenHash = tokenHash,
+                ExpiresAt = DateTime.UtcNow.AddHours(1),
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _authRepository.SavePasswordResetToken(resetToken);
+            _emailService.sendPasswordResetLink(user.Email, rawToken);
         }
 
         public bool ResetPassword(string token, string newPasswordHash)
         {
-            // TODO: Marius
-            throw new NotImplementedException();
+            string tokenHashToFind = _hashService.GetHash(token);
+            PasswordResetToken? resetToken = _authRepository.FindPasswordResetToken(tokenHashToFind);
+
+            if (resetToken == null || resetToken.UsedAt != null || resetToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return false;
+            }
+
+            string finalPasswordHash = _hashService.GetHash(newPasswordHash);
+            bool updated = _authRepository.UpdatePassword(resetToken.UserId, finalPasswordHash);
+            if (!updated)
+            {
+                return false;
+            }
+
+            resetToken.UsedAt = DateTime.UtcNow;
+            _authRepository.SavePasswordResetToken(resetToken);
+            _authRepository.InvalidateAllSessions(resetToken.UserId);
+
+            return true;
         }
 
         // PRIVATE HELPERS

@@ -12,6 +12,8 @@ namespace BankApp.Server.Repositories.Interfaces
         void SavePasswordResetToken(PasswordResetToken token);
         PasswordResetToken? FindPasswordResetToken(string tokenHash);
         void InvalidateAllSessions(int userId);
+        User? FindUserById(int id);
+        bool UpdatePassword(int userId, string newPasswordHash);
 
         // Additional methods for session management (could be removed if not needed)
         List<Session> FindSessionsByUserId(int userId);
