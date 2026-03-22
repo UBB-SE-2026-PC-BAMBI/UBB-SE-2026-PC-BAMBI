@@ -11,7 +11,7 @@ namespace BankApp.Client
             App.NavigationService.SetFrame(RootFrame);
 
             // Start on the login page
-            App.NavigationService.NavigateTo<LoginView>();
+            App.NavigationService.NavigateTo<ProfileView>();
         }
     }
 }
