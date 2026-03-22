@@ -31,6 +31,11 @@ namespace BankApp.Server.Controllers
         [HttpPut("{userId}")]
         public IActionResult UpdateProfile(int userId, [FromBody] UpdateProfileRequest request)
         {
+            if (userId != request.UserId)
+            {
+                return BadRequest(new UpdateProfileResponse(false, "URL user id and current user mismatch."));
+            }
+
             UpdateProfileResponse response = _profileService.UpdatePersonalInfo(request);
 
             if (!response.Success)
