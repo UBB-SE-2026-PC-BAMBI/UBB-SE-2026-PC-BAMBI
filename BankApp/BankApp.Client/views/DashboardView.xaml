@@ -229,7 +229,7 @@
                                 <TextBlock x:Name="CardNumberText" Grid.Row="2"
                                            Text="**** **** **** 6767"
                                            FontSize="16" FontWeight="SemiBold"
-                                           Foreground="White" LetterSpacing="3"
+                                           Foreground="White"
                                            Margin="0,0,0,12"/>
 
                                 <!-- Cardholder + Expiry -->
@@ -295,7 +295,7 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                          HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C7;" FontSize="24" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Pay Bill" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -306,7 +306,7 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                          HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C0;" FontSize="24" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Exchange" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -317,7 +317,7 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                          HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE81C;" FontSize="24" HorizontalAlignment="Center"/>
                                 <TextBlock Text="History" FontSize="11" 
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
