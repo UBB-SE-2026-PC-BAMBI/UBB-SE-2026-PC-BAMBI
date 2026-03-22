@@ -54,6 +54,7 @@ namespace BankApp.Client.Views
 
         private void RefreshUI()
         {
+            UserNameText.Text = _viewModel.CurrentUser?.FullName ?? string.Empty;
             TransactionsList.ItemsSource = _viewModel.RecentTransactions;
             BuildCardDots();
             ShowCard(_currentCardIndex);
@@ -133,22 +134,22 @@ namespace BankApp.Client.Views
 
         private async void TransferButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transfer", "Transfer feature works!");
+            await ShowAlertAsync("Transfer", "Transfer feature works! ✓");
         }
 
         private async void PayBillButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Pay Bill", "Pay Bill feature works!");
+            await ShowAlertAsync("Pay Bill", "Pay Bill feature works! ✓");
         }
 
         private async void ExchangeButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works! ✅");
+            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works! ✓");
         }
 
         private async void TxHistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transaction History", "Transaction History feature works! ✅");
+            await ShowAlertAsync("Transaction History", "Transaction History feature works! ✓");
         }
 
         // ─── NAV + LOGOUT ─────────────────────────────────────────────
@@ -161,6 +162,7 @@ namespace BankApp.Client.Views
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             App.ApiService.ClearToken();
+            //await _viewModel.Logout();
             App.NavigationService.NavigateTo<LoginView>();
         }
 
