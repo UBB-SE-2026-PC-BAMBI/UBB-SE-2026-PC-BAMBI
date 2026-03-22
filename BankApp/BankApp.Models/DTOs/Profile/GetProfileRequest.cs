@@ -9,5 +9,10 @@ namespace BankApp.Models.DTOs.Profile
     public class GetProfileRequest
     {
         public int UserId { get; set; }
+
+        public GetProfileRequest(int userId)
+        {
+            UserId = userId;
+        }
     }
 }
