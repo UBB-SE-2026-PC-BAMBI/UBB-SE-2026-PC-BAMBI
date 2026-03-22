@@ -12,16 +12,33 @@ namespace BankApp.Server.Controllers
         private readonly IProfileService _profileService;
         public ProfileController(IProfileService profileService) { _profileService = profileService; }
 
+        // GET: api/profile/{userId}
+        // Serializes: GetProfileResponse
         [HttpGet("{userId}")]
         public IActionResult GetProfile(int userId)
         {
-            throw new NotImplementedException();
+            User? user = _profileService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound(new GetProfileResponse(false, "User not found."));
+            }
+
+            return Ok(new GetProfileResponse(true, "Successfully retrieved profile information.", user));
         }
 
+        // PUT: api/profile/{userId}
+        // Serializes: UpdateProfileResponse
         [HttpPut("{userId}")]
         public IActionResult UpdateProfile(int userId, [FromBody] UpdateProfileRequest request)
         {
-            throw new NotImplementedException();
+            UpdateProfileResponse response = _profileService.UpdatePersonalInfo(request);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
         }
 
         [HttpPut("{userId}/password")]
