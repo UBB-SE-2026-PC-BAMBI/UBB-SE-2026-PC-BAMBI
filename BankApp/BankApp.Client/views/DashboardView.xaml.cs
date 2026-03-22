@@ -71,7 +71,7 @@ namespace BankApp.Client.Views
 
             var card = cards[index];
 
-            CardBankName.Text = "ING";
+            CardBankName.Text = "PC𐂂BAMBI";
             CardBrandName.Text = string.IsNullOrEmpty(card.CardBrand) ? "Mastercard" : card.CardBrand;
             CardHolderText.Text = card.CardholderName.ToUpper();
             CardExpiryText.Text = card.ExpiryDate.ToString("MM/yy");

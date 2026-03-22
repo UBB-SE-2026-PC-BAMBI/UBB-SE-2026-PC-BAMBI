@@ -209,7 +209,7 @@
 
                                 <!-- Bank + Brand Row -->
                                 <Grid Grid.Row="0">
-                                    <TextBlock x:Name="CardBankName" Text="ING"
+                                    <TextBlock x:Name="CardBankName" 
                                                FontSize="20" FontWeight="Bold"
                                                Foreground="White"/>
                                     <TextBlock x:Name="CardBrandName" Text="Mastercard"
