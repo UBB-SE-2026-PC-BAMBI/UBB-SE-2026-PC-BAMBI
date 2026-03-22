@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BankApp.Models.DTOs.Dashboard;
+using Microsoft.AspNetCore.Mvc;
 using BankApp.Server.Services.Interfaces;
 
 namespace BankApp.Server.Controllers
@@ -13,7 +14,23 @@ namespace BankApp.Server.Controllers
         [HttpGet("{userId}")]
         public IActionResult GetDashboard(int userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                DashboardResponse dashboardData = _dashService.GetDashboardData(userId);
+                if (dashboardData == null)
+                {
+                    return NotFound(new { message = $"User with Id = {userId} was not found." });
+
+                }
+
+                return Ok(dashboardData);
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500,
+                    new { error = "An error occured while fetching the dashboard data."});
+            }
         }
     }
 }
