@@ -21,10 +21,9 @@
         <SolidColorBrush x:Key="InputBg"           Color="#F8FAFC"/>
         <SolidColorBrush x:Key="DangerRed"         Color="#EF4444"/>
 
-        <!-- Sidebar Nav Button -->
+        <!-- Sidebar Nav Button — full ControlTemplate prevents WinUI overriding foreground in hover/pressed -->
         <Style x:Key="NavItemStyle" TargetType="Button">
             <Setter Property="Background"                 Value="Transparent"/>
-            <Setter Property="Foreground"                 Value="#B0C4DE"/>
             <Setter Property="BorderThickness"            Value="0"/>
             <Setter Property="HorizontalAlignment"        Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
@@ -33,36 +32,221 @@
             <Setter Property="FontFamily"                 Value="Segoe UI"/>
             <Setter Property="CornerRadius"               Value="6"/>
             <Setter Property="Margin"                     Value="8,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1A3A5C"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#D0E4F7"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#152E4D"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#B0C4DE"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#4A6080"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"
+                                              Foreground="#B0C4DE"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Active Nav Button -->
-        <Style x:Key="NavItemActiveStyle" TargetType="Button" BasedOn="{StaticResource NavItemStyle}">
-            <Setter Property="Background" Value="#2563EB"/>
-            <Setter Property="Foreground" Value="White"/>
+        <Style x:Key="NavItemActiveStyle" TargetType="Button">
+            <Setter Property="Background"                 Value="#2563EB"/>
+            <Setter Property="BorderThickness"            Value="0"/>
+            <Setter Property="HorizontalAlignment"        Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding"                    Value="20,10"/>
+            <Setter Property="FontSize"                   Value="13"/>
+            <Setter Property="FontFamily"                 Value="Segoe UI"/>
+            <Setter Property="CornerRadius"               Value="6"/>
+            <Setter Property="Margin"                     Value="8,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1D55D4"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1848BC"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="Center"
+                                              Foreground="White"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Primary Button -->
         <Style x:Key="PrimaryButtonStyle" TargetType="Button">
             <Setter Property="Background"      Value="#2563EB"/>
-            <Setter Property="Foreground"      Value="White"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding"         Value="24,10"/>
             <Setter Property="FontSize"        Value="13"/>
             <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
             <Setter Property="Height"          Value="40"/>
             <Setter Property="CornerRadius"    Value="8"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1D55D4"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1848BC"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#93B4F0"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Foreground="White"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontFamily="{TemplateBinding FontFamily}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Outline Button -->
         <Style x:Key="OutlineButtonStyle" TargetType="Button">
             <Setter Property="Background"      Value="Transparent"/>
-            <Setter Property="Foreground"      Value="#2563EB"/>
             <Setter Property="BorderBrush"     Value="#2563EB"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding"         Value="12,6"/>
             <Setter Property="FontSize"        Value="12"/>
             <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
             <Setter Property="CornerRadius"    Value="6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#EFF4FF"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#DBEAFE"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Foreground="#2563EB"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontFamily="{TemplateBinding FontFamily}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- Ghost Button (icon-only) -->
@@ -71,6 +255,41 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Padding"         Value="4"/>
             <Setter Property="Width"           Value="34"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#F1F5F9"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root"
+                                                                           Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#E2E8F0"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <!-- TextBox Input -->
@@ -161,80 +380,80 @@
                             Click="DashboardNavButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE80F;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Dashboard" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Dashboard" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8AB;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Transfers" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Transfers" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8C7;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Bill Payments" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Bill Payments" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8C0;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Cards" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Cards" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE81C;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Transaction History" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Transaction History" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8A1;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Currency Exchange" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Currency Exchange" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8D6;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Savings &amp; Loans" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Savings &amp; Loans" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8F1;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Investments &amp; Trading" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Investments &amp; Trading" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE9D2;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Statistics" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Statistics" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
                     <Button Style="{StaticResource NavItemStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE8F2;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Support" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                            <TextBlock Text="Support" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
@@ -242,8 +461,8 @@
                     <Button Style="{StaticResource NavItemActiveStyle}">
                         <StackPanel Orientation="Horizontal">
                             <FontIcon Glyph="&#xE77B;" FontFamily="Segoe MDL2 Assets"
-                                      FontSize="14" Margin="0,0,10,0"/>
-                            <TextBlock Text="Profile" VerticalAlignment="Center"/>
+                                      FontSize="14" Margin="0,0,10,0" Foreground="White"/>
+                            <TextBlock Text="Profile" Foreground="White" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 
@@ -257,8 +476,8 @@
                         Click="LogoutButton_Click">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE7E8;" FontFamily="Segoe MDL2 Assets"
-                                  FontSize="14" Margin="0,0,10,0"/>
-                        <TextBlock Text="Logout" VerticalAlignment="Center"/>
+                                  FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
+                        <TextBlock Text="Logout" Foreground="#B0C4DE" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Button>
             </Border>
@@ -344,8 +563,8 @@
                                       VerticalAlignment="Center"/>
                         </Border>
 
+                        <!-- Populated from code-behind via ViewModel.CurrentUser -->
                         <TextBlock x:Name="ProfileCardName"
-                                   Text="Anamaria Prodan"
                                    FontSize="15" FontFamily="Segoe UI Semibold"
                                    Foreground="#1E293B"
                                    HorizontalAlignment="Center"
@@ -355,25 +574,17 @@
                         <Border Height="1" Background="#E2E8F0" Margin="0,12"/>
 
                         <StackPanel>
-                            <TextBlock Text="Date of Birth" Style="{StaticResource FieldLabelStyle}"/>
-                            <TextBlock x:Name="ProfileCardDob"
-                                       Text="10 March"
-                                       FontSize="13" Foreground="#1E293B" Margin="0,0,0,10"/>
-
                             <TextBlock Text="Email" Style="{StaticResource FieldLabelStyle}"/>
                             <TextBlock x:Name="ProfileCardEmail"
-                                       Text="muresonianisa@..."
                                        FontSize="12" Foreground="#1E293B"
                                        TextTrimming="CharacterEllipsis" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Phone" Style="{StaticResource FieldLabelStyle}"/>
                             <TextBlock x:Name="ProfileCardPhone"
-                                       Text="+40 770 331 808"
                                        FontSize="13" Foreground="#1E293B" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Address" Style="{StaticResource FieldLabelStyle}"/>
                             <TextBlock x:Name="ProfileCardAddress"
-                                       Text="430293 Residency"
                                        FontSize="13" Foreground="#1E293B"/>
                         </StackPanel>
 
@@ -442,6 +653,7 @@
                                 <TextBlock Text="Personal Information"
                                            Style="{StaticResource SectionTitleStyle}"/>
 
+                                <!-- Row 1: Full Name + Email (read-only) -->
                                 <Grid Margin="0,0,0,14">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -452,17 +664,20 @@
                                         <TextBlock Text="Full Name" Style="{StaticResource FieldLabelStyle}"/>
                                         <TextBox x:Name="FullNameBox"
                                                  Style="{StaticResource InputStyle}"
-                                                 Text="Anamaria Prodan"/>
+                                                 IsReadOnly="True"
+                                                 Opacity="0.6"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2">
                                         <TextBlock Text="Email" Style="{StaticResource FieldLabelStyle}"/>
                                         <TextBox x:Name="EmailBox"
                                                  Style="{StaticResource InputStyle}"
-                                                 Text="muresonianisa@..."/>
+                                                 IsReadOnly="True"
+                                                 Opacity="0.6"/>
                                     </StackPanel>
                                 </Grid>
 
-                                <Grid Margin="0,0,0,14">
+                                <!-- Row 2: Phone + Address (editable) -->
+                                <Grid Margin="0,0,0,24">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="16"/>
@@ -471,54 +686,12 @@
                                     <StackPanel Grid.Column="0">
                                         <TextBlock Text="Phone Number" Style="{StaticResource FieldLabelStyle}"/>
                                         <TextBox x:Name="PhoneBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="+40 310 245 221"/>
+                                                 Style="{StaticResource InputStyle}"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Billing Address" Style="{StaticResource FieldLabelStyle}"/>
-                                        <TextBox x:Name="BillingAddressBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="2490 Grove Street"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,14">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="City" Style="{StaticResource FieldLabelStyle}"/>
-                                        <TextBox x:Name="CityBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="Cluj-Napoca"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="State / County" Style="{StaticResource FieldLabelStyle}"/>
-                                        <TextBox x:Name="StateBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="Cluj"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Grid Margin="0,0,0,24">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Postcode" Style="{StaticResource FieldLabelStyle}"/>
-                                        <TextBox x:Name="PostcodeBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="430 293"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Country" Style="{StaticResource FieldLabelStyle}"/>
-                                        <TextBox x:Name="CountryBox"
-                                                 Style="{StaticResource InputStyle}"
-                                                 Text="Romania"/>
+                                        <TextBlock Text="Address" Style="{StaticResource FieldLabelStyle}"/>
+                                        <TextBox x:Name="AddressBox"
+                                                 Style="{StaticResource InputStyle}"/>
                                     </StackPanel>
                                 </Grid>
 
@@ -549,8 +722,7 @@
                                         </Grid.ColumnDefinitions>
                                         <PasswordBox x:Name="CurrentPasswordBox"
                                                      Grid.Column="0"
-                                                     Style="{StaticResource PasswordStyle}"
-                                                     Password="****"/>
+                                                     Style="{StaticResource PasswordStyle}"/>
                                         <Button Grid.Column="1"
                                                 Style="{StaticResource GhostButtonStyle}"
                                                 Margin="4,0,0,0"
@@ -641,7 +813,6 @@
                                             </StackPanel>
                                             <ToggleSwitch x:Name="TwoFactorToggle"
                                                           Grid.Column="1"
-                                                          IsOn="True"
                                                           OnContent="" OffContent=""
                                                           VerticalAlignment="Center"
                                                           Toggled="TwoFactorToggle_Toggled"/>
@@ -655,8 +826,7 @@
                                             </Grid.ColumnDefinitions>
                                             <TextBox x:Name="TwoFactorPhoneBox"
                                                      Grid.Column="0"
-                                                     Style="{StaticResource InputStyle}"
-                                                     Text="+40 50508050"/>
+                                                     Style="{StaticResource InputStyle}"/>
                                             <Button Grid.Column="1"
                                                     Style="{StaticResource GhostButtonStyle}"
                                                     Margin="4,0,0,0"
@@ -676,36 +846,8 @@
                                                    FontSize="14" FontFamily="Segoe UI Semibold"
                                                    Foreground="#1E293B" Margin="0,0,0,12"/>
 
-                                        <Border BorderBrush="#E2E8F0" BorderThickness="1"
-                                                CornerRadius="6" Padding="10,8"
-                                                Background="White" Margin="0,0,0,10">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Grid.Column="0"
-                                                           Text="name@gmail.com"
-                                                           FontSize="13" Foreground="#1E293B"
-                                                           VerticalAlignment="Center"/>
-                                                <Button Grid.Column="1"
-                                                        Style="{StaticResource GhostButtonStyle}"
-                                                        Margin="0,0,6,0"
-                                                        Click="EditConnectedAccount_Click">
-                                                    <FontIcon Glyph="&#xE70F;"
-                                                              FontFamily="Segoe MDL2 Assets"
-                                                              FontSize="13" Foreground="#64748B"/>
-                                                </Button>
-                                                <Button Grid.Column="2"
-                                                        Style="{StaticResource GhostButtonStyle}"
-                                                        Click="RemoveConnectedAccount_Click">
-                                                    <FontIcon Glyph="&#xE711;"
-                                                              FontFamily="Segoe MDL2 Assets"
-                                                              FontSize="13" Foreground="#EF4444"/>
-                                                </Button>
-                                            </Grid>
-                                        </Border>
+                                        <!-- Populated from code-behind via ViewModel.OAuthLinks -->
+                                        <StackPanel x:Name="OAuthLinksPanel" Margin="0,0,0,10"/>
 
                                         <Button x:Name="ManageDevicesButton"
                                                 Style="{StaticResource OutlineButtonStyle}"
@@ -713,8 +855,10 @@
                                             <StackPanel Orientation="Horizontal">
                                                 <FontIcon Glyph="&#xE8FA;"
                                                           FontFamily="Segoe MDL2 Assets"
-                                                          FontSize="12" Margin="0,0,6,0"/>
+                                                          FontSize="12" Margin="0,0,6,0"
+                                                          Foreground="#2563EB"/>
                                                 <TextBlock Text="Manage Device Connections"
+                                                           Foreground="#2563EB"
                                                            VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </Button>
@@ -735,124 +879,10 @@
                                            FontSize="13" Foreground="#64748B"
                                            Margin="0,-8,0,20"/>
 
+                                <!-- Populated from code-behind via ViewModel.NotificationPreferences -->
                                 <Border BorderBrush="#E2E8F0" BorderThickness="1"
                                         CornerRadius="10" Padding="20,6" Background="#FAFBFF">
-                                    <StackPanel>
-
-                                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="0,14">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Transaction Alerts"
-                                                               FontSize="13.5" FontFamily="Segoe UI Semibold"
-                                                               Foreground="#1E293B"/>
-                                                    <TextBlock Text="Get notified about every transaction on your account"
-                                                               FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
-                                                </StackPanel>
-                                                <ToggleSwitch x:Name="TransactionAlertsToggle"
-                                                              Grid.Column="1" IsOn="False"
-                                                              OnContent="" OffContent=""
-                                                              VerticalAlignment="Center"
-                                                              Toggled="NotificationToggle_Toggled"/>
-                                            </Grid>
-                                        </Border>
-
-                                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="0,14">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Login Alerts"
-                                                               FontSize="13.5" FontFamily="Segoe UI Semibold"
-                                                               Foreground="#1E293B"/>
-                                                    <TextBlock Text="Receive an alert when a new device logs into your account"
-                                                               FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
-                                                </StackPanel>
-                                                <ToggleSwitch x:Name="LoginAlertsToggle"
-                                                              Grid.Column="1" IsOn="False"
-                                                              OnContent="" OffContent=""
-                                                              VerticalAlignment="Center"
-                                                              Toggled="NotificationToggle_Toggled"/>
-                                            </Grid>
-                                        </Border>
-
-                                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="0,14">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Bill Payment Reminder"
-                                                               FontSize="13.5" FontFamily="Segoe UI Semibold"
-                                                               Foreground="#1E293B"/>
-                                                    <TextBlock Text="Remind me 7 days before a bill is due"
-                                                               FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
-                                                </StackPanel>
-                                                <ToggleSwitch x:Name="BillReminderToggle"
-                                                              Grid.Column="1" IsOn="True"
-                                                              OnContent="" OffContent=""
-                                                              VerticalAlignment="Center"
-                                                              Toggled="NotificationToggle_Toggled"/>
-                                            </Grid>
-                                        </Border>
-
-                                        <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="0,14">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Marketing and Offers"
-                                                               FontSize="13.5" FontFamily="Segoe UI Semibold"
-                                                               Foreground="#1E293B"/>
-                                                    <TextBlock Text="Receive personalised offers and promotions"
-                                                               FontSize="11.5" Foreground="#64748B" Margin="0,2,0,0"/>
-                                                </StackPanel>
-                                                <ToggleSwitch x:Name="MarketingToggle"
-                                                              Grid.Column="1" IsOn="False"
-                                                              OnContent="" OffContent=""
-                                                              VerticalAlignment="Center"
-                                                              Toggled="NotificationToggle_Toggled"/>
-                                            </Grid>
-                                        </Border>
-
-                                        <Border Padding="0,14">
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <StackPanel Grid.Column="0">
-                                                    <TextBlock Text="Maximum Spending Alert"
-                                                               FontSize="13.5" FontFamily="Segoe UI Semibold"
-                                                               Foreground="#1E293B"/>
-                                                    <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                                        <TextBlock Text="Alert when spending exceeds "
-                                                                   FontSize="11.5" Foreground="#64748B"/>
-                                                        <Border BorderBrush="#E2E8F0" BorderThickness="1"
-                                                                CornerRadius="4" Padding="6,1" Background="White">
-                                                            <TextBlock Text="$1,000" FontSize="11.5"
-                                                                       Foreground="#2563EB"
-                                                                       FontFamily="Segoe UI Semibold"/>
-                                                        </Border>
-                                                    </StackPanel>
-                                                </StackPanel>
-                                                <ToggleSwitch x:Name="SpendingAlertToggle"
-                                                              Grid.Column="1" IsOn="False"
-                                                              OnContent="" OffContent=""
-                                                              VerticalAlignment="Center"
-                                                              Toggled="NotificationToggle_Toggled"/>
-                                            </Grid>
-                                        </Border>
-
-                                    </StackPanel>
+                                    <StackPanel x:Name="NotificationPreferencesPanel"/>
                                 </Border>
 
                             </StackPanel>

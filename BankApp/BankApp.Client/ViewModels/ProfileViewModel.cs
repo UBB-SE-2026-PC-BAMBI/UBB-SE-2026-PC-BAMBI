@@ -13,7 +13,7 @@ namespace BankApp.Client.ViewModels
     {
         private readonly ApiService _apiService;
         private bool _disposed;
-
+        
         public Observable<ProfileState> State { get; private set; }
         public User CurrentUser { get; private set; }
         public List<OAuthLink> OAuthLinks { get; private set; }
@@ -41,6 +41,15 @@ namespace BankApp.Client.ViewModels
             OAuthLinks = oAuthLinks ?? new List<OAuthLink>();
             ActiveSessions = activeSessions ?? new List<Session>();
             NotificationPreferences = notificationPreferences ?? new List<NotificationPreference>();
+        }
+
+        public async Task<bool> LoadProfile()
+        {
+            try
+            {
+                State.SetValue(ProfileState.Loading);
+
+            }
         }
 
         public async Task<bool> UpdatePersonalInfo(string phone, string address, string password)

@@ -1,94 +1,196 @@
-using BankApp.Client.Utilities;
 using BankApp.Client.ViewModels;
-using BankApp.Models.Enums;
-using Microsoft.UI;
+using BankApp.Models.Entities;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Windows.UI;
+using Microsoft.UI.Xaml.Navigation;
+using System.Collections.Generic;
 
 namespace BankApp.Client.Views
 {
-    public sealed partial class ProfileView : Page, Observer<ProfileState>
+    public sealed partial class ProfileView : Page
     {
-        private readonly ProfileViewModel _viewModel;
+        private ProfileViewModel _viewModel;
 
         public ProfileView()
         {
-            InitializeComponent();
-            _viewModel = new ProfileViewModel(App.ApiService);
-            _viewModel.State.AddObserver(this);
+            this.InitializeComponent();
         }
 
-        // ═══════════════════════════════════════
-        //  OBSERVER
-        // ═══════════════════════════════════════
+        // ─── Navigation ────────────────────────────────────────────────────────────
 
-        public void Update(ProfileState state) => OnStateChanged(state);
-
-        public void OnStateChanged(ProfileState state)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            DispatcherQueue.TryEnqueue(() =>
+            base.OnNavigatedTo(e);
+
+            if (e.Parameter is ProfileViewModel vm)
             {
-                HideLoading();
-                ErrorInfoBar.IsOpen = false;
-                SuccessInfoBar.IsOpen = false;
-
-                switch (state)
-                {
-                    case ProfileState.Idle:
-                        break;
-
-                    case ProfileState.Loading:
-                        ShowLoading();
-                        break;
-
-                    case ProfileState.Success:
-                        break;
-
-                    case ProfileState.UpdateSuccess:
-                        ShowSuccess("Profile updated successfully.");
-                        RefreshProfileCard();
-                        break;
-
-                    case ProfileState.PasswordChanged:
-                        ShowSuccess("Password changed successfully.");
-                        ClearPasswordFields();
-                        break;
-
-                    case ProfileState.Error:
-                        ShowError("Something went wrong. Please try again.");
-                        break;
-                }
-            });
+                _viewModel = vm;
+                PopulateUI();
+            }
         }
 
-        // ═══════════════════════════════════════
-        //  TAB SWITCHING
-        // ═══════════════════════════════════════
+        // ─── Population ─────────────────────────────────────────────────────────────
 
-        private void SetActiveTab(Button active, Button b, Button c)
+        private void PopulateUI()
         {
-            var accentBrush = new SolidColorBrush(Color.FromArgb(255, 37, 99, 235));
-            var transparentBrush = new SolidColorBrush(Colors.Transparent);
-            var secondaryBrush = new SolidColorBrush(Color.FromArgb(255, 100, 116, 139));
+            var user = _viewModel.CurrentUser;
 
-            active.BorderBrush = accentBrush;
-            active.Foreground = accentBrush;
+            // Profile card
+            ProfileCardName.Text = user.FullName ?? string.Empty;
+            ProfileCardEmail.Text = user.Email ?? string.Empty;
+            ProfileCardPhone.Text = user.PhoneNumber ?? string.Empty;
+            ProfileCardAddress.Text = user.Address ?? string.Empty;
 
-            b.BorderBrush = transparentBrush;
-            b.Foreground = secondaryBrush;
+            // Personal info tab — read-only fields
+            FullNameBox.Text = user.FullName ?? string.Empty;
+            EmailBox.Text = user.Email ?? string.Empty;
 
-            c.BorderBrush = transparentBrush;
-            c.Foreground = secondaryBrush;
+            // Personal info tab — editable fields
+            PhoneBox.Text = user.PhoneNumber ?? string.Empty;
+            AddressBox.Text = user.Address ?? string.Empty;
+
+            // Security tab
+            TwoFactorToggle.IsOn = user.Is2FAEnabled;
+            TwoFactorPhoneBox.Text = user.PhoneNumber ?? string.Empty;
+
+            // OAuth links
+            PopulateOAuthLinks(_viewModel.OAuthLinks);
+
+            // Notification preferences
+            PopulateNotificationPreferences(_viewModel.NotificationPreferences);
         }
+
+        private void PopulateOAuthLinks(List<OAuthLink> links)
+        {
+            OAuthLinksPanel.Children.Clear();
+
+            if (links == null || links.Count == 0)
+                return;
+
+            foreach (var link in links)
+            {
+                var row = new Grid { Margin = new Thickness(0, 0, 0, 10) };
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var border = new Border
+                {
+                    BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.LightGray),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(6),
+                    Padding = new Thickness(10, 8, 10, 8),
+                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White)
+                };
+
+                var innerGrid = new Grid();
+                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var emailText = new TextBlock
+                {
+                    Text = link.ProviderEmail ?? link.Provider,
+                    FontSize = 13,
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 30, 41, 59)),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                Grid.SetColumn(emailText, 0);
+
+                var removeBtn = new Button
+                {
+                    Style = (Style)Resources["GhostButtonStyle"],
+                    Margin = new Thickness(0, 0, 0, 0),
+                    Tag = link
+                };
+                removeBtn.Click += RemoveConnectedAccount_Click;
+                var removeIcon = new FontIcon
+                {
+                    Glyph = "\xE711",
+                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe MDL2 Assets"),
+                    FontSize = 13,
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 239, 68, 68))
+                };
+                removeBtn.Content = removeIcon;
+                Grid.SetColumn(removeBtn, 2);
+
+                innerGrid.Children.Add(emailText);
+                innerGrid.Children.Add(removeBtn);
+                border.Child = innerGrid;
+
+                OAuthLinksPanel.Children.Add(border);
+            }
+        }
+
+        private void PopulateNotificationPreferences(List<NotificationPreference> prefs)
+        {
+            NotificationPreferencesPanel.Children.Clear();
+
+            if (prefs == null || prefs.Count == 0)
+                return;
+
+            for (int i = 0; i < prefs.Count; i++)
+            {
+                var pref = prefs[i];
+                bool isLast = i == prefs.Count - 1;
+
+                var border = new Border
+                {
+                    BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 226, 232, 240)),
+                    BorderThickness = isLast ? new Thickness(0) : new Thickness(0, 0, 0, 1),
+                    Padding = new Thickness(0, 14, 0, 14)
+                };
+
+                var grid = new Grid();
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var labelStack = new StackPanel { Orientation = Orientation.Vertical };
+
+                var title = new TextBlock
+                {
+                    Text = pref.Category ?? string.Empty,
+                    FontSize = 13.5,
+                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Semibold"),
+                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 30, 41, 59))
+                };
+
+                labelStack.Children.Add(title);
+                Grid.SetColumn(labelStack, 0);
+
+                var toggle = new ToggleSwitch
+                {
+                    IsOn = pref.PushEnabled,
+                    OnContent = string.Empty,
+                    OffContent = string.Empty,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Tag = pref
+                };
+                toggle.Toggled += NotificationToggle_Toggled;
+                Grid.SetColumn(toggle, 1);
+
+                grid.Children.Add(labelStack);
+                grid.Children.Add(toggle);
+                border.Child = grid;
+
+                NotificationPreferencesPanel.Children.Add(border);
+            }
+        }
+
+        // ─── Tab switching ──────────────────────────────────────────────────────────
 
         private void TabPersonalBtn_Click(object sender, RoutedEventArgs e)
         {
             PanelPersonal.Visibility = Visibility.Visible;
             PanelSecurity.Visibility = Visibility.Collapsed;
             PanelNotifications.Visibility = Visibility.Collapsed;
-            SetActiveTab(TabPersonalBtn, TabSecurityBtn, TabNotificationsBtn);
+
+            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
         }
 
         private void TabSecurityBtn_Click(object sender, RoutedEventArgs e)
@@ -96,7 +198,13 @@ namespace BankApp.Client.Views
             PanelPersonal.Visibility = Visibility.Collapsed;
             PanelSecurity.Visibility = Visibility.Visible;
             PanelNotifications.Visibility = Visibility.Collapsed;
-            SetActiveTab(TabSecurityBtn, TabPersonalBtn, TabNotificationsBtn);
+
+            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
         }
 
         private void TabNotificationsBtn_Click(object sender, RoutedEventArgs e)
@@ -104,154 +212,131 @@ namespace BankApp.Client.Views
             PanelPersonal.Visibility = Visibility.Collapsed;
             PanelSecurity.Visibility = Visibility.Collapsed;
             PanelNotifications.Visibility = Visibility.Visible;
-            SetActiveTab(TabNotificationsBtn, TabPersonalBtn, TabSecurityBtn);
+
+            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
+            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
+            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
         }
 
-        // ═══════════════════════════════════════
-        //  PERSONAL TAB
-        // ═══════════════════════════════════════
+        // ─── Personal info ──────────────────────────────────────────────────────────
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            var fullName = FullNameBox.Text.Trim();
-            var email = EmailBox.Text.Trim();
-            var phone = PhoneBox.Text.Trim();
+            ShowLoading(true);
 
-            if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email))
+            bool success = await _viewModel.UpdatePersonalInfo(
+                PhoneBox.Text,
+                AddressBox.Text,
+                password: string.Empty);
+
+            ShowLoading(false);
+
+            if (success)
             {
-                ShowError("Full name and email are required.");
-                return;
+                ProfileCardPhone.Text = PhoneBox.Text.Trim();
+                ProfileCardAddress.Text = AddressBox.Text.Trim();
+                ShowSuccess("Profile updated successfully.");
             }
-
-            // _viewModel.UpdateProfile(fullName, email, phone);
+            else
+            {
+                ShowError("Failed to update profile. Please try again.");
+            }
         }
 
-        // ═══════════════════════════════════════
-        //  SECURITY TAB
-        // ═══════════════════════════════════════
+        // ─── Password ───────────────────────────────────────────────────────────────
 
-        private void UpdatePasswordButton_Click(object sender, RoutedEventArgs e)
+        private async void UpdatePasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            var current = CurrentPasswordBox.Password;
-            var newPass = NewPasswordBox.Password;
-            var confirm = ConfirmPasswordBox.Password;
-
-            if (string.IsNullOrWhiteSpace(current) ||
-                string.IsNullOrWhiteSpace(newPass) ||
-                string.IsNullOrWhiteSpace(confirm))
-            {
-                ShowError("Please fill in all password fields.");
-                return;
-            }
-
-            if (newPass != confirm)
+            if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
             {
                 ShowError("New passwords do not match.");
                 return;
             }
 
-            if (newPass.Length < 8)
+            ShowLoading(true);
+
+            bool success = await _viewModel.ChangePassword(
+                CurrentPasswordBox.Password,
+                NewPasswordBox.Password);
+
+            ShowLoading(false);
+
+            if (success)
             {
-                ShowError("New password must be at least 8 characters.");
-                return;
+                CurrentPasswordBox.Password = string.Empty;
+                NewPasswordBox.Password = string.Empty;
+                ConfirmPasswordBox.Password = string.Empty;
+                ShowSuccess("Password updated successfully.");
             }
-
-            // TODO: re-enable once CurrentUser is wired up in ProfileViewModel
-            // _viewModel.ChangePassword(current, newPass);
-            ShowError("Change password not yet connected to user session.");
-        }
-
-        private void ToggleCurrentPassword_Click(object sender, RoutedEventArgs e)
-        {
-            CurrentPasswordBox.PasswordRevealMode =
-                CurrentPasswordBox.PasswordRevealMode == PasswordRevealMode.Hidden
-                    ? PasswordRevealMode.Visible
-                    : PasswordRevealMode.Hidden;
-        }
-
-        private void ToggleNewPassword_Click(object sender, RoutedEventArgs e)
-        {
-            NewPasswordBox.PasswordRevealMode =
-                NewPasswordBox.PasswordRevealMode == PasswordRevealMode.Hidden
-                    ? PasswordRevealMode.Visible
-                    : PasswordRevealMode.Hidden;
-        }
-
-        private void ToggleConfirmPassword_Click(object sender, RoutedEventArgs e)
-        {
-            ConfirmPasswordBox.PasswordRevealMode =
-                ConfirmPasswordBox.PasswordRevealMode == PasswordRevealMode.Hidden
-                    ? PasswordRevealMode.Visible
-                    : PasswordRevealMode.Hidden;
-        }
-
-        private void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            // Guard: control may not be loaded yet during page init
-            if (TwoFactorPhoneBox is null) return;
-
-            TwoFactorPhoneBox.IsEnabled = TwoFactorToggle.IsOn;
-        }
-
-        private void SaveTwoFactorPhone_Click(object sender, RoutedEventArgs e)
-        {
-            var phone = TwoFactorPhoneBox.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(phone))
+            else
             {
-                ShowError("Please enter a valid phone number for 2FA.");
-                return;
+                ShowError("Failed to change password. Check your current password and try again.");
             }
-
-            // TODO: _viewModel.UpdateTwoFactorPhone(phone);
-            ShowSuccess("2FA phone number updated.");
         }
 
-        private void EditConnectedAccount_Click(object sender, RoutedEventArgs e)
+        private void ToggleCurrentPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
+        private void ToggleNewPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
+        private void ToggleConfirmPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
+
+        // ─── 2FA ────────────────────────────────────────────────────────────────────
+
+        private async void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // TODO: open edit dialog for connected account
+            if (_viewModel == null) return;
+
+            bool success = TwoFactorToggle.IsOn
+                ? await _viewModel.EnableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone)
+                : await _viewModel.DisableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone);
+
+            if (!success)
+            {
+                // Revert toggle if the call failed
+                TwoFactorToggle.Toggled -= TwoFactorToggle_Toggled;
+                TwoFactorToggle.IsOn = !TwoFactorToggle.IsOn;
+                TwoFactorToggle.Toggled += TwoFactorToggle_Toggled;
+                ShowError("Failed to update 2FA settings.");
+            }
         }
 
-        private void RemoveConnectedAccount_Click(object sender, RoutedEventArgs e)
+        private void SaveTwoFactorPhone_Click(object sender, RoutedEventArgs e) { /* save phone for 2FA */ }
+
+        // ─── OAuth ──────────────────────────────────────────────────────────────────
+
+        private async void RemoveConnectedAccount_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: _viewModel.RemoveConnectedAccount(accountId);
+            if (sender is Button btn && btn.Tag is OAuthLink link)
+            {
+                bool success = await _viewModel.UnlinkOAuth(link.Provider);
+                if (success)
+                    PopulateOAuthLinks(_viewModel.OAuthLinks);
+                else
+                    ShowError("Failed to remove connected account.");
+            }
         }
 
-        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e)
+        private void EditConnectedAccount_Click(object sender, RoutedEventArgs e) { /* edit flow */ }
+        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e) { /* navigate to sessions */ }
+
+        // ─── Notifications ──────────────────────────────────────────────────────────
+
+        private async void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // TODO: App.NavigationService.NavigateTo<ManageDevicesView>();
+            if (_viewModel?.NotificationPreferences == null) return;
+
+            if (sender is ToggleSwitch toggle && toggle.Tag is NotificationPreference pref)
+                pref.PushEnabled = toggle.IsOn;
+
+            await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
         }
 
-        // ═══════════════════════════════════════
-        //  NOTIFICATIONS TAB
-        // ═══════════════════════════════════════
-
-        private void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            // Guard: other toggles may not be loaded yet during page init
-            if (TransactionAlertsToggle is null ||
-                LoginAlertsToggle is null ||
-                BillReminderToggle is null ||
-                MarketingToggle is null ||
-                SpendingAlertToggle is null) return;
-
-            var transactionAlerts = TransactionAlertsToggle.IsOn;
-            var loginAlerts = LoginAlertsToggle.IsOn;
-            var billReminder = BillReminderToggle.IsOn;
-            var marketing = MarketingToggle.IsOn;
-            var spendingAlert = SpendingAlertToggle.IsOn;
-
-            // TODO: _viewModel.UpdateNotificationPreferences(
-            //     transactionAlerts, loginAlerts, billReminder, marketing, spendingAlert);
-        }
-
-        // ═══════════════════════════════════════
-        //  SIDEBAR NAVIGATION
-        // ═══════════════════════════════════════
+        // ─── Navigation ─────────────────────────────────────────────────────────────
 
         private void DashboardNavButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: App.NavigationService.NavigateTo<DashboardView>();
+            // nothing
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -259,51 +344,28 @@ namespace BankApp.Client.Views
             App.NavigationService.NavigateTo<LoginView>();
         }
 
-        // ═══════════════════════════════════════
-        //  HELPERS
-        // ═══════════════════════════════════════
+        // ─── UI helpers ─────────────────────────────────────────────────────────────
 
-        public void ShowError(string msg)
+        private void ShowLoading(bool visible)
         {
-            ErrorInfoBar.Message = msg;
+            LoadingPanel.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            LoadingRing.IsActive = visible;
+            ErrorInfoBar.IsOpen = false;
+            SuccessInfoBar.IsOpen = false;
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorInfoBar.Message = message;
             ErrorInfoBar.IsOpen = true;
+            SuccessInfoBar.IsOpen = false;
         }
 
-        public void ShowSuccess(string msg)
+        private void ShowSuccess(string message)
         {
-            SuccessInfoBar.Message = msg;
+            SuccessInfoBar.Message = message;
             SuccessInfoBar.IsOpen = true;
-        }
-
-        public void ShowLoading()
-        {
-            LoadingPanel.Visibility = Visibility.Visible;
-            LoadingRing.IsActive = true;
-            SaveButton.IsEnabled = false;
-            UpdatePasswordButton.IsEnabled = false;
-        }
-
-        public void HideLoading()
-        {
-            LoadingPanel.Visibility = Visibility.Collapsed;
-            LoadingRing.IsActive = false;
-            SaveButton.IsEnabled = true;
-            UpdatePasswordButton.IsEnabled = true;
-        }
-
-        private void RefreshProfileCard()
-        {
-            ProfileCardName.Text = FullNameBox.Text.Trim();
-            ProfileCardEmail.Text = EmailBox.Text.Trim();
-            ProfileCardPhone.Text = PhoneBox.Text.Trim();
-            ProfileCardAddress.Text = BillingAddressBox.Text.Trim();
-        }
-
-        private void ClearPasswordFields()
-        {
-            CurrentPasswordBox.Password = string.Empty;
-            NewPasswordBox.Password = string.Empty;
-            ConfirmPasswordBox.Password = string.Empty;
+            ErrorInfoBar.IsOpen = false;
         }
     }
 }
