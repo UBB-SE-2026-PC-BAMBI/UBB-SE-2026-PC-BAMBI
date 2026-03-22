@@ -66,6 +66,21 @@ namespace BankApp.Server.Controllers
             return Ok(response);
         }
 
+        // GET: api/profile/{userId}/oauthlinks
+        // Serializes: List<OAuthLink>
+        [HttpGet("{userId}/oauthlinks")]
+        public IActionResult GetOAuthLinks(int userId)
+        {
+            List<OAuthLink> links = _profileService.GetOAuthLinks(userId);
+
+            if (links.Count == 0)
+            {
+                return NotFound(links);
+            }
+
+            return Ok(links);
+        }
+
         // GET: api/profile/{userId}/notifications/preferences
         // Serializes: List<NotificationPreference>
         [HttpGet("{userId}/notifications/preferences")]

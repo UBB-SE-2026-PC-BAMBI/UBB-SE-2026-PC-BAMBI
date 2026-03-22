@@ -15,7 +15,7 @@ namespace BankApp.Client.ViewModels
         private bool _disposed;
         
         public Observable<ProfileState> State { get; private set; }
-        public User CurrentUser { get; private set; }
+        public ProfileInfo ProfileInfo { get; private set; }
         public List<OAuthLink> OAuthLinks { get; private set; }
         public List<Session> ActiveSessions { get; private set; }
         public List<NotificationPreference> NotificationPreferences { get; private set; }
@@ -25,22 +25,7 @@ namespace BankApp.Client.ViewModels
             _apiService = apiService;
             State = new Observable<ProfileState>(ProfileState.Idle);
 
-        }
-
-        public ProfileViewModel(
-            ApiService apiService,
-            Observable<ProfileState> state,
-            User currentUser,
-            List<OAuthLink> oAuthLinks,
-            List<Session> activeSessions,
-            List<NotificationPreference> notificationPreferences)
-        {
-            _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
-            State = state ?? throw new ArgumentNullException(nameof(state));
-            CurrentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
-            OAuthLinks = oAuthLinks ?? new List<OAuthLink>();
-            ActiveSessions = activeSessions ?? new List<Session>();
-            NotificationPreferences = notificationPreferences ?? new List<NotificationPreference>();
+            _ = LoadProfile();
         }
 
         public async Task<bool> LoadProfile()
@@ -49,6 +34,47 @@ namespace BankApp.Client.ViewModels
             {
                 State.SetValue(ProfileState.Loading);
 
+                GetProfileResponse? profileResponse = await _apiService.GetAsync<GetProfileResponse>(
+                    $"api/profile/{_apiService.GetCurrentUserId()}");
+
+                if (profileResponse == null || !profileResponse.Success || profileResponse.ProfileInfo == null)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                ProfileInfo = profileResponse.ProfileInfo;
+
+                List<OAuthLink>? oauthResponse = await _apiService.GetAsync<List<OAuthLink>>(
+                    $"api/profile/{_apiService.GetCurrentUserId()}/oauthlinks");
+
+                if (oauthResponse == null)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                OAuthLinks = oauthResponse;
+
+                List<NotificationPreference>? prefsResponse = await _apiService.GetAsync<List<NotificationPreference>>(
+                    $"api/profile/{_apiService.GetCurrentUserId()}/notifications/preferences");
+
+                if (prefsResponse == null)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                NotificationPreferences = prefsResponse;
+
+                State.SetValue(ProfileState.UpdateSuccess);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                State.SetValue(ProfileState.Error);
+                LogError(nameof(UpdatePersonalInfo), ex);
+                return false;
             }
         }
 
@@ -66,14 +92,14 @@ namespace BankApp.Client.ViewModels
                     PhoneNumber = phone?.Trim(),
                     Address = address?.Trim()
                 };
-
+                
                 var result = await _apiService.PostAsync<UpdateProfileRequest, bool>(
-                    $"api/profile/{CurrentUser.Id}", request);
+                    $"api/profile/{ProfileInfo.UserId}", request);
 
                 if (result)
                 {
-                    if (!string.IsNullOrWhiteSpace(phone)) CurrentUser.PhoneNumber = phone.Trim();
-                    if (!string.IsNullOrWhiteSpace(address)) CurrentUser.Address = address.Trim();
+                    if (!string.IsNullOrWhiteSpace(phone)) ProfileInfo.PhoneNumber = phone.Trim();
+                    if (!string.IsNullOrWhiteSpace(address)) ProfileInfo.Address = address.Trim();
                     State.SetValue(ProfileState.UpdateSuccess);
                 }
                 else
@@ -112,7 +138,7 @@ namespace BankApp.Client.ViewModels
                 };
 
                 var result = await _apiService.PostAsync<ChangePasswordRequest, bool>(
-                    $"api/profile/{CurrentUser.Id}/password", request);
+                    $"api/profile/{ProfileInfo.UserId}/password", request);
 
                 State.SetValue(result ? ProfileState.UpdateSuccess : ProfileState.Error);
                 return result;
@@ -133,12 +159,14 @@ namespace BankApp.Client.ViewModels
                 var request = new { Method = method.ToString() };
 
                 var result = await _apiService.PostAsync<object, bool>(
-                    $"api/profile/{CurrentUser.Id}/2fa/enable", request);
+                    $"api/profile/{ProfileInfo.UserId}/2fa/enable", request);
 
                 if (result)
                 {
+                    /*
                     CurrentUser.Is2FAEnabled = true;
                     CurrentUser.Preferred2FAMethod = method.ToString();
+                    */
                     State.SetValue(ProfileState.UpdateSuccess);
                 }
                 else
@@ -160,6 +188,7 @@ namespace BankApp.Client.ViewModels
         {
             try
             {
+                /*
                 if (!CurrentUser.Is2FAEnabled)
                     return false;
 
@@ -181,7 +210,8 @@ namespace BankApp.Client.ViewModels
                     State.SetValue(ProfileState.Error);
                 }
 
-                return result;
+                return result;*/
+                return true;
             }
 
             catch (Exception ex)
@@ -211,11 +241,12 @@ namespace BankApp.Client.ViewModels
                 var request = new { Provider = provider.Trim() };
 
                 var result = await _apiService.PostAsync<object, bool>(
-                    $"api/profile/{CurrentUser.Id}/oauth/link", request);
+                    $"api/profile/{ProfileInfo.UserId}/oauth/link", request);
 
                 if (result)
                 {
-                    OAuthLinks.Add(new OAuthLink { Provider = provider, UserId = CurrentUser.Id });
+                    /*
+                    OAuthLinks.Add(new OAuthLink { Provider = provider, UserId = ProfileInfo.UserId });*/
                     State.SetValue(ProfileState.UpdateSuccess);
                 }
                 else
@@ -238,6 +269,7 @@ namespace BankApp.Client.ViewModels
         {
             try
             {
+                /*
                 if (string.IsNullOrWhiteSpace(provider))
                     return false;
 
@@ -264,7 +296,8 @@ namespace BankApp.Client.ViewModels
                     State.SetValue(ProfileState.Error);
                 }
 
-                return result;
+                return result;*/
+                return true;
             }
             catch (Exception ex)
             {
@@ -285,7 +318,7 @@ namespace BankApp.Client.ViewModels
                 State.SetValue(ProfileState.Loading);
 
                 var result = await _apiService.PostAsync<List<NotificationPreference>, bool>(
-                    $"api/profile/{CurrentUser.Id}/notifications/preferences", preferences);
+                    $"api/profile/{ProfileInfo.UserId}/notifications/preferences", preferences);
 
                 if (result)
                 {

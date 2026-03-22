@@ -1,5 +1,7 @@
+using BankApp.Client.Utilities;
 using BankApp.Client.ViewModels;
 using BankApp.Models.Entities;
+using BankApp.Models.Enums;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
@@ -7,13 +9,16 @@ using System.Collections.Generic;
 
 namespace BankApp.Client.Views
 {
-    public sealed partial class ProfileView : Page
+    public sealed partial class ProfileView : Page, Observer<ProfileState>
     {
         private ProfileViewModel _viewModel;
 
         public ProfileView()
         {
             this.InitializeComponent();
+
+            _viewModel = new ProfileViewModel(App.ApiService);
+            _viewModel.State.AddObserver(this);
         }
 
         // ─── Navigation ────────────────────────────────────────────────────────────
@@ -21,19 +26,27 @@ namespace BankApp.Client.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
+            /*
             if (e.Parameter is ProfileViewModel vm)
             {
-                _viewModel = vm;
-                PopulateUI();
-            }
+
+                // If data already loaded before we got here
+                if (_viewModel.ProfileInfo != null)
+                    PopulateUI();
+            }*/
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            _viewModel?.State.RemoveObserver(this);
         }
 
         // ─── Population ─────────────────────────────────────────────────────────────
 
         private void PopulateUI()
         {
-            var user = _viewModel.CurrentUser;
+            var user = _viewModel.ProfileInfo;
 
             // Profile card
             ProfileCardName.Text = user.FullName ?? string.Empty;
@@ -50,7 +63,8 @@ namespace BankApp.Client.Views
             AddressBox.Text = user.Address ?? string.Empty;
 
             // Security tab
-            TwoFactorToggle.IsOn = user.Is2FAEnabled;
+            //TwoFactorToggle.IsOn = user.Is2FAEnabled;
+            TwoFactorToggle.IsOn = false; // TODO: replace with real value when API is ready
             TwoFactorPhoneBox.Text = user.PhoneNumber ?? string.Empty;
 
             // OAuth links
@@ -185,12 +199,9 @@ namespace BankApp.Client.Views
             PanelSecurity.Visibility = Visibility.Collapsed;
             PanelNotifications.Visibility = Visibility.Collapsed;
 
-            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
-            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabPersonalBtn.Style = (Style)Resources["TabButtonActiveStyle"];
+            TabSecurityBtn.Style = (Style)Resources["TabButtonStyle"];
+            TabNotificationsBtn.Style = (Style)Resources["TabButtonStyle"];
         }
 
         private void TabSecurityBtn_Click(object sender, RoutedEventArgs e)
@@ -199,12 +210,9 @@ namespace BankApp.Client.Views
             PanelSecurity.Visibility = Visibility.Visible;
             PanelNotifications.Visibility = Visibility.Collapsed;
 
-            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
-            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabPersonalBtn.Style = (Style)Resources["TabButtonStyle"];
+            TabSecurityBtn.Style = (Style)Resources["TabButtonActiveStyle"];
+            TabNotificationsBtn.Style = (Style)Resources["TabButtonStyle"];
         }
 
         private void TabNotificationsBtn_Click(object sender, RoutedEventArgs e)
@@ -213,12 +221,9 @@ namespace BankApp.Client.Views
             PanelSecurity.Visibility = Visibility.Collapsed;
             PanelNotifications.Visibility = Visibility.Visible;
 
-            TabNotificationsBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabNotificationsBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 37, 99, 235));
-            TabPersonalBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabPersonalBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
-            TabSecurityBtn.BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent);
-            TabSecurityBtn.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 100, 116, 139));
+            TabPersonalBtn.Style = (Style)Resources["TabButtonStyle"];
+            TabSecurityBtn.Style = (Style)Resources["TabButtonStyle"];
+            TabNotificationsBtn.Style = (Style)Resources["TabButtonActiveStyle"];
         }
 
         // ─── Personal info ──────────────────────────────────────────────────────────
@@ -366,6 +371,29 @@ namespace BankApp.Client.Views
             SuccessInfoBar.Message = message;
             SuccessInfoBar.IsOpen = true;
             ErrorInfoBar.IsOpen = false;
+        }
+        public void Update(ProfileState state)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                switch (state)
+                {
+                    case ProfileState.Loading:
+                        ShowLoading(true);
+                        break;
+
+                    case ProfileState.UpdateSuccess:
+                        ShowLoading(false);
+                        if (_viewModel.ProfileInfo != null)
+                            PopulateUI();
+                        break;
+
+                    case ProfileState.Error:
+                        ShowLoading(false);
+                        ShowError("Failed to load profile.");
+                        break;
+                }
+            });
         }
     }
 }

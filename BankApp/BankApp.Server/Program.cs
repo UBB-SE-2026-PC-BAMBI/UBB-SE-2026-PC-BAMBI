@@ -53,6 +53,8 @@ builder.Services.AddScoped<IUserDAO, UserDAO>();
 builder.Services.AddScoped<ISessionDAO, SessionDAO>();
 builder.Services.AddScoped<IOAuthLinkDAO, OAuthLinkDAO>();
 builder.Services.AddScoped<IPasswordResetTokenDAO, PasswordResetTokenDAO>();
+builder.Services.AddScoped<INotificationPreferenceDAO, NotificationPreferenceDAO>();
+
 
 // Infrastructure Services
 builder.Services.AddScoped<IHashService, HashService>();
@@ -63,9 +65,12 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 
 var app = builder.Build();
 

@@ -11,12 +11,10 @@ namespace BankApp.Models.DTOs.Profile
     {
         public bool Success { get; set; }
         public string Message { get; set; }
-        public int? UserId { get; set; }
-        public string? Email { get; set; }
-        public string? FullName { get; set; }
-        public string? PhoneNumber { get; set; }
-        public string? Address { get; set; }
-        public string? Nationality { get; set; }
+
+        public ProfileInfo? ProfileInfo { get; set; }
+
+        public GetProfileResponse() { }
 
         public GetProfileResponse(bool success, string message)
         {
@@ -28,16 +26,7 @@ namespace BankApp.Models.DTOs.Profile
         {
             Success = success;
             Message = message;
-
-            if (user != null)
-            {
-                UserId = user.Id;
-                Email = user.Email;
-                FullName = user.FullName;
-                PhoneNumber = user.PhoneNumber;
-                Address = user.Address;
-                Nationality = user.Nationality;
-            }
+            ProfileInfo = new ProfileInfo(user);
         }
     }
 }

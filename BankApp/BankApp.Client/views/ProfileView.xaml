@@ -21,6 +21,16 @@
         <SolidColorBrush x:Key="InputBg"           Color="#F8FAFC"/>
         <SolidColorBrush x:Key="DangerRed"         Color="#EF4444"/>
 
+        <SolidColorBrush x:Key="TextControlForeground"              Color="#1E293B"/>
+        <SolidColorBrush x:Key="TextControlForegroundPointerOver"   Color="#1E293B"/>
+        <SolidColorBrush x:Key="TextControlForegroundFocused"       Color="#1E293B"/>
+        <SolidColorBrush x:Key="TextControlForegroundDisabled"      Color="#94A3B8"/>
+
+        <SolidColorBrush x:Key="TextControlBackground"              Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="TextControlBackgroundPointerOver"   Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="TextControlBackgroundFocused"       Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="TextControlBackgroundDisabled"      Color="#F1F5F9"/>
+
         <!-- Sidebar Nav Button — full ControlTemplate prevents WinUI overriding foreground in hover/pressed -->
         <Style x:Key="NavItemStyle" TargetType="Button">
             <Setter Property="Background"                 Value="Transparent"/>
@@ -292,9 +302,110 @@
             </Setter>
         </Style>
 
+        <!-- Tab Button — inactive -->
+        <Style x:Key="TabButtonStyle" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush"     Value="Transparent"/>
+            <Setter Property="Padding"         Value="16,10"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1E293B"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#2563EB"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Foreground="#64748B"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontFamily="{TemplateBinding FontFamily}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Tab Button — active -->
+        <Style x:Key="TabButtonActiveStyle" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush"     Value="#2563EB"/>
+            <Setter Property="Padding"         Value="16,10"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal"/>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1D55D4"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter"
+                                                                           Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1848BC"/>
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter x:Name="ContentPresenter"
+                                              Content="{TemplateBinding Content}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Foreground="#2563EB"
+                                              FontSize="{TemplateBinding FontSize}"
+                                              FontFamily="{TemplateBinding FontFamily}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- TextBox Input -->
         <Style x:Key="InputStyle" TargetType="TextBox">
             <Setter Property="Background"      Value="#F8FAFC"/>
+            <Setter Property="Foreground"      Value="#1E293B"/>
             <Setter Property="BorderBrush"     Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding"         Value="10,8"/>
@@ -307,6 +418,7 @@
         <!-- PasswordBox -->
         <Style x:Key="PasswordStyle" TargetType="PasswordBox">
             <Setter Property="Background"      Value="#F8FAFC"/>
+            <Setter Property="Foreground"      Value="#1E293B"/>
             <Setter Property="BorderBrush"     Value="#E2E8F0"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding"         Value="10,8"/>
@@ -333,6 +445,7 @@
         </Style>
 
     </Page.Resources>
+
 
     <!-- Root: Sidebar + Main -->
     <Grid>
@@ -608,35 +721,17 @@
 
                                 <Button x:Name="TabPersonalBtn"
                                         Content="Personal Information"
-                                        Background="Transparent"
-                                        BorderThickness="0,0,0,2"
-                                        BorderBrush="#2563EB"
-                                        Foreground="#2563EB"
-                                        Padding="16,10"
-                                        FontSize="13"
-                                        FontFamily="Segoe UI Semibold"
+                                        Style="{StaticResource TabButtonActiveStyle}"
                                         Click="TabPersonalBtn_Click"/>
 
                                 <Button x:Name="TabSecurityBtn"
                                         Content="Security Settings"
-                                        Background="Transparent"
-                                        BorderThickness="0,0,0,2"
-                                        BorderBrush="Transparent"
-                                        Foreground="#64748B"
-                                        Padding="16,10"
-                                        FontSize="13"
-                                        FontFamily="Segoe UI Semibold"
+                                        Style="{StaticResource TabButtonStyle}"
                                         Click="TabSecurityBtn_Click"/>
 
                                 <Button x:Name="TabNotificationsBtn"
                                         Content="Notification Preferences"
-                                        Background="Transparent"
-                                        BorderThickness="0,0,0,2"
-                                        BorderBrush="Transparent"
-                                        Foreground="#64748B"
-                                        Padding="16,10"
-                                        FontSize="13"
-                                        FontFamily="Segoe UI Semibold"
+                                        Style="{StaticResource TabButtonStyle}"
                                         Click="TabNotificationsBtn_Click"/>
 
                             </StackPanel>

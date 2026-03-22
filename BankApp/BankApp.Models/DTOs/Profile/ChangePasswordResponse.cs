@@ -11,6 +11,8 @@ namespace BankApp.Models.DTOs.Profile
         public bool Success { get; set; }
         public string? Message { get; set; }
 
+        public ChangePasswordResponse() {  }
+
         public ChangePasswordResponse(bool success, string? message)
         {
             Success = success;
