@@ -1,15 +1,28 @@
 ﻿using System.Text.RegularExpressions;
+using System.Net.Mail;
 
 namespace BankApp.Server.Utilities
 {
     public static class ValidationUtil
     {
-        // MARIUS PLS VERIFY THIS UWU
         public static bool IsValidEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email)) { return false; }
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            return Regex.IsMatch(email, pattern);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return false;
+            }
+
+            email = email.Trim().ToLower();
+             
+            try
+            {
+                MailAddress addr = new MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static bool IsStrongPassword(string password)
@@ -18,7 +31,8 @@ namespace BankApp.Server.Utilities
             return password.Length >= 8
                 && password.Any(char.IsUpper)
                 && password.Any(char.IsLower)
-                && password.Any(char.IsDigit);
+                && password.Any(char.IsDigit)
+                && password.Any(ch => !char.IsLetterOrDigit(ch));
         }
 
         public static bool IsValidOTP(string otp)
@@ -28,6 +42,7 @@ namespace BankApp.Server.Utilities
 
         public static bool PasswordsMatch(string a, string b)
         {
+            if (a == null || b == null) return false;
             return a == b;
         }
 
