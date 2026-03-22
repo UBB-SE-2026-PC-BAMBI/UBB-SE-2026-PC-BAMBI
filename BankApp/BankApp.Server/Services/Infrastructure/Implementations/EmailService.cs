@@ -62,7 +62,7 @@ namespace BankApp.Server.Services.Infrastructure.Implementations
             }
             catch (Exception ex)
             {
-                // Maybe log the error ?
+                ;
             }
         }
     }
