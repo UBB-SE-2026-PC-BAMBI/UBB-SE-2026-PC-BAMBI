@@ -106,5 +106,23 @@ namespace BankApp.Server.Controllers
             _authService.ResendOTP(userId, method);
             return Ok(new { message = "If the user exists, a new code has been sent." });
         }
+
+        [HttpPost("oauth-login")]
+        public async Task<IActionResult> OAuthLogin([FromBody] OAuthLoginRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Provider) || string.IsNullOrWhiteSpace(request.ProviderToken))
+            {
+                return BadRequest(new { error = "Provider and ProviderToken are required." });
+            }
+
+            LoginResponse response = await _authService.OAuthLoginAsync(request);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }
