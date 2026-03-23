@@ -110,7 +110,7 @@ namespace BankApp.Client.ViewModels
                     _apiService.SetToken(response.Token!);
                     _apiService.SetCurrentUserId(response.UserId!.Value);
 
-                    SetState(State, RegisterState.Success);
+                    SetState(State, RegisterState.AutoLoggedIn);
                 }
             }
             catch (Exception)
