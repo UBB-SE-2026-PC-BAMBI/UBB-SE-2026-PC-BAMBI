@@ -70,24 +70,48 @@ namespace BankApp.Client.ViewModels
 
             try
             {
-                OAuthRegisterRequest? request = new OAuthRegisterRequest
+                if (provider.ToLower() == "google")
                 {
-                    Email = email,
-                    Provider = provider,
-                    ProviderToken = "",
-                    FullName = email
-                };
+                    var options = new Duende.IdentityModel.OidcClient.OidcClientOptions
+                    {
+                        Authority = "https://accounts.google.com",
+                        ClientId = OAuthSecrets.ClientId,
+                        ClientSecret = OAuthSecrets.ClientSecret,
+                        Scope = "openid email profile",
+                        RedirectUri = "http://127.0.0.1:7890/",
+                        Browser = new BankApp.Client.Utilities.SystemBrowser(7890)
+                    };
+                    options.Policy.Discovery.ValidateEndpoints = false;
 
-                RegisterResponse? response = await _apiService.PostAsync<OAuthRegisterRequest, RegisterResponse>(
-                    "/api/auth/register", request);
+                    var oidcClient = new Duende.IdentityModel.OidcClient.OidcClient(options);
+                    var loginResult = await oidcClient.LoginAsync(new Duende.IdentityModel.OidcClient.LoginRequest());
 
-                if (response == null || !response.Success)
-                {
-                    SetState(State, RegisterState.Error);
-                    return;
+                    if (loginResult.IsError)
+                    {
+                        SetState(State, RegisterState.Error);
+                        return;
+                    }
+
+                    OAuthLoginRequest apiRequest = new OAuthLoginRequest
+                    {
+                        Provider = "Google",
+                        ProviderToken = loginResult.IdentityToken
+                    };
+
+                    LoginResponse? response = await _apiService.PostAsync<OAuthLoginRequest, LoginResponse>(
+                        "/api/auth/oauth-login", apiRequest);
+
+                    if (response == null || !response.Success)
+                    {
+                        SetState(State, RegisterState.Error);
+                        return;
+                    }
+
+                    _apiService.SetToken(response.Token!);
+                    _apiService.SetCurrentUserId(response.UserId!.Value);
+
+                    SetState(State, RegisterState.AutoLoggedIn);
                 }
-
-                SetState(State, RegisterState.Success);
             }
             catch (Exception)
             {
