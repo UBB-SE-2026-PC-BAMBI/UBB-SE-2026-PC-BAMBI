@@ -80,6 +80,7 @@ namespace BankApp.Client.ViewModels
 
         public async Task<bool> UpdatePersonalInfo(string phone, string address, string password)
         {
+            // TODO: Review the code. It's broken
             try
             {
                 if (string.IsNullOrWhiteSpace(phone) && string.IsNullOrWhiteSpace(address))
@@ -120,6 +121,7 @@ namespace BankApp.Client.ViewModels
 
         public async Task<bool> ChangePassword(string currentPassword, string newPassword)
         {
+            // TODO: Review the code. It's broken
             try
             {
                 if (string.IsNullOrWhiteSpace(currentPassword) ||
