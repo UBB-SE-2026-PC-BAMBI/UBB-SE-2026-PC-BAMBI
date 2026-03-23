@@ -4,7 +4,7 @@ namespace BankApp.Server.Services.Interfaces
     public interface IAuthService
     {
         LoginResponse Login(LoginRequest request);
-        LoginResponse OAuthLogin(OAuthLoginRequest request);
+        Task<LoginResponse> OAuthLoginAsync(OAuthLoginRequest request);
         RegisterResponse Register(RegisterRequest request);
         RegisterResponse OAuthRegister(OAuthRegisterRequest request);
         LoginResponse VerifyOTP(VerifyOTPRequest request);
