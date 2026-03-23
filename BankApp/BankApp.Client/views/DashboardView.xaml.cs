@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using Windows.UI;
+using System.Threading.Tasks;
 
 namespace BankApp.Client.Views
 {
@@ -169,10 +170,10 @@ namespace BankApp.Client.Views
             // TODO: navigate to respective views when implemented - for later
         }
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
+            //await App.ApiService.PostAsync("/api/auth/logout", null); to configure later (bogdan)
             App.ApiService.ClearToken();
-            //await _viewModel.Logout();
             App.NavigationService.NavigateTo<LoginView>();
         }
 
