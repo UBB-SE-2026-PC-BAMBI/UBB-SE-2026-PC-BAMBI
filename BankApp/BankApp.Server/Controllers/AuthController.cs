@@ -42,19 +42,42 @@ namespace BankApp.Server.Controllers
         [HttpPost("verify-otp")]
         public IActionResult VerifyOTP([FromBody] VerifyOTPRequest request)
         {
-            throw new NotImplementedException();
+            LoginResponse response = _authService.VerifyOTP(request);
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
         }
 
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(request.Email))
+            {
+                return BadRequest(new { error = "Email is required." });
+            }
+            _authService.RequestPasswordReset(request.Email);
+
+            // Always return an OK response with a generic message ( prevent malicious operations )
+            return Ok(new { message = "If an account with that email exists, a password reset link has been sent." });
         }
 
         [HttpPost("reset-password")]
         public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                return BadRequest(new { error = "Token and new password are required." });
+            }
+
+            bool isSuccess = _authService.ResetPassword(request.Token, request.NewPassword);
+            if (!isSuccess)
+            {
+                return BadRequest(new { error = "Invalid, expired, or already used reset token." });
+            }
+
+            return Ok(new { message = "Password reset successfully. You may now log in with your new password." });
         }
 
         [HttpPost("logout")]
