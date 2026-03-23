@@ -4,6 +4,7 @@ using BankApp.Models.Entities;
 using BankApp.Models.Enums;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,11 @@ namespace BankApp.Client.Views
     {
         private ProfileViewModel _viewModel;
 
-        // Holds verified password
+
         private string _verifiedPassword = string.Empty;
+        private string _pending2FAType = "";
+        private bool _is2FAFlow = false;
+
 
         public ProfileView()
         {
@@ -68,11 +72,12 @@ namespace BankApp.Client.Views
             PhoneBox.Text = user.PhoneNumber ?? "";
             AddressBox.Text = user.Address ?? "";
 
-            TwoFactorPhoneBox.Text = user.PhoneNumber ?? "";
-            TwoFactorEmailBox.Text = user.Email ?? "";
+            TwoFactorPhoneDisplay.Text = user.PhoneNumber ?? "";
+            TwoFactorEmailDisplay.Text = user.Email ?? "";
 
             PopulateOAuthLinks(_viewModel.OAuthLinks);
             PopulateNotificationPreferences(_viewModel.NotificationPreferences);
+            Update2FAVisuals();
         }
 
         private void SetEditingEnabled(bool enabled)
@@ -228,6 +233,28 @@ namespace BankApp.Client.Views
         }
 
         // ─── 2FA ─────────────────────────────────────────
+
+
+        private async void Handle2FAAction_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            _pending2FAType = btn.Tag.ToString(); // "Phone" or "Email"
+
+            if (btn.Content.ToString() == "Remove")
+            {
+                // Logic for removal
+            }
+            else
+            {
+                // Logic for Add/Verify
+                _is2FAFlow = true;
+                VerifyCurrentPasswordBox.Password = "";
+                await VerifyPasswordDialog.ShowAsync();
+            }
+        }
+
+
+
         private async void SaveTwoFactorSettings_Click(object sender, RoutedEventArgs e)
         {
             //bool success = await _viewModel.UpdateTwoFactorContacts(
@@ -241,22 +268,22 @@ namespace BankApp.Client.Views
         }
         private async void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            bool success = TwoFactorToggle.IsOn
-                ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Phone)
-                : await _viewModel.DisableTwoFactor(TwoFactorMethod.Phone);
+            //bool success = TwoFactorToggle.IsOn
+            //    ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Phone)
+            //    : await _viewModel.DisableTwoFactor(TwoFactorMethod.Phone);
 
-            if (!success)
-                ShowError("2FA update failed.");
+            //if (!success)
+            //    ShowError("2FA update failed.");
         }
 
         private async void TwoFactorEmailToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            bool success = TwoFactorEmailToggle.IsOn
-                ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Email)
-                : await _viewModel.DisableTwoFactor(TwoFactorMethod.Email);
+            //bool success = TwoFactorEmailToggle.IsOn
+            //    ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Email)
+            //    : await _viewModel.DisableTwoFactor(TwoFactorMethod.Email);
 
-            if (!success)
-                ShowError("2FA email update failed.");
+            //if (!success)
+            //    ShowError("2FA email update failed.");
         }
 
         // ─── OAuth ─────────────────────────────────────────
@@ -302,6 +329,36 @@ namespace BankApp.Client.Views
 
         // ─── Helpers ─────────────────────────
 
+        private void Update2FAVisuals()
+        {
+            var user = _viewModel.ProfileInfo;
+
+            // Check Phone Status
+            if (string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                TwoFactorPhoneDisplay.Text = "No phone number set";
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Add", "#F1F5F9", "#64748B", "Disabled");
+            }
+            else if (true/*!user.IsPhoneVerified*/)
+            { // You need this property in your Model
+                TwoFactorPhoneDisplay.Text = user.PhoneNumber;
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Verify", "#FFF7ED", "#C2410C", "Unverified");
+            }
+            else
+            {
+                TwoFactorPhoneDisplay.Text = user.PhoneNumber;
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Remove", "#F0FDF4", "#15803D", "Active");
+            }
+        }
+
+        private void ConfigureActionButton(Button btn, Border badge, TextBlock statusTxt, string action, string badgeBg, string textCol, string status)
+        {
+            btn.Content = action;
+            statusTxt.Text = status;
+            
+        }
+
+        
         private void ShowLoading(bool visible)
         {
             LoadingPanel.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
@@ -423,5 +480,8 @@ namespace BankApp.Client.Views
                 NotificationPreferencesPanel.Children.Add(toggle);
             }
         }
+
+
+
     }
 }

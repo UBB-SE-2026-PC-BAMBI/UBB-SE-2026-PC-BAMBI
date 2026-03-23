@@ -1373,357 +1373,135 @@
 
 
 
-                                <!-- ══════════════════════  TAB 2 — Security  ══════════════════════ -->
-
                                 <StackPanel x:Name="PanelSecurity" Visibility="Collapsed" Spacing="14">
 
-
-
-                                    <!-- Section header -->
-
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-
-                                        <Border Width="36" Height="36" CornerRadius="10"
-
-                                                Background="#FEF2F2" Margin="0,0,12,0">
-
-                                            <FontIcon Glyph="&#xE72E;" FontFamily="Segoe MDL2 Assets"
-
-                                                      FontSize="16" Foreground="#EF4444"
-
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                                        <Border Width="36" Height="36" CornerRadius="10" Background="#FEF2F2" Margin="0,0,12,0">
+                                            <FontIcon Glyph="&#xE72E;" FontSize="16" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
-
                                         <StackPanel VerticalAlignment="Center">
-
-                                            <TextBlock Text="Security Settings"
-
-                                                       FontSize="15" FontFamily="Segoe UI Semibold"
-
-                                                       Foreground="#1E293B"/>
-
-                                            <TextBlock Text="Manage your authentication and password"
-
-                                                       FontSize="12" Foreground="#94A3B8"/>
-
+                                            <TextBlock Text="Security Settings" FontSize="15" FontFamily="Segoe UI Semibold" Foreground="#1E293B"/>
+                                            <TextBlock Text="Manage your authentication and password" FontSize="12" Foreground="#94A3B8"/>
                                         </StackPanel>
-
                                     </StackPanel>
 
-
-
-                                    <!-- ── 1. Two-Factor Authentication ── -->
-
-                                    <Border Background="#FAFBFF" CornerRadius="12"
-
-                                            BorderBrush="#E2E8F0" BorderThickness="1"
-
-                                            Padding="18,16">
-
-                                        <StackPanel Spacing="14">
-
-                                            <!-- 2FA header row -->
-
+                                    <Border Background="#FAFBFF" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="1" Padding="20">
+                                        <StackPanel Spacing="20">
                                             <StackPanel Orientation="Horizontal">
-
-                                                <Border Width="30" Height="30" CornerRadius="8"
-
-                                                        Background="#EFF4FF" Margin="0,0,10,0">
-
-                                                    <FontIcon Glyph="&#xE8EA;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="14" Foreground="#2563EB"
-
-                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                                                <Border Width="32" Height="32" CornerRadius="8" Background="#EFF4FF" Margin="0,0,12,0">
+                                                    <FontIcon Glyph="&#xE8EA;" FontSize="16" Foreground="#2563EB" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-
                                                 <StackPanel VerticalAlignment="Center">
-
-                                                    <TextBlock Text="Two-Factor Authentication"
-
-                                                               Style="{StaticResource SectionTitleStyle}" FontSize="13.5"/>
-
-                                                    <TextBlock Text="Add an extra layer of security to your account"
-
-                                                               FontSize="11.5" Foreground="#94A3B8"/>
-
+                                                    <TextBlock Text="Two-Factor Authentication" Style="{StaticResource SectionTitleStyle}"/>
+                                                    <TextBlock Text="Methods must be verified before they can be used for security." FontSize="11" Foreground="#94A3B8"/>
                                                 </StackPanel>
-
                                             </StackPanel>
 
-
-
-                                            <Border Height="1" Background="#E2E8F0"/>
-
-
-
-                                            <!-- Phone row -->
+                                            <Border Height="1" Background="#F1F5F9"/>
 
                                             <Grid>
-
                                                 <Grid.ColumnDefinitions>
-
-                                                    <ColumnDefinition Width="*"/>
-
                                                     <ColumnDefinition Width="Auto"/>
-
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-
-                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-
-                                                    <TextBlock Text="Phone Number" Style="{StaticResource FieldLabelStyle}"/>
-
-                                                    <TextBox x:Name="TwoFactorPhoneBox"
-
-                                                             Style="{StaticResource InputStyle}"
-
-                                                             PlaceholderText="Add phone number"/>
-
+                                                <FontIcon Grid.Column="0" Glyph="&#xE717;" FontSize="18" Foreground="#64748B" Margin="0,0,15,0"/>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Phone Verification" FontSize="13" FontFamily="Segoe UI Semibold"/>
+                                                        <Border x:Name="PhoneStatusBadge" Margin="8,0,0,0" Padding="6,1" CornerRadius="4" Background="#F1F5F9">
+                                                            <TextBlock x:Name="PhoneStatusText" Text="Unverified" FontSize="10" Foreground="#64748B"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TwoFactorPhoneDisplay" Text="Not configured" FontSize="12" Foreground="#94A3B8"/>
                                                 </StackPanel>
-
-                                                <ToggleSwitch x:Name="TwoFactorToggle"
-
-                                                              Grid.Column="1"
-
-                                                              OnContent="" OffContent=""
-
-                                                              VerticalAlignment="Bottom"
-
-                                                              Margin="14,0,0,0"
-
-                                                              Toggled="TwoFactorToggle_Toggled"/>
-
+                                                <Button x:Name="ActionPhoneBtn" Grid.Column="2" Content="Verify" 
+                        Style="{StaticResource OutlineButtonStyle}" Width="80"
+                        Click="Handle2FAAction_Click" Tag="Phone"/>
                                             </Grid>
-
-
-
-                                            <!-- Email row -->
 
                                             <Grid>
-
                                                 <Grid.ColumnDefinitions>
-
-                                                    <ColumnDefinition Width="*"/>
-
                                                     <ColumnDefinition Width="Auto"/>
-
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
                                                 </Grid.ColumnDefinitions>
-
-                                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
-
-                                                    <TextBlock Text="Email Address" Style="{StaticResource FieldLabelStyle}"/>
-
-                                                    <TextBox x:Name="TwoFactorEmailBox"
-
-                                                             Style="{StaticResource InputStyle}"
-
-                                                             PlaceholderText="Add email address"/>
-
+                                                <FontIcon Grid.Column="0" Glyph="&#xE715;" FontSize="18" Foreground="#64748B" Margin="0,0,15,0"/>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="Email Verification" FontSize="13" FontFamily="Segoe UI Semibold"/>
+                                                        <Border x:Name="EmailStatusBadge" Margin="8,0,0,0" Padding="6,1" CornerRadius="4" Background="#F1F5F9">
+                                                            <TextBlock x:Name="EmailStatusText" Text="Unverified" FontSize="10" Foreground="#64748B"/>
+                                                        </Border>
+                                                    </StackPanel>
+                                                    <TextBlock x:Name="TwoFactorEmailDisplay" Text="Not configured" FontSize="12" Foreground="#94A3B8"/>
                                                 </StackPanel>
-
-                                                <ToggleSwitch x:Name="TwoFactorEmailToggle"
-
-                                                              Grid.Column="1"
-
-                                                              OnContent="" OffContent=""
-
-                                                              VerticalAlignment="Bottom"
-
-                                                              Margin="14,0,0,0"
-
-                                                              Toggled="TwoFactorEmailToggle_Toggled"/>
-
+                                                <Button x:Name="ActionEmailBtn" Grid.Column="2" Content="Verify" 
+                        Style="{StaticResource OutlineButtonStyle}" Width="80"
+                        Click="Handle2FAAction_Click" Tag="Email"/>
                                             </Grid>
-
-
-
-                                            <Button Style="{StaticResource OutlineButtonStyle}"
-
-                                                    HorizontalAlignment="Left"
-
-                                                    Click="SaveTwoFactorSettings_Click">
-
-                                                <StackPanel Orientation="Horizontal">
-
-                                                    <FontIcon Glyph="&#xE74E;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="11" Margin="0,0,6,0" Foreground="#2563EB"/>
-
-                                                    <TextBlock Text="Save 2FA Settings" VerticalAlignment="Center"/>
-
-                                                </StackPanel>
-
-                                            </Button>
-
                                         </StackPanel>
-
                                     </Border>
 
-
-
-                                    <!-- ── 2. Connected Accounts ── -->
-
-                                    <Border Background="#FAFBFF" CornerRadius="12"
-
-                                            BorderBrush="#E2E8F0" BorderThickness="1"
-
-                                            Padding="18,16">
-
+                                    <Border Background="#FAFBFF" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="1" Padding="18,16">
                                         <StackPanel Spacing="12">
-
                                             <StackPanel Orientation="Horizontal">
-
-                                                <Border Width="30" Height="30" CornerRadius="8"
-
-                                                        Background="#EFF4FF" Margin="0,0,10,0">
-
-                                                    <FontIcon Glyph="&#xE8FD;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="14" Foreground="#2563EB"
-
-                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                                                <Border Width="30" Height="30" CornerRadius="8" Background="#EFF4FF" Margin="0,0,10,0">
+                                                    <FontIcon Glyph="&#xE8FD;" FontSize="14" Foreground="#2563EB" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-
                                                 <StackPanel VerticalAlignment="Center">
-
-                                                    <TextBlock Text="Connected Accounts"
-
-                                                               Style="{StaticResource SectionTitleStyle}" FontSize="13.5"/>
-
-                                                    <TextBlock Text="Manage third-party sign-in providers"
-
-                                                               FontSize="11.5" Foreground="#94A3B8"/>
-
+                                                    <TextBlock Text="Connected Accounts" Style="{StaticResource SectionTitleStyle}" FontSize="13.5"/>
+                                                    <TextBlock Text="Manage third-party sign-in providers" FontSize="11.5" Foreground="#94A3B8"/>
                                                 </StackPanel>
-
                                             </StackPanel>
-
                                             <Border Height="1" Background="#E2E8F0"/>
-
                                             <StackPanel x:Name="OAuthLinksPanel"/>
-
-                                            <Button x:Name="ManageDevicesButton"
-
-                                                    Style="{StaticResource OutlineButtonStyle}"
-
-                                                    HorizontalAlignment="Left"
-
-                                                    Click="ManageDevicesButton_Click">
-
+                                            <Button x:Name="ManageDevicesButton" Style="{StaticResource OutlineButtonStyle}" HorizontalAlignment="Left" Click="ManageDevicesButton_Click">
                                                 <StackPanel Orientation="Horizontal">
-
-                                                    <FontIcon Glyph="&#xE8FA;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="11" Margin="0,0,6,0" Foreground="#2563EB"/>
-
+                                                    <FontIcon Glyph="&#xE8FA;" FontSize="11" Margin="0,0,6,0" Foreground="#2563EB"/>
                                                     <TextBlock Text="Manage Connected Accounts" VerticalAlignment="Center"/>
-
                                                 </StackPanel>
-
                                             </Button>
-
                                         </StackPanel>
-
                                     </Border>
 
-
-
-                                    <!-- ── 3. Password Settings ── -->
-
-                                    <Border CornerRadius="12" BorderThickness="1"
-
-                                            BorderBrush="#FECACA" Padding="18,16">
-
+                                    <Border CornerRadius="12" BorderThickness="1" BorderBrush="#FECACA" Padding="18,16">
                                         <Border.Background>
-
                                             <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-
                                                 <GradientStop Color="#FFF5F5" Offset="0"/>
-
                                                 <GradientStop Color="#FFFFFF" Offset="1"/>
-
                                             </LinearGradientBrush>
-
                                         </Border.Background>
-
                                         <Grid>
-
                                             <Grid.ColumnDefinitions>
-
                                                 <ColumnDefinition Width="*"/>
-
                                                 <ColumnDefinition Width="Auto"/>
-
                                             </Grid.ColumnDefinitions>
-
                                             <StackPanel Grid.Column="0" VerticalAlignment="Center" Orientation="Horizontal">
-
-                                                <Border Width="30" Height="30" CornerRadius="8"
-
-                                                        Background="#FEE2E2" Margin="0,0,10,0">
-
-                                                    <FontIcon Glyph="&#xE72E;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="14" Foreground="#EF4444"
-
-                                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                                                <Border Width="30" Height="30" CornerRadius="8" Background="#FEE2E2" Margin="0,0,10,0">
+                                                    <FontIcon Glyph="&#xE72E;" FontSize="14" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
-
                                                 <StackPanel VerticalAlignment="Center">
-
-                                                    <TextBlock Text="Password Settings"
-
-                                                               Style="{StaticResource SectionTitleStyle}" FontSize="13.5"/>
-
-                                                    <TextBlock Text="Change your account password"
-
-                                                               FontSize="11.5" Foreground="#94A3B8"/>
-
+                                                    <TextBlock Text="Password Settings" Style="{StaticResource SectionTitleStyle}" FontSize="13.5"/>
+                                                    <TextBlock Text="Change your account password" FontSize="11.5" Foreground="#94A3B8"/>
                                                 </StackPanel>
-
                                             </StackPanel>
-
-                                            <Button x:Name="ChangePasswordButton"
-
-                                                    Grid.Column="1"
-
-                                                    Style="{StaticResource DangerButtonStyle}"
-
-                                                    VerticalAlignment="Center"
-
-                                                    Click="ChangePasswordButton_Click">
-
+                                            <Button x:Name="ChangePasswordButton" Grid.Column="1" Style="{StaticResource DangerButtonStyle}" VerticalAlignment="Center" Click="ChangePasswordButton_Click">
                                                 <StackPanel Orientation="Horizontal">
-
-                                                    <FontIcon Glyph="&#xE72E;" FontFamily="Segoe MDL2 Assets"
-
-                                                              FontSize="12" Margin="0,0,7,0" Foreground="White"/>
-
+                                                    <FontIcon Glyph="&#xE72E;" FontSize="12" Margin="0,0,7,0" Foreground="White"/>
                                                     <TextBlock Text="Change Password" VerticalAlignment="Center"/>
-
                                                 </StackPanel>
-
                                             </Button>
-
                                         </Grid>
-
                                     </Border>
-
-
-
                                 </StackPanel>
-
-
-
-                                <!-- ══════════════════════  TAB 3 — Notifications  ══════════════════════ -->
-
                                 <StackPanel x:Name="PanelNotifications" Visibility="Collapsed">
 
 
+
+
+
+                                    <!-- ══════════════════════  TAB 3 — Notifications  ══════════════════════ -->
 
                                     <!-- Section header -->
 
