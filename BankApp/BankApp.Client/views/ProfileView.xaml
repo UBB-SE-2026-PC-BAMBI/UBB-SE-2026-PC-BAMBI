@@ -430,120 +430,28 @@
         </Grid.ColumnDefinitions>
 
         <!-- ════════════════════  SIDEBAR  ════════════════════ -->
-        <Grid Grid.Column="0" Background="#0F2A4A">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-
-            <Border Grid.Row="0" Padding="20,22,20,14">
-                <StackPanel Orientation="Horizontal">
-                    <Border Width="32" Height="32" CornerRadius="8"
-                            Background="#2563EB" Margin="0,0,10,0">
-                        <TextBlock Text="B" FontSize="18" FontWeight="Bold"
-                                   Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <TextBlock Text="BankApp" FontSize="16" FontWeight="SemiBold"
-                               Foreground="White" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Border>
-
-            <Border Grid.Row="1" Height="1" Background="#1E3A5F" Margin="16,0"/>
-
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" Padding="0,10,0,0">
-                <StackPanel>
-                    <Button Style="{StaticResource NavItemStyle}" Click="DashboardNavButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE80F;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Dashboard" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8AB;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Transfers" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Bill Payments" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8C0;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Cards" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Transaction History" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8A1;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Currency Exchange" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8D6;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Savings &amp; Loans" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Investments &amp; Trading" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE9D2;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Statistics" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE8F2;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                            <TextBlock Text="Support" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                    <Button Style="{StaticResource NavItemActiveStyle}">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon Glyph="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="White"/>
-                            <TextBlock Text="Profile" Foreground="White" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </ScrollViewer>
-
-            <Border Grid.Row="3" Padding="8,10">
-                <Button x:Name="LogoutButton" Style="{StaticResource NavItemStyle}" Click="LogoutButton_Click">
-                    <StackPanel Orientation="Horizontal">
-                        <FontIcon Glyph="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="14" Margin="0,0,10,0" Foreground="#B0C4DE"/>
-                        <TextBlock Text="Logout" Foreground="#B0C4DE" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-            </Border>
-        </Grid>
+        <Border x:Name="SidebarContainer" 
+        Grid.Column="0" 
+        Background="#1A3C6E" 
+        VerticalAlignment="Stretch">
+            <TextBlock Text="Navbar will go here" 
+               Foreground="White" 
+               HorizontalAlignment="Center" 
+               VerticalAlignment="Center"
+               Opacity="0.5"/>
+        </Border>
 
         <!-- ════════════════════  MAIN CONTENT  ════════════════════ -->
         <ScrollViewer Grid.Column="1"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-            <Grid Margin="28,22,28,28">
+              VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled"
+              VerticalScrollMode="Enabled">
+            <Grid Margin="28,22,28,28" VerticalAlignment="Top">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="16"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <!-- Page title -->
@@ -595,7 +503,7 @@
                                 </Border.Background>
                                 <StackPanel HorizontalAlignment="Center">
                                     <Border Width="64" Height="64" CornerRadius="32"
-                                            Background="#FFFFFF26"
+                                            Background="#90EE90"
                                             HorizontalAlignment="Center"
                                             Margin="0,0,0,10">
                                         <FontIcon Glyph="&#xE77B;" FontFamily="Segoe MDL2 Assets"
@@ -679,74 +587,111 @@
                                     <!-- Section header -->
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
                                         <Border Width="36" Height="36" CornerRadius="10"
-                                                Background="#EFF4FF" Margin="0,0,12,0">
+                Background="#EFF4FF" Margin="0,0,12,0">
                                             <FontIcon Glyph="&#xE77B;" FontFamily="Segoe MDL2 Assets"
-                                                      FontSize="16" Foreground="#2563EB"
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                      FontSize="16" Foreground="#2563EB"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="Personal Information"
-                                                       FontSize="15" FontFamily="Segoe UI Semibold"
-                                                       Foreground="#1E293B"/>
-                                            <TextBlock Text="Update your contact details below"
-                                                       FontSize="12" Foreground="#94A3B8"/>
+                       FontSize="15" FontFamily="Segoe UI Semibold"
+                       Foreground="#1E293B"/>
+                                            <TextBlock Text="View and update your personal details"
+                       FontSize="12" Foreground="#94A3B8"/>
                                         </StackPanel>
                                     </StackPanel>
 
-                                    <!-- Fields inside a subtle inset card -->
+                                    <!-- Fields -->
                                     <Border Background="#FAFBFF" CornerRadius="12"
-                                            BorderBrush="#E2E8F0" BorderThickness="1"
-                                            Padding="20,18" Margin="0,0,0,16">
+            BorderBrush="#E2E8F0" BorderThickness="1"
+            Padding="20,18" Margin="0,0,0,16">
                                         <StackPanel Spacing="14">
+
+                                            <!-- Row 1 -->
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="16"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
+
                                                 <StackPanel Grid.Column="0">
                                                     <TextBlock Text="Full Name" Style="{StaticResource FieldLabelStyle}"/>
-                                                    <TextBox x:Name="FullNameBox" Style="{StaticResource InputStyle}"
-                                                             IsReadOnly="True" Opacity="0.6"/>
+                                                    <TextBox x:Name="FullNameBox"
+                             Style="{StaticResource InputStyle}"
+                             IsReadOnly="True"
+                             Opacity="0.6"/>
                                                 </StackPanel>
+
                                                 <StackPanel Grid.Column="2">
                                                     <TextBlock Text="Email Address" Style="{StaticResource FieldLabelStyle}"/>
-                                                    <TextBox x:Name="EmailBox" Style="{StaticResource InputStyle}"
-                                                             IsReadOnly="True" Opacity="0.6"/>
+                                                    <TextBox x:Name="EmailBox"
+                             Style="{StaticResource InputStyle}"
+                             IsReadOnly="True"
+                             Opacity="0.6"/>
                                                 </StackPanel>
                                             </Grid>
+
+                                            <!-- Row 2 -->
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*"/>
                                                     <ColumnDefinition Width="16"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
+
                                                 <StackPanel Grid.Column="0">
                                                     <TextBlock Text="Phone Number" Style="{StaticResource FieldLabelStyle}"/>
-                                                    <TextBox x:Name="PhoneBox" Style="{StaticResource InputStyle}"/>
+                                                    <TextBox x:Name="PhoneBox"
+                             Style="{StaticResource InputStyle}"
+                             IsReadOnly="True"
+                             Opacity="0.6"/>
                                                 </StackPanel>
+
                                                 <StackPanel Grid.Column="2">
                                                     <TextBlock Text="Address" Style="{StaticResource FieldLabelStyle}"/>
-                                                    <TextBox x:Name="AddressBox" Style="{StaticResource InputStyle}"/>
+                                                    <TextBox x:Name="AddressBox"
+                             Style="{StaticResource InputStyle}"
+                             IsReadOnly="True"
+                             Opacity="0.6"/>
                                                 </StackPanel>
                                             </Grid>
+
                                         </StackPanel>
                                     </Border>
 
-                                    <!-- Read-only note -->
+                                    <!-- Info note -->
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
                                         <FontIcon Glyph="&#xE783;" FontFamily="Segoe MDL2 Assets"
-                                                  FontSize="11" Foreground="#94A3B8" Margin="0,0,6,0"
-                                                  VerticalAlignment="Center"/>
-                                        <TextBlock Text="Name and email are managed by your account and cannot be changed here."
-                                                   FontSize="11.5" Foreground="#94A3B8" TextWrapping="Wrap"/>
+                  FontSize="11" Foreground="#94A3B8" Margin="0,0,6,0"/>
+                                        <TextBlock Text="You must verify your password before editing your information."
+                   FontSize="11.5" Foreground="#94A3B8"
+                   TextWrapping="Wrap"/>
                                     </StackPanel>
 
-                                    <Button x:Name="SaveButton"
-                                            Style="{StaticResource PrimaryButtonStyle}"
-                                            Content="Save Changes"
-                                            HorizontalAlignment="Left" Width="160"
-                                            Click="SaveButton_Click"/>
+                                    <!-- Buttons -->
+                                    <StackPanel Orientation="Horizontal" Spacing="10">
+
+                                        <Button x:Name="UpdateButton"
+                Style="{StaticResource OutlineButtonStyle}"
+                Content="Update"
+                Width="120"
+                Click="UpdateButton_Click"/>
+
+                                        <StackPanel Orientation="Horizontal" Spacing="10">
+
+                                            <!-- Save button (step 2: save changes) -->
+                                            <Button x:Name="SaveButton"
+            Style="{StaticResource PrimaryButtonStyle}"
+            Content="Save Changes"
+            Width="160"
+            IsEnabled="False"
+            Click="SaveButton_Click"/>
+
+                                        </StackPanel>
+
+                                    </StackPanel>
+
                                 </StackPanel>
 
                                 <!-- ══════════════════════  TAB 2 — Security  ══════════════════════ -->
@@ -938,7 +883,7 @@
                                                        FontSize="15" FontFamily="Segoe UI Semibold"
                                                        Foreground="#1E293B"/>
                                             <TextBlock Text="Choose which alerts you want to receive"
-                                                       FontSize="12" Foreground="#94A3B8"/>
+                                                       FontSize="12" Foreground="#94A3B8"/> 
                                         </StackPanel>
                                     </StackPanel>
 
