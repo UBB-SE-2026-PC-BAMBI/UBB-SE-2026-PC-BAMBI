@@ -103,7 +103,7 @@ namespace BankApp.Client.Views
 
         private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: App.NavigationService.NavigateTo<ForgotPasswordView>();
+            App.NavigationService.NavigateTo<ForgotPasswordView>();
         }
 
         private void CreateAccountButton_Click(object sender, RoutedEventArgs e)

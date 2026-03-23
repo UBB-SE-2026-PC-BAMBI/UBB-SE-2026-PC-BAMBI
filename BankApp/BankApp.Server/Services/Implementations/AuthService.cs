@@ -205,13 +205,12 @@ namespace BankApp.Server.Services.Implementations
             User? user = _authRepository.FindUserByEmail(email);
             if (user == null) return;
 
-            string rawToken = Guid.NewGuid().ToString();
-            string tokenHash = _hashService.GetHash(rawToken);
+            string rawToken = System.Security.Cryptography.RandomNumberGenerator.GetInt32(100000, 999999).ToString();
             PasswordResetToken resetToken = new PasswordResetToken
             {
                 UserId = user.Id,
-                TokenHash = tokenHash,
-                ExpiresAt = DateTime.UtcNow.AddHours(1),
+                TokenHash = rawToken,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5),
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -219,18 +218,18 @@ namespace BankApp.Server.Services.Implementations
             _emailService.sendPasswordResetLink(user.Email, rawToken);
         }
 
-        public bool ResetPassword(string token, string newPasswordHash)
+        public bool ResetPassword(string token, string newPassword)
         {
-            string tokenHashToFind = _hashService.GetHash(token);
-            PasswordResetToken? resetToken = _authRepository.FindPasswordResetToken(tokenHashToFind);
+            PasswordResetToken? resetToken = _authRepository.FindPasswordResetToken(token);
 
             if (resetToken == null || resetToken.UsedAt != null || resetToken.ExpiresAt < DateTime.UtcNow)
             {
                 return false;
             }
 
-            string finalPasswordHash = _hashService.GetHash(newPasswordHash);
+            string finalPasswordHash = _hashService.GetHash(newPassword);
             bool updated = _authRepository.UpdatePassword(resetToken.UserId, finalPasswordHash);
+
             if (!updated)
             {
                 return false;
@@ -338,6 +337,19 @@ namespace BankApp.Server.Services.Implementations
                 FailedLoginAttempts = 0
             };
         }
+
+        public bool VerifyResetToken(string token)
+        {
+            PasswordResetToken? resetToken = _authRepository.FindPasswordResetToken(token);
+
+            if (resetToken == null || resetToken.UsedAt != null || resetToken.ExpiresAt < DateTime.UtcNow)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         public bool Logout(string token)
         {
             Session? session = _authRepository.FindSessionByToken(token);

@@ -87,6 +87,35 @@ namespace BankApp.Client.ViewModels
                 SetState(State, ForgotPasswordState.Error);
             }
         }
+
+        public async Task VerifyToken(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                SetState(State, ForgotPasswordState.Error);
+                return;
+            }
+
+            try
+            {
+                var response = await _apiService.PostAsync<object, ApiResponse>("/api/auth/verify-reset-token", new { Token = code });
+
+                if (response != null && response.error == null)
+                {
+                    SetState(State, ForgotPasswordState.TokenValid);
+                }
+                else
+                {
+                    SetState(State, ForgotPasswordState.TokenExpired);
+                }
+            }
+            catch (Exception)
+            {
+                SetState(State, ForgotPasswordState.Error);
+            }
+        }
+
+
         public override void Dispose()
         {
             State = null;
