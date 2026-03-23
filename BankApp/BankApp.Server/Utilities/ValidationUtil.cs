@@ -45,5 +45,11 @@ namespace BankApp.Server.Utilities
             if (a == null || b == null) return false;
             return a == b;
         }
+
+        public static bool IsValidPhoneNumber(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone)) return false;
+            return Regex.IsMatch(phone, @"^\+?[\d\s\-().]{7,15}$");
+        }
     }
 }

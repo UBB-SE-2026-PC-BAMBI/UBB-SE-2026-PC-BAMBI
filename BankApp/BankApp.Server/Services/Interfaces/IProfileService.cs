@@ -1,12 +1,13 @@
-﻿using BankApp.Models.Entities;
+﻿using BankApp.Models.DTOs.Profile;
+using BankApp.Models.Entities;
 using BankApp.Models.Enums;
 namespace BankApp.Server.Services.Interfaces
 {
     public interface IProfileService
     {
         User? GetUserById(int userId);
-        bool UpdatePersonalInfo(int userId, string? phone, string? address);
-        bool ChangePassword(int userId, string currentPassword, string newPassword);
+        UpdateProfileResponse UpdatePersonalInfo(UpdateProfileRequest request);
+        ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
         bool Enable2FA(int userId, TwoFactorMethod method);
         bool Disable2FA(int userId, TwoFactorMethod method);
         List<OAuthLink> GetOAuthLinks(int userId);

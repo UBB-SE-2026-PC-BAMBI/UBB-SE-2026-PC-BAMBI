@@ -40,7 +40,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case LoginState.Success:
-                        App.NavigationService.NavigateTo<DashboardView>(); // TODO: replace with DashboardView -> done
+                        App.NavigationService.NavigateTo<ProfileView>(); // TODO: replace with DashboardView
                         break;
 
                     case LoginState.Require2FA:
@@ -103,7 +103,7 @@ namespace BankApp.Client.Views
 
         private void ForgotPasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: App.NavigationService.NavigateTo<ForgotPasswordView>();
+            App.NavigationService.NavigateTo<ForgotPasswordView>();
         }
 
         private void CreateAccountButton_Click(object sender, RoutedEventArgs e)

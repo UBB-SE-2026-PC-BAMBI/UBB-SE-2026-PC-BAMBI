@@ -58,7 +58,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case RegisterState.WeakPassword:
-                        ShowError("Password must be at least 8 characters with uppercase, lowercase, and a digit.");
+                        ShowError("Password must be at least 8 characters with uppercase, lowercase, a digit and a special character.");
                         break;
 
                     case RegisterState.PasswordMismatch:

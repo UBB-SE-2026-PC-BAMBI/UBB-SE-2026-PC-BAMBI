@@ -62,6 +62,9 @@
     <Page Update="Views\LoginView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Update="views\ForgotPasswordView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
   <!--

@@ -71,6 +71,11 @@ namespace BankApp.Server.Controllers
                 return BadRequest(new { error = "Token and new password are required." });
             }
 
+            if (!BankApp.Server.Utilities.ValidationUtil.IsStrongPassword(request.NewPassword))
+            {
+                return BadRequest(new { error = "Password must be at least 8 characters with uppercase, lowercase, a digit, and a special character." });
+            }
+
             bool isSuccess = _authService.ResetPassword(request.Token, request.NewPassword);
             if (!isSuccess)
             {
@@ -124,5 +129,24 @@ namespace BankApp.Server.Controllers
 
             return Ok(response);
         }
+        public class VerifyTokenDto { public string Token { get; set; } = string.Empty; }
+
+        [HttpPost("verify-reset-token")]
+        public IActionResult VerifyResetToken([FromBody] VerifyTokenDto request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Token))
+            {
+                return BadRequest(new { error = "Token is required." });
+            }
+
+            bool isValid = _authService.VerifyResetToken(request.Token);
+            if (!isValid)
+            {
+                return BadRequest(new { error = "Invalid or expired token." });
+            }
+
+            return Ok(new { message = "Token is valid." });
+        }
+
     }
 }
