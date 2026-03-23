@@ -63,5 +63,15 @@ namespace BankApp.Client.Utilities
             var response = await _httpClient.GetAsync(endpoint);
             return await response.Content.ReadFromJsonAsync<TResponse>();
         }
+
+        public async Task<TResponse?> PutAsync<TRequest, TResponse>(string endpoint, TRequest data)
+        {
+            var response = await _httpClient.PutAsJsonAsync(endpoint, data);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<TResponse>();
+
+            // Try to read error response
+            return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
     }
 }
