@@ -77,9 +77,26 @@ namespace BankApp.Client.Views
 
         private void SetEditingEnabled(bool enabled)
         {
+            //FullNameBox.IsEnabled = enabled;
             PhoneBox.IsEnabled = enabled;
             AddressBox.IsEnabled = enabled;
             SaveButton.IsEnabled = enabled;
+
+            
+            PhoneBox.IsReadOnly = !enabled;
+            AddressBox.IsReadOnly = !enabled;
+            //FullNameBox.IsReadOnly = !enabled;
+          
+            PhoneBox.Opacity = enabled ? 1.0 : 0.6;
+            AddressBox.Opacity = enabled ? 1.0 : 0.6;
+           // FullNameBox.Opacity = !enabled ? 1.0 : 0.6;
+            
+            if (enabled)
+            {
+                PhoneBox.Focus(FocusState.Programmatic);
+                AddressBox.Focus(FocusState.Programmatic);
+               // FullNameBox.Focus(FocusState.Programmatic);
+            }
         }
 
         // ─── PERSONAL INFO FLOW ───────────────────────────────
@@ -96,36 +113,36 @@ namespace BankApp.Client.Views
             ContentDialog sender,
             ContentDialogButtonClickEventArgs args)
         {
-            //var deferral = args.GetDeferral();
+            var deferral = args.GetDeferral();
 
-            //if (string.IsNullOrWhiteSpace(VerifyCurrentPasswordBox.Password))
-            //{
-            //    VerifyErrorInfoBar.Message = "Enter your password.";
-            //    VerifyErrorInfoBar.IsOpen = true;
-            //    args.Cancel = true;
-            //    deferral.Complete();
-            //    return;
-            //}
+            if (string.IsNullOrWhiteSpace(VerifyCurrentPasswordBox.Password))
+            {
+                VerifyErrorInfoBar.Message = "Enter your password.";
+                VerifyErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
 
             //bool verified = await _viewModel.VerifyPassword(VerifyCurrentPasswordBox.Password);
+            bool verified = true;
+            if (!verified)
+            {
+                VerifyErrorInfoBar.Message = "Incorrect password.";
+                VerifyErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
 
-            //if (!verified)
-            //{
-            //    VerifyErrorInfoBar.Message = "Incorrect password.";
-            //    VerifyErrorInfoBar.IsOpen = true;
-            //    args.Cancel = true;
-            //    deferral.Complete();
-            //    return;
-            //}
+            _verifiedPassword = VerifyCurrentPasswordBox.Password;
 
-            //_verifiedPassword = VerifyCurrentPasswordBox.Password;
+            SetEditingEnabled(true);
 
-            //SetEditingEnabled(true);
+            VerifyErrorInfoBar.IsOpen = false;
+            deferral.Complete();
 
-            //VerifyErrorInfoBar.IsOpen = false;
-            //deferral.Complete();
-
-            //ShowSuccess("You can now edit your profile.");
+            ShowSuccess("You can now edit your profile.");
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
