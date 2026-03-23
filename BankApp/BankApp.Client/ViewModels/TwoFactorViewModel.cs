@@ -42,10 +42,11 @@ namespace BankApp.Client.ViewModels
                     OTPCode = otp
                 };
 
-                var response = await _apiService.PostAsync<VerifyOTPRequest, object>("/api/auth/verify-otp", request);
+                var response = await _apiService.PostAsync<VerifyOTPRequest, LoginResponse>("/api/auth/verify-otp", request);
 
-                if (response != null)
+                if (response != null && response.Success)
                 {
+                    _apiService.SetToken(response.Token!);
                     SetState(State, TwoFactorState.Success);
                 }
                 else
