@@ -80,7 +80,7 @@ namespace BankApp.Server.Services.Implementations
             if (_hashService.Verify(request.CurrentPassword, user.PasswordHash))
             {
                 user.PasswordHash = _hashService.GetHash(request.NewPassword);
-                _userRepository.UpdateUser(user);
+                _userRepository.UpdatePassword(user.Id, user.PasswordHash);
                 return new ChangePasswordResponse(true, "Password changed successfully.");
             }
             else
