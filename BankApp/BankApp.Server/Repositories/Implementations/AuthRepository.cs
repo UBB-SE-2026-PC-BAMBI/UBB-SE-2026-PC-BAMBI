@@ -98,5 +98,15 @@ namespace BankApp.Server.Repositories.Implementations
         {
             _userDao.LockAccount(userId, lockoutEnd);
         }
+
+        public User? FindUserById(int id)
+        {
+            return _userDao.FindById(id);
+        }
+
+        public bool UpdatePassword(int userId, string newPasswordHash)
+        {
+            return _userDao.UpdatePassword(userId, newPasswordHash);
+        }
     }
 }
