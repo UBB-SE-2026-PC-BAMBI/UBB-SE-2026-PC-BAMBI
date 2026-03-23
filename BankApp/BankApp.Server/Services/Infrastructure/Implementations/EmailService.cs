@@ -36,9 +36,8 @@ namespace BankApp.Server.Services.Infrastructure.Implementations
 
         public void sendPasswordResetLink(string email, string token)
         {
-            string resetLink = $"http://localhost:5000/reset-password?token={token}";
-            string subject = "BankApp - Password Reset Request";
-            string body = $"Hello,\n\nYou requested a password reset. Click the link below to set a new password:\n{resetLink}\n\nIf you did not request this, please ignore this email.";
+            string subject = "BankApp - Password Reset Code";
+            string body = $"Hello,\n\nYou requested a password reset. Please copy and paste the recovery code below into the app:\n\n{token}\n\nIf you did not request this, please ignore this email.";
             SendEmail(email, subject, body);
         }
 
