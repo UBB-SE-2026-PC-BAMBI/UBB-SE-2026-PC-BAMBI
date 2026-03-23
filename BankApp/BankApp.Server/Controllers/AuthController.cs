@@ -99,5 +99,12 @@ namespace BankApp.Server.Controllers
 
             return Ok(new { message = "Logged out successfully." });
         }
+
+        [HttpPost("resend-otp")]
+        public IActionResult ResendOTP([FromQuery] int userId, [FromQuery] string method = "email")
+        {
+            _authService.ResendOTP(userId, method);
+            return Ok(new { message = "If the user exists, a new code has been sent." });
+        }
     }
 }

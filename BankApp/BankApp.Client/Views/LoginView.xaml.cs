@@ -44,7 +44,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case LoginState.Require2FA:
-                        // TODO: App.NavigationService.NavigateTo<TwoFactorView>();
+                        App.NavigationService.NavigateTo<TwoFactorView>();
                         break;
 
                     case LoginState.InvalidCredentials:

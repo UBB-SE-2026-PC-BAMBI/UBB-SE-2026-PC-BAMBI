@@ -9,7 +9,7 @@ namespace BankApp.Server.Services.Infrastructure.Implementations
     {
         private static readonly Dictionary<int, (string Code, DateTime ExpiryTime)> _temporarySmsStorage = new();
         private const int SmsOtpExpiryMinutes = 5;
-        private const int TotpWindowSeconds = 30;
+        private const int TotpWindowSeconds = 300;
 
         public OTPService() {}
 
