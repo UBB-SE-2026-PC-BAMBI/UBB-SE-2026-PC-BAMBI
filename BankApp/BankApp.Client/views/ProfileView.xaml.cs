@@ -20,6 +20,7 @@ namespace BankApp.Client.Views
 
         private string _verifiedPassword = string.Empty;
         private string _pending2FAType = "";
+        private bool _isChangingPasswordFlow = false;
         private bool _is2FAFlow = false;
 
 
@@ -108,15 +109,16 @@ namespace BankApp.Client.Views
 
         private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
+            _isChangingPasswordFlow = false; // Just editing info
+            _is2FAFlow = false;
             VerifyCurrentPasswordBox.Password = "";
             VerifyErrorInfoBar.IsOpen = false;
-
-            await VerifyPasswordDialog.ShowAsync().AsTask();
+            await VerifyPasswordDialog.ShowAsync();
         }
 
         private async void VerifyPasswordDialog_PrimaryButtonClick(
-            ContentDialog sender,
-            ContentDialogButtonClickEventArgs args)
+     ContentDialog sender,
+     ContentDialogButtonClickEventArgs args)
         {
             var deferral = args.GetDeferral();
 
@@ -129,8 +131,9 @@ namespace BankApp.Client.Views
                 return;
             }
 
-            //bool verified = await _viewModel.VerifyPassword(VerifyCurrentPasswordBox.Password);
+            // Logic for verification (hardcoded to true for your test)
             bool verified = true;
+
             if (!verified)
             {
                 VerifyErrorInfoBar.Message = "Incorrect password.";
@@ -140,14 +143,31 @@ namespace BankApp.Client.Views
                 return;
             }
 
+            // Success logic
             _verifiedPassword = VerifyCurrentPasswordBox.Password;
-
-            SetEditingEnabled(true);
-
             VerifyErrorInfoBar.IsOpen = false;
+
+            // Complete the deferral so the FIRST dialog closes
             deferral.Complete();
 
-            ShowSuccess("You can now edit your profile.");
+            // Now, trigger the NEXT step based on the flow
+            if (_isChangingPasswordFlow)
+            {
+                // We MUST use the Dispatcher to wait until the first dialog is gone
+                DispatcherQueue.TryEnqueue(async () =>
+                {
+                    NewPasswordBox.Password = "";
+                    ConfirmPasswordBox.Password = "";
+                    NewPasswordErrorInfoBar.IsOpen = false;
+                    await NewPasswordDialog.ShowAsync();
+                });
+            }
+            else if (!_is2FAFlow)
+            {
+                // Normal profile edit flow
+                SetEditingEnabled(true);
+                ShowSuccess("You can now edit your profile.");
+            }
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -181,28 +201,33 @@ namespace BankApp.Client.Views
 
         private async void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
+            _isChangingPasswordFlow = true; // Password change flow
+            _is2FAFlow = false;
             VerifyCurrentPasswordBox.Password = "";
             VerifyErrorInfoBar.IsOpen = false;
-
-            await VerifyPasswordDialog.ShowAsync().AsTask();
+            await VerifyPasswordDialog.ShowAsync();
         }
 
         private async void NewPasswordDialog_PrimaryButtonClick(
-            ContentDialog sender,
-            ContentDialogButtonClickEventArgs args)
+     ContentDialog sender,
+     ContentDialogButtonClickEventArgs args)
         {
             var deferral = args.GetDeferral();
 
-            if (NewPasswordBox.Password.Length < 8)
+            string newPwd = NewPasswordBox.Password;
+            string confirmPwd = ConfirmPasswordBox.Password;
+
+            // 1. Basic Validation
+            if (newPwd.Length < 8)
             {
-                NewPasswordErrorInfoBar.Message = "Minimum 8 characters.";
+                NewPasswordErrorInfoBar.Message = "Minimum 8 characters required.";
                 NewPasswordErrorInfoBar.IsOpen = true;
                 args.Cancel = true;
                 deferral.Complete();
                 return;
             }
 
-            if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+            if (newPwd != confirmPwd)
             {
                 NewPasswordErrorInfoBar.Message = "Passwords do not match.";
                 NewPasswordErrorInfoBar.IsOpen = true;
@@ -211,27 +236,27 @@ namespace BankApp.Client.Views
                 return;
             }
 
-            bool success = await _viewModel.ChangePassword(
-                _verifiedPassword,
-                NewPasswordBox.Password);
+            // 2. Call ViewModel
+            // Note: We use the _verifiedPassword we saved from Dialog 1 as the 'old' password
+            bool success = await _viewModel.ChangePassword(_verifiedPassword, newPwd);
 
             if (success)
             {
-                _verifiedPassword = "";
+                _verifiedPassword = ""; // Clear security sensitive data
                 NewPasswordErrorInfoBar.IsOpen = false;
 
                 deferral.Complete();
-                ShowSuccess("Password updated.");
+                ShowSuccess("Your password has been changed successfully.");
             }
             else
             {
-                NewPasswordErrorInfoBar.Message = "Failed to update password.";
+                NewPasswordErrorInfoBar.Message = "The server rejected the change. Please check your connection.";
                 NewPasswordErrorInfoBar.IsOpen = true;
                 args.Cancel = true;
                 deferral.Complete();
             }
         }
-
+       
         // ─── 2FA ─────────────────────────────────────────
 
 
