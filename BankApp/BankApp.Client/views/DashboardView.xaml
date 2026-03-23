@@ -30,6 +30,24 @@
                     </Border>
                     <TextBlock Text="BankApp" FontSize="18" FontWeight="Bold"
                                Foreground="White" VerticalAlignment="Center"/>
+
+                    <!-- Notification Bell with Badge -->
+                    <Grid VerticalAlignment="Center" Margin="20,0,0,0">
+                        <FontIcon Glyph="&#xEA8F;" FontSize="20" Foreground="#AAA"/>
+                        <Border x:Name="NotificationBadge"
+                                Width="18" Height="18" CornerRadius="9"
+                                Background="#FF6B6B"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Margin="0,-6,-6,0"
+                                Visibility="Collapsed">
+                            <TextBlock x:Name="NotificationBadgeText"
+                                       Text="0" FontSize="10" FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
                 </StackPanel>
             </StackPanel>
 
@@ -204,7 +222,8 @@
                         </Button>
 
                         <!-- Card Visual -->
-                        <Border Grid.Column="1" CornerRadius="16" Height="200" MaxWidth="380">
+                        <Border Grid.Column="1" CornerRadius="16" Height="200" MaxWidth="380"
+                                PointerPressed="CardVisual_PointerPressed">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#FF6B35" Offset="0"/>
@@ -221,10 +240,10 @@
 
                                 <!-- Bank + Brand Row -->
                                 <Grid Grid.Row="0">
-                                    <TextBlock x:Name="CardBankName"
+                                    <TextBlock x:Name="CardBankName" Text ="PlaceholderBankName"
                                                FontSize="20" FontWeight="Bold"
                                                Foreground="White"/>
-                                    <TextBlock x:Name="CardBrandName" Text="Mastercard"
+                                    <TextBlock x:Name="CardBrandName" Text="Placeholder"
                                                FontSize="14" FontWeight="SemiBold"
                                                Foreground="White" Opacity="0.9"
                                                HorizontalAlignment="Right"
@@ -248,7 +267,7 @@
                                     <StackPanel>
                                         <TextBlock Text="CARD HOLDER" FontSize="9"
                                                    Foreground="White" Opacity="0.7"/>
-                                        <TextBlock x:Name="CardHolderText" Text=""
+                                        <TextBlock x:Name="CardHolderText" Text="PlaceholderName"
                                                    FontSize="13" FontWeight="SemiBold"
                                                    Foreground="White"/>
                                     </StackPanel>
@@ -405,6 +424,15 @@
 
             </StackPanel>
         </ScrollViewer>
-
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay" Grid.Column="1" 
+              Background="#80F4F6FA"
+              Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                <ProgressRing IsActive="True" Width="48" Height="48" Foreground="#4ECDC4"/>
+                <TextBlock Text="Loading..." FontSize="14" Foreground="#555"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
