@@ -29,7 +29,14 @@ namespace BankApp.Server.Services.Implementations
 
         public UpdateProfileResponse UpdatePersonalInfo(UpdateProfileRequest request)
         {
-            User? user = _userRepository.FindById(request.UserId);
+            if (request.UserId == null)
+            {
+                return new UpdateProfileResponse(false, "Something went wrong. Please try again.");
+            }
+
+            int userId = request.UserId.Value;
+
+            User? user = _userRepository.FindById(userId);
             if (user == null)
             {
                 return new UpdateProfileResponse(false, "User not found.");
