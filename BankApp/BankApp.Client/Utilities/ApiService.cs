@@ -11,7 +11,7 @@ namespace BankApp.Client.Utilities
         private string? _token;
         private int? _currentUserId;
 
-        public ApiService(string baseUrl = "http://localhost:5024")
+        public ApiService(string baseUrl = "http://172.20.10.5:5024/")
         {
             _httpClient = new HttpClient
             {
@@ -50,12 +50,20 @@ namespace BankApp.Client.Utilities
 
         public async Task<TResponse?> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
-            var response = await _httpClient.PostAsJsonAsync(endpoint, data);
-            if (response.IsSuccessStatusCode)
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadFromJsonAsync<TResponse>();
                 return await response.Content.ReadFromJsonAsync<TResponse>();
-
-            // Try to read error response
-            return await response.Content.ReadFromJsonAsync<TResponse>();
+            }
+            catch (Exception ex)
+            {
+                // Put a breakpoint here and check ex.Message
+                Console.WriteLine($"HTTP ERROR: {ex.Message}");
+                Console.WriteLine($"Inner: {ex.InnerException?.Message}");
+                throw;
+            }
         }
 
         public async Task<TResponse?> GetAsync<TResponse>(string endpoint)

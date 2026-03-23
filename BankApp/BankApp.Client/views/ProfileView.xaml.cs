@@ -5,13 +5,20 @@ using BankApp.Models.Enums;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Foundation; // required for IAsyncOperation<ContentDialogResult>.AsTask()
 
 namespace BankApp.Client.Views
 {
     public sealed partial class ProfileView : Page, Observer<ProfileState>
     {
         private ProfileViewModel _viewModel;
+
+        // Holds the verified current password between Step 1 and Step 2
+        // so Step 2 can pass it to ChangePassword() without re-asking.
+        private string _verifiedCurrentPassword = string.Empty;
 
         public ProfileView()
         {
@@ -23,17 +30,18 @@ namespace BankApp.Client.Views
 
         // ─── Navigation ────────────────────────────────────────────────────────────
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            /*
-            if (e.Parameter is ProfileViewModel vm)
-            {
 
-                // If data already loaded before we got here
-                if (_viewModel.ProfileInfo != null)
-                    PopulateUI();
-            }*/
+            ShowLoading(true);
+
+           await _viewModel.LoadProfile();
+
+            ShowLoading(false);
+
+            if (_viewModel.ProfileInfo != null)
+                PopulateUI();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -62,10 +70,10 @@ namespace BankApp.Client.Views
             PhoneBox.Text = user.PhoneNumber ?? string.Empty;
             AddressBox.Text = user.Address ?? string.Empty;
 
-            // Security tab
-            //TwoFactorToggle.IsOn = user.Is2FAEnabled;
+            // Security tab — 2FA
             TwoFactorToggle.IsOn = false; // TODO: replace with real value when API is ready
             TwoFactorPhoneBox.Text = user.PhoneNumber ?? string.Empty;
+            TwoFactorEmailBox.Text = user.Email ?? string.Empty;
 
             // OAuth links
             PopulateOAuthLinks(_viewModel.OAuthLinks);
@@ -83,23 +91,18 @@ namespace BankApp.Client.Views
 
             foreach (var link in links)
             {
-                var row = new Grid { Margin = new Thickness(0, 0, 0, 10) };
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
                 var border = new Border
                 {
                     BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.LightGray),
                     BorderThickness = new Thickness(1),
                     CornerRadius = new CornerRadius(6),
                     Padding = new Thickness(10, 8, 10, 8),
-                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White)
+                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White),
+                    Margin = new Thickness(0, 0, 0, 10)
                 };
 
                 var innerGrid = new Grid();
                 innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
                 innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
                 var emailText = new TextBlock
@@ -111,13 +114,6 @@ namespace BankApp.Client.Views
                 };
                 Grid.SetColumn(emailText, 0);
 
-                var removeBtn = new Button
-                {
-                    Style = (Style)Resources["GhostButtonStyle"],
-                    Margin = new Thickness(0, 0, 0, 0),
-                    Tag = link
-                };
-                removeBtn.Click += RemoveConnectedAccount_Click;
                 var removeIcon = new FontIcon
                 {
                     Glyph = "\xE711",
@@ -125,8 +121,17 @@ namespace BankApp.Client.Views
                     FontSize = 13,
                     Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 239, 68, 68))
                 };
-                removeBtn.Content = removeIcon;
-                Grid.SetColumn(removeBtn, 2);
+
+                var removeBtn = new Button
+                {
+                    Content = removeIcon,
+                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.Transparent),
+                    BorderThickness = new Thickness(0),
+                    Padding = new Thickness(6),
+                    Tag = link
+                };
+                removeBtn.Click += RemoveConnectedAccount_Click;
+                Grid.SetColumn(removeBtn, 1);
 
                 innerGrid.Children.Add(emailText);
                 innerGrid.Children.Add(removeBtn);
@@ -251,40 +256,113 @@ namespace BankApp.Client.Views
             }
         }
 
-        // ─── Password ───────────────────────────────────────────────────────────────
+        // ─── Password — two-step flow ────────────────────────────────────────────────
+        //
+        //  Step 1  VerifyPasswordDialog   — user enters current password only.
+        //          On success the dialog closes and Step 2 opens automatically.
+        //
+        //  Step 2  NewPasswordDialog      — user enters new + confirm password.
+        //          Uses _verifiedCurrentPassword stored from Step 1.
 
-        private async void UpdatePasswordButton_Click(object sender, RoutedEventArgs e)
+        private async void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+            // Reset Step 1
+            VerifyCurrentPasswordBox.Password = string.Empty;
+            VerifyErrorInfoBar.IsOpen = false;
+
+            await VerifyPasswordDialog.ShowAsync().AsTask();
+            // Step 2 is triggered from inside VerifyPasswordDialog_PrimaryButtonClick on success.
+        }
+
+        /// <summary>
+        /// Step 1 — verifies the current password via the API.
+        /// Keeps the dialog open on failure; closes it and opens Step 2 on success.
+        /// </summary>
+        private async void VerifyPasswordDialog_PrimaryButtonClick(
+            ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            //var deferral = args.GetDeferral();
+
+            //if (string.IsNullOrWhiteSpace(VerifyCurrentPasswordBox.Password))
+            //{
+            //    VerifyErrorInfoBar.Message = "Please enter your current password.";
+            //    VerifyErrorInfoBar.IsOpen = true;
+            //    args.Cancel = true;
+            //    deferral.Complete();
+            //    return;
+            //}
+
+            //bool verified = await _viewModel.VerifyPassword(VerifyCurrentPasswordBox.Password);
+
+            //if (!verified)
+            //{
+            //    VerifyErrorInfoBar.Message = "Incorrect password. Please try again.";
+            //    VerifyErrorInfoBar.IsOpen = true;
+            //    args.Cancel = true;
+            //    deferral.Complete();
+            //    return;
+            //}
+
+            //// Stash the verified password and close Step 1.
+            //_verifiedCurrentPassword = VerifyCurrentPasswordBox.Password;
+            //VerifyErrorInfoBar.IsOpen = false;
+            //deferral.Complete();
+
+            //// Open Step 2 after Step 1 has fully dismissed.
+            //NewPasswordBox.Password = string.Empty;
+            //ConfirmPasswordBox.Password = string.Empty;
+            //NewPasswordErrorInfoBar.IsOpen = false;
+
+            //await NewPasswordDialog.ShowAsync().AsTask();
+        }
+
+        /// <summary>
+        /// Step 2 — validates new password and saves it.
+        /// Keeps the dialog open on failure; closes it and shows a success bar on success.
+        /// </summary>
+        private async void NewPasswordDialog_PrimaryButtonClick(
+            ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+
+            if (string.IsNullOrWhiteSpace(NewPasswordBox.Password) ||
+                NewPasswordBox.Password.Length < 8)
             {
-                ShowError("New passwords do not match.");
+                NewPasswordErrorInfoBar.Message = "New password must be at least 8 characters.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
                 return;
             }
 
-            ShowLoading(true);
+            if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+            {
+                NewPasswordErrorInfoBar.Message = "Passwords do not match.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
 
             bool success = await _viewModel.ChangePassword(
-                CurrentPasswordBox.Password,
+                _verifiedCurrentPassword,
                 NewPasswordBox.Password);
-
-            ShowLoading(false);
 
             if (success)
             {
-                CurrentPasswordBox.Password = string.Empty;
-                NewPasswordBox.Password = string.Empty;
-                ConfirmPasswordBox.Password = string.Empty;
+                _verifiedCurrentPassword = string.Empty; // clear sensitive data
+                NewPasswordErrorInfoBar.IsOpen = false;
+                deferral.Complete();
                 ShowSuccess("Password updated successfully.");
             }
             else
             {
-                ShowError("Failed to change password. Check your current password and try again.");
+                NewPasswordErrorInfoBar.Message = "Failed to update password. Please try again.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
             }
         }
-
-        private void ToggleCurrentPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
-        private void ToggleNewPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
-        private void ToggleConfirmPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
 
         // ─── 2FA ────────────────────────────────────────────────────────────────────
 
@@ -293,20 +371,53 @@ namespace BankApp.Client.Views
             if (_viewModel == null) return;
 
             bool success = TwoFactorToggle.IsOn
-                ? await _viewModel.EnableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone)
-                : await _viewModel.DisableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone);
+                ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Phone)
+                : await _viewModel.DisableTwoFactor(TwoFactorMethod.Phone);
 
             if (!success)
             {
-                // Revert toggle if the call failed
                 TwoFactorToggle.Toggled -= TwoFactorToggle_Toggled;
                 TwoFactorToggle.IsOn = !TwoFactorToggle.IsOn;
                 TwoFactorToggle.Toggled += TwoFactorToggle_Toggled;
-                ShowError("Failed to update 2FA settings.");
+                ShowError("Failed to update phone 2FA setting.");
             }
         }
 
-        private void SaveTwoFactorPhone_Click(object sender, RoutedEventArgs e) { /* save phone for 2FA */ }
+        private async void TwoFactorEmailToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (_viewModel == null) return;
+
+            bool success = TwoFactorEmailToggle.IsOn
+                ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Email)
+                : await _viewModel.DisableTwoFactor(TwoFactorMethod.Email);
+
+            if (!success)
+            {
+                TwoFactorEmailToggle.Toggled -= TwoFactorEmailToggle_Toggled;
+                TwoFactorEmailToggle.IsOn = !TwoFactorEmailToggle.IsOn;
+                TwoFactorEmailToggle.Toggled += TwoFactorEmailToggle_Toggled;
+                ShowError("Failed to update email 2FA setting.");
+            }
+        }
+
+        /// <summary>
+        /// Saves both the 2FA phone number and email address.
+        /// </summary>
+        private async void SaveTwoFactorSettings_Click(object sender, RoutedEventArgs e)
+        {
+            //ShowLoading(true);
+
+            //bool success = await _viewModel.UpdateTwoFactorContacts(
+            //    TwoFactorPhoneBox.Text.Trim(),
+            //    TwoFactorEmailBox.Text.Trim());
+
+            //ShowLoading(false);
+
+            //if (success)
+            //    ShowSuccess("2FA settings saved.");
+            //else
+            //    ShowError("Failed to save 2FA settings. Please try again.");
+        }
 
         // ─── OAuth ──────────────────────────────────────────────────────────────────
 
@@ -322,8 +433,10 @@ namespace BankApp.Client.Views
             }
         }
 
-        private void EditConnectedAccount_Click(object sender, RoutedEventArgs e) { /* edit flow */ }
-        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e) { /* navigate to sessions */ }
+        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: navigate to connected-accounts / sessions management view
+        }
 
         // ─── Notifications ──────────────────────────────────────────────────────────
 
@@ -337,11 +450,11 @@ namespace BankApp.Client.Views
             await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
         }
 
-        // ─── Navigation ─────────────────────────────────────────────────────────────
+        // ─── Sidebar navigation ─────────────────────────────────────────────────────
 
         private void DashboardNavButton_Click(object sender, RoutedEventArgs e)
         {
-            // nothing
+            App.NavigationService.NavigateTo<DashboardView>();
         }
 
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -372,6 +485,9 @@ namespace BankApp.Client.Views
             SuccessInfoBar.IsOpen = true;
             ErrorInfoBar.IsOpen = false;
         }
+
+        // ─── Observer ───────────────────────────────────────────────────────────────
+
         public void Update(ProfileState state)
         {
             DispatcherQueue.TryEnqueue(() =>
@@ -382,6 +498,7 @@ namespace BankApp.Client.Views
                         ShowLoading(true);
                         break;
 
+                 
                     case ProfileState.UpdateSuccess:
                         ShowLoading(false);
                         if (_viewModel.ProfileInfo != null)
