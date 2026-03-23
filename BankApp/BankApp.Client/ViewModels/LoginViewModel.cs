@@ -46,6 +46,8 @@ namespace BankApp.Client.ViewModels
 
                 if (response.Requires2FA)
                 {
+                    _apiService.SetCurrentUserId(response.UserId!.Value);
+
                     SetState(State, LoginState.Require2FA);
                     return;
                 }
