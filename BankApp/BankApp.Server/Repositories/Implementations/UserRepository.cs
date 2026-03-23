@@ -29,6 +29,11 @@ public class UserRepository : IUserRepository
         return _userDao.Update(user);
     }
 
+    public bool UpdatePassword(int userId, string newPasswordHash)
+    {
+        return _userDao.UpdatePassword(userId, newPasswordHash);
+    }
+
     public List<Session> GetActiveSessions(int userId)
     {
         return _sessionDao.FindByUserId(userId);

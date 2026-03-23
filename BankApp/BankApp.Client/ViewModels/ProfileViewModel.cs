@@ -131,26 +131,27 @@ namespace BankApp.Client.ViewModels
             // TODO: Review the code. It's broken
             try
             {
-                if (string.IsNullOrWhiteSpace(currentPassword) ||
-                    string.IsNullOrWhiteSpace(newPassword))
-                    return false;
-
-                if (currentPassword == newPassword)
-                    return false;
-
                 State.SetValue(ProfileState.Loading);
 
-                var request = new ChangePasswordRequest
+                if (ProfileInfo == null || ProfileInfo.UserId == null)
                 {
-                    CurrentPassword = currentPassword,
-                    NewPassword = newPassword
-                };
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
 
-                var result = await _apiService.PostAsync<ChangePasswordRequest, bool>(
+                ChangePasswordRequest request = new ChangePasswordRequest(ProfileInfo.UserId.Value, currentPassword, newPassword);
+
+                ChangePasswordResponse? result = await _apiService.PutAsync<ChangePasswordRequest, ChangePasswordResponse>(
                     $"api/profile/{ProfileInfo.UserId}/password", request);
 
-                State.SetValue(result ? ProfileState.UpdateSuccess : ProfileState.Error);
-                return result;
+                if (result == null || !result.Success)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                State.SetValue(ProfileState.UpdateSuccess);
+                return result.Success;
             }
             catch (Exception ex)
             {
