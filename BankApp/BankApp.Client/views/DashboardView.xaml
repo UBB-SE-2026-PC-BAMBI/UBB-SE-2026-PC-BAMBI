@@ -8,9 +8,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <!-- Sidebar -->
             <ColumnDefinition Width="220"/>
-            <!-- Main Content -->
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -32,6 +30,24 @@
                     </Border>
                     <TextBlock Text="BankApp" FontSize="18" FontWeight="Bold"
                                Foreground="White" VerticalAlignment="Center"/>
+
+                    <!-- Notification Bell with Badge -->
+                    <Grid VerticalAlignment="Center" Margin="20,0,0,0">
+                        <FontIcon Glyph="&#xEA8F;" FontSize="20" Foreground="#AAA"/>
+                        <Border x:Name="NotificationBadge"
+                                Width="18" Height="18" CornerRadius="9"
+                                Background="#FF6B6B"
+                                HorizontalAlignment="Right" VerticalAlignment="Top"
+                                Margin="0,-6,-6,0"
+                                Visibility="Collapsed">
+                            <TextBlock x:Name="NotificationBadgeText"
+                                       Text="0" FontSize="10" FontWeight="Bold"
+                                       Foreground="White"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+
                 </StackPanel>
             </StackPanel>
 
@@ -43,6 +59,7 @@
                     <Border x:Name="NavDashboard" CornerRadius="8" Background="#16213E"
                             BorderBrush="#4ECDC4" BorderThickness="1.5" Padding="12,10">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE80F;" FontSize="14" Foreground="#4ECDC4"/>
                             <TextBlock Text="Dashboard" Foreground="White" FontSize="13"
                                        FontWeight="SemiBold" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -52,6 +69,7 @@
                     <Border x:Name="NavTransfers" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE8AB;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Transfers" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -61,6 +79,7 @@
                     <Border x:Name="NavBillPayments" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE8C7;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Bill Payments" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -70,6 +89,7 @@
                     <Border x:Name="NavCards" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE8C0;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Cards" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -79,6 +99,7 @@
                     <Border x:Name="NavTransferHistory" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE81C;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Transfer History" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -88,6 +109,7 @@
                     <Border x:Name="NavCurrencyExchange" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE8B1;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Currency Exchange" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -97,6 +119,7 @@
                     <Border x:Name="NavSavings" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE719;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Savings &amp; Loans" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -106,6 +129,7 @@
                     <Border x:Name="NavInvestments" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE9D9;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Investments &amp; Trading" Foreground="#AAA" FontSize="12"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -115,6 +139,7 @@
                     <Border x:Name="NavStatistics" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE9D2;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Statistics" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -124,6 +149,7 @@
                     <Border x:Name="NavSupport" CornerRadius="8" Padding="12,10"
                             PointerPressed="NavItem_PointerPressed">
                         <StackPanel Orientation="Horizontal" Spacing="12">
+                            <FontIcon Glyph="&#xE897;" FontSize="14" Foreground="#AAA"/>
                             <TextBlock Text="Support" Foreground="#AAA" FontSize="13"
                                        VerticalAlignment="Center"/>
                         </StackPanel>
@@ -134,13 +160,14 @@
                             PointerPressed="NavItem_PointerPressed">
                         <Button x:Name="ProfileButton" Click="ProfileButton_Click"
                                 HorizontalAlignment="Stretch" Background="Transparent"
-                                   BorderThickness="0" HorizontalContentAlignment="Left">
+                                BorderThickness="0" HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal" Spacing="12">
+                                <FontIcon Glyph="&#xE77B;" FontSize="14" Foreground="#AAA"/>
                                 <TextBlock Text="Profile" Foreground="#AAA" FontSize="13"
-                                       VerticalAlignment="Center"/>
+                                           VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
-                </Border>
+                    </Border>
 
                 </StackPanel>
             </ScrollViewer>
@@ -151,6 +178,7 @@
                         HorizontalAlignment="Stretch" Background="Transparent"
                         BorderThickness="0" Padding="12,10">
                     <StackPanel Orientation="Horizontal" Spacing="12">
+                        <FontIcon Glyph="&#xF3B1;" FontSize="14" Foreground="#FF6B6B"/>
                         <TextBlock Text="Log out" Foreground="#FF6B6B" FontSize="13"
                                    VerticalAlignment="Center"/>
                     </StackPanel>
@@ -166,8 +194,11 @@
             <StackPanel Padding="36,32" Spacing="28">
 
                 <!-- Page Title -->
-                <TextBlock Text="Dashboard" FontSize="28" FontWeight="Bold"
-                           Foreground="#1A1A2E"/>
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Welcome back," FontSize="20" Foreground="Black"/>
+                    <TextBlock x:Name="UserNameText" Text="" FontSize="28"
+                               FontWeight="Bold" Foreground="#1A1A2E"/>
+                </StackPanel>
 
                 <!-- ─── CARD SECTION ─── -->
                 <StackPanel Spacing="12">
@@ -191,8 +222,8 @@
                         </Button>
 
                         <!-- Card Visual -->
-                        <Border Grid.Column="1" CornerRadius="16" Height="200"
-                                MaxWidth="380">
+                        <Border Grid.Column="1" CornerRadius="16" Height="200" MaxWidth="380"
+                                PointerPressed="CardVisual_PointerPressed">
                             <Border.Background>
                                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                                     <GradientStop Color="#FF6B35" Offset="0"/>
@@ -209,10 +240,10 @@
 
                                 <!-- Bank + Brand Row -->
                                 <Grid Grid.Row="0">
-                                    <TextBlock x:Name="CardBankName" 
+                                    <TextBlock x:Name="CardBankName" Text ="PlaceholderBankName"
                                                FontSize="20" FontWeight="Bold"
                                                Foreground="White"/>
-                                    <TextBlock x:Name="CardBrandName" Text="Mastercard"
+                                    <TextBlock x:Name="CardBrandName" Text="Placeholder"
                                                FontSize="14" FontWeight="SemiBold"
                                                Foreground="White" Opacity="0.9"
                                                HorizontalAlignment="Right"
@@ -227,25 +258,23 @@
 
                                 <!-- Card Number -->
                                 <TextBlock x:Name="CardNumberText" Grid.Row="2"
-                                           Text="**** **** **** 6767"
+                                           Text="**** **** **** ****"
                                            FontSize="16" FontWeight="SemiBold"
-                                           Foreground="White"
-                                           Margin="0,0,0,12"/>
+                                           Foreground="White" Margin="0,0,0,12"/>
 
                                 <!-- Cardholder + Expiry -->
                                 <Grid Grid.Row="3">
                                     <StackPanel>
                                         <TextBlock Text="CARD HOLDER" FontSize="9"
                                                    Foreground="White" Opacity="0.7"/>
-                                        <TextBlock x:Name="CardHolderText"
-                                                   Text="COSMHIN MOCANU"
+                                        <TextBlock x:Name="CardHolderText" Text="PlaceholderName"
                                                    FontSize="13" FontWeight="SemiBold"
                                                    Foreground="White"/>
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Right">
                                         <TextBlock Text="VALID THRU" FontSize="9"
                                                    Foreground="White" Opacity="0.7"/>
-                                        <TextBlock x:Name="CardExpiryText" Text="02/27"
+                                        <TextBlock x:Name="CardExpiryText" Text=""
                                                    FontSize="13" FontWeight="SemiBold"
                                                    Foreground="White"/>
                                     </StackPanel>
@@ -295,8 +324,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE8C7;" FontSize="24" 
-                                          Foreground ="Black" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8C7;" FontSize="24"
+                                          Foreground="Black" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Pay Bill" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -307,8 +336,8 @@
                                 Width="90" Height="80" CornerRadius="12"
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
-                                <FontIcon Glyph="&#xE8C0;" FontSize="24" 
-                                          Foreground ="Black" HorizontalAlignment="Center"/>
+                                <FontIcon Glyph="&#xE8B1;" FontSize="24"
+                                          Foreground="Black" HorizontalAlignment="Center"/>
                                 <TextBlock Text="Exchange" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
@@ -320,8 +349,8 @@
                                 Background="White" BorderThickness="0">
                             <StackPanel Spacing="6" HorizontalAlignment="Center">
                                 <FontIcon Glyph="&#xE81C;" FontSize="24"
-                                          Foreground ="Black" HorizontalAlignment="Center"/>
-                                <TextBlock Text="History" FontSize="11" 
+                                          Foreground="Black" HorizontalAlignment="Center"/>
+                                <TextBlock Text="History" FontSize="11"
                                            Foreground="#333" HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Button>
@@ -335,8 +364,9 @@
                                Foreground="#555"/>
 
                     <Border CornerRadius="12" Background="White" Padding="0">
-                        <!-- Header -->
                         <StackPanel>
+
+                            <!-- Header -->
                             <Grid Padding="20,14" Background="#F8F9FA">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="2*"/>
@@ -358,7 +388,7 @@
                                            Foreground="#888"/>
                             </Grid>
 
-                            <!-- Transaction Rows (bound in code-behind) -->
+                            <!-- Transaction Rows -->
                             <ItemsControl x:Name="TransactionsList">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate x:DataType="entities:Transaction">
@@ -394,6 +424,15 @@
 
             </StackPanel>
         </ScrollViewer>
-
+        <!-- Loading Overlay -->
+        <Grid x:Name="LoadingOverlay" Grid.Column="1" 
+              Background="#80F4F6FA"
+              Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                <ProgressRing IsActive="True" Width="48" Height="48" Foreground="#4ECDC4"/>
+                <TextBlock Text="Loading..." FontSize="14" Foreground="#555"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

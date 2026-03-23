@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Shapes;
 using System;
 using Windows.UI;
+using System.Threading.Tasks;
 
 namespace BankApp.Client.Views
 {
@@ -38,28 +39,31 @@ namespace BankApp.Client.Views
                 switch (state)
                 {
                     case DashboardState.Loading:
-                        // TODO: show loading indicator if needed
+                        ShowLoading();
                         break;
 
                     case DashboardState.Success:
+                        HideLoading();
                         RefreshUI();
                         break;
 
                     case DashboardState.Error:
+                        HideLoading();
                         ShowError("Failed to load dashboard. Please try again.");
                         break;
                 }
             });
         }
 
+
         private void RefreshUI()
         {
+            UserNameText.Text = _viewModel.CurrentUser?.FullName ?? string.Empty;
             TransactionsList.ItemsSource = _viewModel.RecentTransactions;
+            UpdateNotificationBadge(_viewModel.UnreadNotificationCount);
             BuildCardDots();
             ShowCard(_currentCardIndex);
         }
-
-        // ─── CARD NAVIGATION ──────────────────────────────────────────
 
         private void ShowCard(int index)
         {
@@ -116,6 +120,18 @@ namespace BankApp.Client.Views
             }
         }
 
+        private void UpdateNotificationBadge(int count)
+        {
+            if (count <= 0)
+            {
+                NotificationBadge.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            NotificationBadgeText.Text = count > 99 ? "99+" : count.ToString();
+            NotificationBadge.Visibility = Visibility.Visible;
+        }
+
         private void PrevCardButton_Click(object sender, RoutedEventArgs e)
         {
             if (_currentCardIndex > 0)
@@ -129,8 +145,6 @@ namespace BankApp.Client.Views
                 ShowCard(_currentCardIndex + 1);
         }
 
-        // ─── QUICK ACTIONS ────────────────────────────────────────────
-
         private async void TransferButton_Click(object sender, RoutedEventArgs e)
         {
             await ShowAlertAsync("Transfer", "Transfer feature works!");
@@ -143,23 +157,22 @@ namespace BankApp.Client.Views
 
         private async void ExchangeButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works! ✅");
+            await ShowAlertAsync("Currency Exchange", "Currency Exchange feature works!");
         }
 
         private async void TxHistoryButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowAlertAsync("Transaction History", "Transaction History feature works! ✅");
+            await ShowAlertAsync("Transaction History", "Transaction History feature works!");
         }
-
-        // ─── NAV + LOGOUT ─────────────────────────────────────────────
 
         private void NavItem_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            // TODO: navigate to respective views when implemented
+            // TODO: navigate to respective views when implemented - for later
         }
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
+            //await App.ApiService.PostAsync("/api/auth/logout", null); to configure later (bogdan)
             App.ApiService.ClearToken();
             App.NavigationService.NavigateTo<LoginView>();
         }
@@ -170,11 +183,9 @@ namespace BankApp.Client.Views
             App.NavigationService.NavigateTo<DashboardView>();  // TODO: CHANGE DASHBOARDVIEW WITH PROFILE lelele
         }
 
-        // ─── HELPER ──────────────────────────────────────────────────
-
         private void ShowError(string msg)
         {
-            // TODO: add an ErrorInfoBar to the XAML like LoginView has
+            // TODO: add an ErrorInfoBar to the XAML like LoginView has - for later
         }
 
         private async System.Threading.Tasks.Task ShowAlertAsync(string title, string message)
@@ -187,6 +198,35 @@ namespace BankApp.Client.Views
                 XamlRoot = this.XamlRoot
             };
             await dialog.ShowAsync();
+        }
+        private async void CardVisual_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var cards = _viewModel.Cards;
+            if (cards == null || cards.Count == 0) return;
+
+            var card = cards[_currentCardIndex];
+
+            string details =
+                $"Card Type:     {card.CardType}\n" +
+                $"Card Brand:    {card.CardBrand ?? "Mastercard"}\n" +
+                $"Card Number:     {card.CardNumber}\n" +
+                $"Cardholder:    {card.CardholderName}\n" +
+                $"Expiry Date:   {card.ExpiryDate:MM/yy}\n" +
+                $"Status:        {card.Status}\n" +
+                $"Contactless:   {(card.IsContactlessEnabled ? "Enabled" : "Disabled")}\n" +
+                $"Online Payments: {(card.IsOnlineEnabled ? "Enabled" : "Disabled")}";
+
+            await ShowAlertAsync("Card Details", details);
+        }
+
+        private void ShowLoading()
+        {
+            LoadingOverlay.Visibility = Visibility.Visible;
+        }
+
+        private void HideLoading()
+        {
+            LoadingOverlay.Visibility = Visibility.Collapsed;
         }
     }
 }

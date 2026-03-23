@@ -6,6 +6,7 @@ using BankApp.Models.Enums;
 using System;
 using System.Collections.Generic;
 
+
 namespace BankApp.Client.ViewModels
 {
     public class DashboardViewModel : BaseViewModel
@@ -39,8 +40,6 @@ namespace BankApp.Client.ViewModels
                     return;
                 }
 
-                // We use the Get endpoint to fetch all dashboard data in one go
-
                 DashboardResponse? response = await _apiService.GetAsync<DashboardResponse>(
                     $"/api/dashboard/{userId}");
 
@@ -50,6 +49,7 @@ namespace BankApp.Client.ViewModels
                     return;
                 }
 
+                CurrentUser = response.CurrentUser;
                 Cards = response.Cards;
                 RecentTransactions = response.RecentTransactions;
                 UnreadNotificationCount = response.UnreadNotificationCount;
@@ -59,26 +59,8 @@ namespace BankApp.Client.ViewModels
             {
                 SetState(State, DashboardState.Error);
             }
-
         }
 
-        public void LoadCards() 
-        {
-            LoadDashboard();
-        }
-
-        public void LoadRecentTransactions()
-        {
-            LoadDashboard();
-        }
-
-        public void LoadUnreadNotificationCount()
-        {
-            LoadDashboard();
-        }
-        public override void Dispose()
-        {
-            //no disposable resources for now
-        }
+        public override void Dispose() { }
     }
 }
