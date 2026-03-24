@@ -14,10 +14,11 @@
 
     Background="#F4F6FA">
 
-    
 
 
     <Page.Resources>
+
+
 
         <!-- ── Colour tokens ── -->
 
@@ -57,9 +58,9 @@
 
         <SolidColorBrush x:Key="TextControlBackgroundDisabled"    Color="#F1F5F9"/>
 
-        
-        <!-- Crazy toggle shit -->
-        
+
+
+
 
         <!-- ══════════════════════════════════════════════
 
@@ -656,7 +657,7 @@
               VerticalContentAlignment="Top">
 
             <Grid Margin="28,22,28,28" VerticalAlignment="Top">
-                
+
                 <Grid.RowDefinitions>
 
                     <RowDefinition Height="Auto"/>
@@ -1124,8 +1125,8 @@
                                                 HorizontalAlignment="Stretch"
                                                 Height="40"
                                                 IsEnabled="False"
-                                                Click="SaveButton_Click"/>          
-                                        </Grid>
+                                                Click="SaveButton_Click"/>
+                                    </Grid>
 
 
 
@@ -1268,14 +1269,15 @@
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
 
                                         <Border Width="36" Height="36" CornerRadius="10"
-                                            Background="#EFF4FF" Margin="0,0,12,0">
 
-                                                                                <FontIcon Glyph="&#xE7E7;"
-                                                  FontFamily="Segoe MDL2 Assets"
-                                                  FontSize="16"
-                                                  Foreground="#2563EB"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
+                                                Background="#EFF4FF" Margin="0,0,12,0">
+
+                                            <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe MDL2 Assets"
+
+                                                      FontSize="16" Foreground="#2563EB"
+
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
                                         </Border>
 
                                         <StackPanel VerticalAlignment="Center">
@@ -1306,7 +1308,7 @@
 
                                 </StackPanel>
 
-                                
+
 
                             </Grid>
 
