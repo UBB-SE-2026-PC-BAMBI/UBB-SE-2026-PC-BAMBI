@@ -1160,6 +1160,27 @@
 
                                             <Border Height="1" Background="#F1F5F9"/>
 
+                                            <!-- 2FA Master Toggle -->
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <FontIcon Grid.Column="0" Glyph="&#xE8EA;" FontSize="18" Foreground="#64748B" Margin="0,0,15,0"/>
+                                                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                    <TextBlock Text="Enable Two-Factor Authentication" FontSize="13" Foreground ="#1E293B"  FontFamily="Segoe UI Semibold"/>
+                                                    <TextBlock Text="Require a verification code when signing in" FontSize="12" Foreground="#94A3B8"/>
+                                                </StackPanel>
+                                                <ToggleSwitch x:Name="TwoFactorToggle"
+                                                              Grid.Column="2"
+                                                              OnContent="" OffContent=""
+                                                              VerticalAlignment="Center"
+                                                              Toggled="TwoFactorToggle_Toggled"/>
+                                            </Grid>
+
+                                            <Border Height="1" Background="#F1F5F9"/>
+
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto"/>

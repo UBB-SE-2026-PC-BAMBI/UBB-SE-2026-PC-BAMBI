@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Management;
+using Microsoft.AspNetCore.Mvc;
 using BankApp.Server.Services.Interfaces;
 using BankApp.Models.DTOs.Profile;
 using BankApp.Models.Entities;
@@ -108,6 +109,27 @@ namespace BankApp.Server.Controllers
             }
 
             return Ok();
+        }
+        [HttpPut("{userId}/2fa/enable")]
+        public IActionResult Enable2FA(int userId, [FromBody] Enable2FARequest request)
+        {
+            bool success = _profileService.Enable2FA(userId, request.Method);
+
+            if (!success)
+                return BadRequest(new Toggle2FAResponse { Success = false });
+
+            return Ok(new Toggle2FAResponse { Success = true });
+        }
+
+        [HttpPut("{userId}/2fa/disable")]
+        public IActionResult Disable2FA(int userId)
+        {
+            bool success = _profileService.Disable2FA(userId);
+
+            if (!success)
+                return BadRequest(new Toggle2FAResponse { Success = false });
+
+            return Ok(new Toggle2FAResponse { Success = true });
         }
     }
 }
