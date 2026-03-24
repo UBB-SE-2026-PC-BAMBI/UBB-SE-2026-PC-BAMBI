@@ -136,8 +136,7 @@ namespace BankApp.Client.Views
                 return;
             }
 
-            // Logic for verification (hardcoded to true for your test)
-            bool verified = true;
+            bool verified = await _viewModel.VerifyPassword(VerifyCurrentPasswordBox.Password);
 
             if (!verified)
             {
