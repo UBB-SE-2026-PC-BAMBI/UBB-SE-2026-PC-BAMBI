@@ -91,12 +91,27 @@ namespace BankApp.Server.Services.Implementations
 
         public bool Enable2FA(int userId, TwoFactorMethod method)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            user.Is2FAEnabled = true;
+            user.Preferred2FAMethod = method.ToString();
+            return _userRepository.UpdateUser(user);
         }
 
-        public bool Disable2FA(int userId, TwoFactorMethod method)
+        public bool Disable2FA(int userId)
         {
-            throw new NotImplementedException();
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.Is2FAEnabled = false;
+            user.Preferred2FAMethod = null;
+            return _userRepository.UpdateUser(user);
         }
 
         public List<OAuthLink> GetOAuthLinks(int userId)
