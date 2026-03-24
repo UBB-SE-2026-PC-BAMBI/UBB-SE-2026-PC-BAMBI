@@ -24,8 +24,6 @@ namespace BankApp.Client.ViewModels
         {
             _apiService = apiService;
             State = new Observable<ProfileState>(ProfileState.Idle);
-
-            _ = LoadProfile();
         }
 
         public async Task<bool> LoadProfile()
