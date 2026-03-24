@@ -20,6 +20,25 @@ namespace BankApp.Server.DataAccess
             _appDbContext = appDbContext;
         }
 
+        public bool Create(int userId, string category)
+        {
+            try
+            {
+                string insertQuery = @"INSERT INTO NotificationPreference (UserId, Category, PushEnabled, EmailEnabled, SmsEnabled)
+                                        VALUES
+                                        (@p0, @p1, 0, 0, 0);
+                                    ";
+
+                int rows = this._appDbContext.ExecuteNonQuery(insertQuery, [userId, category]);
+
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public List<NotificationPreference> FindByUserId(int userId)
         {
             List<NotificationPreference> result = new List<NotificationPreference>();
