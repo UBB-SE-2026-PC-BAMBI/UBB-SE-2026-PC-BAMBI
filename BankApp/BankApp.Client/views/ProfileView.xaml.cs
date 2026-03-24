@@ -4,8 +4,12 @@ using BankApp.Models.Entities;
 using BankApp.Models.Enums;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Windows.Foundation;
 using BankApp.Models.Extensions;
 
 namespace BankApp.Client.Views
@@ -13,6 +17,15 @@ namespace BankApp.Client.Views
     public sealed partial class ProfileView : Page, Observer<ProfileState>
     {
         private ProfileViewModel _viewModel;
+
+
+        private string _verifiedPassword = string.Empty;
+        private string _pending2FAType = "";
+        private bool _isChangingPasswordFlow = false;
+        private bool _is2FAFlow = false;
+        private bool _isPopulating = false;
+        private bool _isUpdatingToggle = false;
+
 
         public ProfileView()
         {
@@ -22,19 +35,22 @@ namespace BankApp.Client.Views
             _viewModel.State.AddObserver(this);
         }
 
-        // ─── Navigation ────────────────────────────────────────────────────────────
+        // ─── Navigation ─────────────────────────────────────────
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            /*
-            if (e.Parameter is ProfileViewModel vm)
-            {
 
-                // If data already loaded before we got here
-                if (_viewModel.ProfileInfo != null)
-                    PopulateUI();
-            }*/
+            ShowLoading(true);
+
+            await _viewModel.LoadProfile();
+
+            ShowLoading(false);
+
+            if (_viewModel.ProfileInfo != null)
+                PopulateUI();
+
+            SetEditingEnabled(false);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -43,156 +59,415 @@ namespace BankApp.Client.Views
             _viewModel?.State.RemoveObserver(this);
         }
 
-        // ─── Population ─────────────────────────────────────────────────────────────
+        // ─── UI Setup ─────────────────────────────────────────
 
         private void PopulateUI()
         {
             var user = _viewModel.ProfileInfo;
 
-            // Profile card
-            ProfileCardName.Text = user.FullName ?? string.Empty;
-            ProfileCardEmail.Text = user.Email ?? string.Empty;
-            ProfileCardPhone.Text = user.PhoneNumber ?? string.Empty;
-            ProfileCardAddress.Text = user.Address ?? string.Empty;
+            ProfileCardName.Text = user.FullName ?? "";
+            ProfileCardEmail.Text = user.Email ?? "";
+            ProfileCardPhone.Text = user.PhoneNumber ?? "";
+            ProfileCardAddress.Text = user.Address ?? "";
 
-            // Personal info tab — read-only fields
-            FullNameBox.Text = user.FullName ?? string.Empty;
-            EmailBox.Text = user.Email ?? string.Empty;
+            FullNameBox.Text = user.FullName ?? "";
+            EmailBox.Text = user.Email ?? "";
 
-            // Personal info tab — editable fields
-            PhoneBox.Text = user.PhoneNumber ?? string.Empty;
-            AddressBox.Text = user.Address ?? string.Empty;
+            PhoneBox.Text = user.PhoneNumber ?? "";
+            AddressBox.Text = user.Address ?? "";
 
-            // Security tab
-            //TwoFactorToggle.IsOn = user.Is2FAEnabled;
-            TwoFactorToggle.IsOn = false; // TODO: replace with real value when API is ready
-            TwoFactorPhoneBox.Text = user.PhoneNumber ?? string.Empty;
+            TwoFactorPhoneDisplay.Text = user.PhoneNumber ?? "";
+            TwoFactorEmailDisplay.Text = user.Email ?? "";
 
-            // OAuth links
             PopulateOAuthLinks(_viewModel.OAuthLinks);
-
-            // Notification preferences
             PopulateNotificationPreferences(_viewModel.NotificationPreferences);
+            Update2FAVisuals();
         }
 
-        private void PopulateOAuthLinks(List<OAuthLink> links)
+        private void SetEditingEnabled(bool enabled)
         {
-            OAuthLinksPanel.Children.Clear();
+            //FullNameBox.IsEnabled = enabled;
+            PhoneBox.IsEnabled = enabled;
+            AddressBox.IsEnabled = enabled;
+            SaveButton.IsEnabled = enabled;
 
-            if (links == null || links.Count == 0)
-                return;
-
-            foreach (var link in links)
+            
+            PhoneBox.IsReadOnly = !enabled;
+            AddressBox.IsReadOnly = !enabled;
+            //FullNameBox.IsReadOnly = !enabled;
+          
+            PhoneBox.Opacity = enabled ? 1.0 : 0.6;
+            AddressBox.Opacity = enabled ? 1.0 : 0.6;
+           // FullNameBox.Opacity = !enabled ? 1.0 : 0.6;
+            
+            if (enabled)
             {
-                var row = new Grid { Margin = new Thickness(0, 0, 0, 10) };
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-                var border = new Border
-                {
-                    BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.LightGray),
-                    BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(6),
-                    Padding = new Thickness(10, 8, 10, 8),
-                    Background = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.Colors.White)
-                };
-
-                var innerGrid = new Grid();
-                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-                innerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-                var emailText = new TextBlock
-                {
-                    Text = link.ProviderEmail ?? link.Provider,
-                    FontSize = 13,
-                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 30, 41, 59)),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                Grid.SetColumn(emailText, 0);
-
-                var removeBtn = new Button
-                {
-                    Style = (Style)Resources["GhostButtonStyle"],
-                    Margin = new Thickness(0, 0, 0, 0),
-                    Tag = link
-                };
-                removeBtn.Click += RemoveConnectedAccount_Click;
-                var removeIcon = new FontIcon
-                {
-                    Glyph = "\xE711",
-                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe MDL2 Assets"),
-                    FontSize = 13,
-                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 239, 68, 68))
-                };
-                removeBtn.Content = removeIcon;
-                Grid.SetColumn(removeBtn, 2);
-
-                innerGrid.Children.Add(emailText);
-                innerGrid.Children.Add(removeBtn);
-                border.Child = innerGrid;
-
-                OAuthLinksPanel.Children.Add(border);
+                PhoneBox.Focus(FocusState.Programmatic);
+                AddressBox.Focus(FocusState.Programmatic);
+               // FullNameBox.Focus(FocusState.Programmatic);
             }
         }
 
-        private void PopulateNotificationPreferences(List<NotificationPreference> prefs)
+        // ─── PERSONAL INFO FLOW ───────────────────────────────
+
+        private async void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
-            NotificationPreferencesPanel.Children.Clear();
+            _isChangingPasswordFlow = false; // Just editing info
+            _is2FAFlow = false;
+            VerifyCurrentPasswordBox.Password = "";
+            VerifyErrorInfoBar.IsOpen = false;
+            await VerifyPasswordDialog.ShowAsync();
+        }
 
-            if (prefs == null || prefs.Count == 0)
-                return;
+        private async void VerifyPasswordDialog_PrimaryButtonClick(
+     ContentDialog sender,
+     ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
 
-            for (int i = 0; i < prefs.Count; i++)
+            if (string.IsNullOrWhiteSpace(VerifyCurrentPasswordBox.Password))
             {
-                var pref = prefs[i];
-                bool isLast = i == prefs.Count - 1;
+                VerifyErrorInfoBar.Message = "Enter your password.";
+                VerifyErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
 
-                var border = new Border
+            // Logic for verification (hardcoded to true for your test)
+            bool verified = true;
+
+            if (!verified)
+            {
+                VerifyErrorInfoBar.Message = "Incorrect password.";
+                VerifyErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
+
+            // Success logic
+            _verifiedPassword = VerifyCurrentPasswordBox.Password;
+            VerifyErrorInfoBar.IsOpen = false;
+
+            // Complete the deferral so the FIRST dialog closes
+            deferral.Complete();
+
+            // Now, trigger the NEXT step based on the flow
+            if (_isChangingPasswordFlow)
+            {
+                // We MUST use the Dispatcher to wait until the first dialog is gone
+                DispatcherQueue.TryEnqueue(async () =>
                 {
-                    BorderBrush = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 226, 232, 240)),
-                    BorderThickness = isLast ? new Thickness(0) : new Thickness(0, 0, 0, 1),
-                    Padding = new Thickness(0, 14, 0, 14)
-                };
-
-                var grid = new Grid();
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-                var labelStack = new StackPanel { Orientation = Orientation.Vertical };
-
-                var title = new TextBlock
-                {
-                    Text = pref.Category.ToDisplayName(),
-                    FontSize = 13.5,
-                    FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Semibold"),
-                    Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 30, 41, 59))
-                };
-
-                labelStack.Children.Add(title);
-                Grid.SetColumn(labelStack, 0);
-
-                var toggle = new ToggleSwitch
-                {
-                    IsOn = pref.PushEnabled,
-                    OnContent = string.Empty,
-                    OffContent = string.Empty,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Tag = pref
-                };
-                toggle.Toggled += NotificationToggle_Toggled;
-                Grid.SetColumn(toggle, 1);
-
-                grid.Children.Add(labelStack);
-                grid.Children.Add(toggle);
-                border.Child = grid;
-
-                NotificationPreferencesPanel.Children.Add(border);
+                    NewPasswordBox.Password = "";
+                    ConfirmPasswordBox.Password = "";
+                    NewPasswordErrorInfoBar.IsOpen = false;
+                    await NewPasswordDialog.ShowAsync();
+                });
+            }
+            else if (!_is2FAFlow)
+            {
+                // Normal profile edit flow
+                SetEditingEnabled(true);
+                ShowSuccess("You can now edit your profile.");
             }
         }
 
-        // ─── Tab switching ──────────────────────────────────────────────────────────
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            ShowLoading(true);
+
+            bool success = await _viewModel.UpdatePersonalInfo(
+                PhoneBox.Text,
+                AddressBox.Text,
+                _verifiedPassword);
+
+            ShowLoading(false);
+
+            if (success)
+            {
+                ProfileCardPhone.Text = PhoneBox.Text.Trim();
+                ProfileCardAddress.Text = AddressBox.Text.Trim();
+
+                _verifiedPassword = "";
+                SetEditingEnabled(false);
+
+                ShowSuccess("Profile updated successfully.");
+            }
+            else
+            {
+                ShowError("Failed to update profile.");
+            }
+        }
+
+        // ─── PASSWORD CHANGE ───────────────────────────────
+
+        private async void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isChangingPasswordFlow = true; // Password change flow
+            _is2FAFlow = false;
+            VerifyCurrentPasswordBox.Password = "";
+            VerifyErrorInfoBar.IsOpen = false;
+            await VerifyPasswordDialog.ShowAsync();
+        }
+
+        private async void NewPasswordDialog_PrimaryButtonClick(
+     ContentDialog sender,
+     ContentDialogButtonClickEventArgs args)
+        {
+            var deferral = args.GetDeferral();
+
+            string newPwd = NewPasswordBox.Password;
+            string confirmPwd = ConfirmPasswordBox.Password;
+
+            // 1. Basic Validation
+            if (newPwd.Length < 8)
+            {
+                NewPasswordErrorInfoBar.Message = "Minimum 8 characters required.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
+
+            if (newPwd != confirmPwd)
+            {
+                NewPasswordErrorInfoBar.Message = "Passwords do not match.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+                return;
+            }
+
+            // 2. Call ViewModel
+            // Note: We use the _verifiedPassword we saved from Dialog 1 as the 'old' password
+            bool success = await _viewModel.ChangePassword(_verifiedPassword, newPwd);
+
+            if (success)
+            {
+                _verifiedPassword = ""; // Clear security sensitive data
+                NewPasswordErrorInfoBar.IsOpen = false;
+
+                deferral.Complete();
+                ShowSuccess("Your password has been changed successfully.");
+            }
+            else
+            {
+                NewPasswordErrorInfoBar.Message = "The server rejected the change. Please check your connection.";
+                NewPasswordErrorInfoBar.IsOpen = true;
+                args.Cancel = true;
+                deferral.Complete();
+            }
+        }
+       
+        // ─── 2FA ─────────────────────────────────────────
+
+
+        private async void Handle2FAAction_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            _pending2FAType = btn.Tag.ToString(); // "Phone" or "Email"
+
+            if (btn.Content.ToString() == "Remove")
+            {
+                // Logic for removal
+            }
+            else
+            {
+                // Logic for Add/Verify
+                _is2FAFlow = true;
+                VerifyCurrentPasswordBox.Password = "";
+                await VerifyPasswordDialog.ShowAsync();
+            }
+        }
+
+
+
+        private async void SaveTwoFactorSettings_Click(object sender, RoutedEventArgs e)
+        {
+            //bool success = await _viewModel.UpdateTwoFactorContacts(
+            //    TwoFactorPhoneBox.Text.Trim(),
+            //    TwoFactorEmailBox.Text.Trim());
+
+            //if (success)
+            //    ShowSuccess("2FA settings saved.");
+            //else
+            //    ShowError("Failed to save 2FA settings.");
+        }
+        private async void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            //bool success = TwoFactorToggle.IsOn
+            //    ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Phone)
+            //    : await _viewModel.DisableTwoFactor(TwoFactorMethod.Phone);
+
+            //if (!success)
+            //    ShowError("2FA update failed.");
+        }
+
+        private async void TwoFactorEmailToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            //bool success = TwoFactorEmailToggle.IsOn
+            //    ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Email)
+            //    : await _viewModel.DisableTwoFactor(TwoFactorMethod.Email);
+
+            //if (!success)
+            //    ShowError("2FA email update failed.");
+        }
+
+        // ─── OAuth ─────────────────────────────────────────
+
+        private async void RemoveConnectedAccount_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is OAuthLink link)
+            {
+                bool success = await _viewModel.UnlinkOAuth(link.Provider);
+
+                if (success)
+                    PopulateOAuthLinks(_viewModel.OAuthLinks);
+                else
+                    ShowError("Failed to remove account.");
+            }
+        }
+
+        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        // ─── Notifications ─────────────────────────
+
+        private async void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // 1. Ignore the event if we are just drawing the UI
+            if (_isPopulating) return;
+
+            if (sender is ToggleSwitch toggle && toggle.Tag is NotificationPreference pref)
+            {
+                pref.PushEnabled = toggle.IsOn;
+
+                // 2. Set the flag to block the UI from fully refreshing
+                _isUpdatingToggle = true;
+
+                bool success = await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
+
+                // 3. Clear the flag when the API call finishes
+                _isUpdatingToggle = false;
+
+                if (!success)
+                {
+                    // Optional: If the API fails, visually flip the switch back to its old state
+                    _isPopulating = true;
+                    toggle.IsOn = !toggle.IsOn;
+                    pref.PushEnabled = toggle.IsOn;
+                    _isPopulating = false;
+                }
+            }
+        }
+        // ─── Navigation ─────────────────────────
+
+        private void DashboardNavButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.NavigationService.NavigateTo<DashboardView>();
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            App.NavigationService.NavigateTo<LoginView>();
+        }
+
+        // ─── Helpers ─────────────────────────
+
+        private void Update2FAVisuals()
+        {
+            var user = _viewModel.ProfileInfo;
+
+            // Check Phone Status
+            if (string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                TwoFactorPhoneDisplay.Text = "No phone number set";
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Add", "#F1F5F9", "#64748B", "Disabled");
+            }
+            else if (true/*!user.IsPhoneVerified*/)
+            { // You need this property in your Model
+                TwoFactorPhoneDisplay.Text = user.PhoneNumber;
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Verify", "#FFF7ED", "#C2410C", "Unverified");
+            }
+            else
+            {
+                TwoFactorPhoneDisplay.Text = user.PhoneNumber;
+                ConfigureActionButton(ActionPhoneBtn, PhoneStatusBadge, PhoneStatusText, "Remove", "#F0FDF4", "#15803D", "Active");
+            }
+        }
+
+        private void ConfigureActionButton(Button btn, Border badge, TextBlock statusTxt, string action, string badgeBg, string textCol, string status)
+        {
+            btn.Content = action;
+            statusTxt.Text = status;
+            
+        }
+
+        
+        private void ShowLoading(bool visible)
+        {
+            LoadingPanel.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
+            LoadingRing.IsActive = visible;
+            ErrorInfoBar.IsOpen = false;
+            SuccessInfoBar.IsOpen = false;
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorInfoBar.Message = message;
+            ErrorInfoBar.IsOpen = true;
+            SuccessInfoBar.IsOpen = false;
+        }
+
+        private void ShowSuccess(string message)
+        {
+            SuccessInfoBar.Message = message;
+            SuccessInfoBar.IsOpen = true;
+            ErrorInfoBar.IsOpen = false;
+        }
+
+        // ─── Observer ─────────────────────────
+
+        public void Update(ProfileState state)
+        {
+            DispatcherQueue.TryEnqueue(() =>
+            {
+                // --- INTERCEPTOR: Block full-page reloads if we are just toggling a switch ---
+                if (_isUpdatingToggle)
+                {
+                    if (state == ProfileState.Error)
+                    {
+                        ShowError("Failed to save notification preferences.");
+                    }
+                    // Ignore Loading and UpdateSuccess so the screen doesn't wipe and redraw!
+                    return;
+                }
+                // ----------------------------------------------------------------------------
+
+                switch (state)
+                {
+                    case ProfileState.Loading:
+                        ShowLoading(true);
+                        break;
+
+                    case ProfileState.UpdateSuccess:
+                        ShowLoading(false);
+                        PopulateUI();
+                        break;
+
+                    case ProfileState.Error:
+                        ShowLoading(false);
+                        ShowError("Operation failed.");
+                        break;
+                }
+            });
+        }
+
+        // ─── EXISTING HELPERS (unchanged) ─────────────────────────
+
+        // ─── TAB SWITCHING ─────────────────────────
 
         private void TabPersonalBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -227,174 +502,55 @@ namespace BankApp.Client.Views
             TabNotificationsBtn.Style = (Style)Resources["TabButtonActiveStyle"];
         }
 
-        // ─── Personal info ──────────────────────────────────────────────────────────
-
-        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void PopulateOAuthLinks(List<OAuthLink> links)
         {
-            ShowLoading(true);
+            OAuthLinksPanel.Children.Clear();
 
-            bool success = await _viewModel.UpdatePersonalInfo(
-                PhoneBox.Text,
-                AddressBox.Text,
-                password: string.Empty);
+            if (links == null) return;
 
-            ShowLoading(false);
-
-            if (success)
+            foreach (var link in links)
             {
-                ProfileCardPhone.Text = PhoneBox.Text.Trim();
-                ProfileCardAddress.Text = AddressBox.Text.Trim();
-                ShowSuccess("Profile updated successfully.");
-            }
-            else
-            {
-                ShowError("Failed to update profile. Please try again.");
+                var btn = new Button
+                {
+                    Content = link.ProviderEmail ?? link.Provider,
+                    Tag = link
+                };
+
+                btn.Click += RemoveConnectedAccount_Click;
+                OAuthLinksPanel.Children.Add(btn);
             }
         }
 
-        // ─── Password ───────────────────────────────────────────────────────────────
-
-        private async void UpdatePasswordButton_Click(object sender, RoutedEventArgs e)
+        private void PopulateNotificationPreferences(List<NotificationPreference> prefs)
         {
-            if (NewPasswordBox.Password != ConfirmPasswordBox.Password)
+            _isPopulating = true; // Tell the app we are drawing the UI
+
+            NotificationPreferencesPanel.Children.Clear();
+
+            if (prefs == null)
             {
-                ShowError("New passwords do not match.");
+                _isPopulating = false;
                 return;
             }
 
-            ShowLoading(true);
-
-            bool success = await _viewModel.ChangePassword(
-                CurrentPasswordBox.Password,
-                NewPasswordBox.Password);
-
-            ShowLoading(false);
-
-            if (success)
+            foreach (var pref in prefs)
             {
-                CurrentPasswordBox.Password = string.Empty;
-                NewPasswordBox.Password = string.Empty;
-                ConfirmPasswordBox.Password = string.Empty;
-                ShowSuccess("Password updated successfully.");
-            }
-            else
-            {
-                ShowError("Failed to change password. Check your current password and try again.");
-            }
-        }
-
-        private void ToggleCurrentPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
-        private void ToggleNewPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
-        private void ToggleConfirmPassword_Click(object sender, RoutedEventArgs e) { /* toggle visibility logic */ }
-
-        // ─── 2FA ────────────────────────────────────────────────────────────────────
-
-        private async void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (_viewModel == null) return;
-
-            bool success = TwoFactorToggle.IsOn
-                ? await _viewModel.EnableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone)
-                : await _viewModel.DisableTwoFactor(BankApp.Models.Enums.TwoFactorMethod.Phone);
-
-            if (!success)
-            {
-                // Revert toggle if the call failed
-                TwoFactorToggle.Toggled -= TwoFactorToggle_Toggled;
-                TwoFactorToggle.IsOn = !TwoFactorToggle.IsOn;
-                TwoFactorToggle.Toggled += TwoFactorToggle_Toggled;
-                ShowError("Failed to update 2FA settings.");
-            }
-        }
-
-        private void SaveTwoFactorPhone_Click(object sender, RoutedEventArgs e) { /* save phone for 2FA */ }
-
-        // ─── OAuth ──────────────────────────────────────────────────────────────────
-
-        private async void RemoveConnectedAccount_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.Tag is OAuthLink link)
-            {
-                bool success = await _viewModel.UnlinkOAuth(link.Provider);
-                if (success)
-                    PopulateOAuthLinks(_viewModel.OAuthLinks);
-                else
-                    ShowError("Failed to remove connected account.");
-            }
-        }
-
-        private void EditConnectedAccount_Click(object sender, RoutedEventArgs e) { /* edit flow */ }
-        private void ManageDevicesButton_Click(object sender, RoutedEventArgs e) { /* navigate to sessions */ }
-
-        // ─── Notifications ──────────────────────────────────────────────────────────
-
-        private async void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (_viewModel?.NotificationPreferences == null) return;
-
-            if (sender is ToggleSwitch toggle && toggle.Tag is NotificationPreference pref)
-                pref.PushEnabled = toggle.IsOn;
-
-            await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
-        }
-
-        // ─── Navigation ─────────────────────────────────────────────────────────────
-
-        private void DashboardNavButton_Click(object sender, RoutedEventArgs e)
-        {
-            // nothing
-        }
-
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            App.NavigationService.NavigateTo<LoginView>();
-        }
-
-        // ─── UI helpers ─────────────────────────────────────────────────────────────
-
-        private void ShowLoading(bool visible)
-        {
-            LoadingPanel.Visibility = visible ? Visibility.Visible : Visibility.Collapsed;
-            LoadingRing.IsActive = visible;
-            ErrorInfoBar.IsOpen = false;
-            SuccessInfoBar.IsOpen = false;
-        }
-
-        private void ShowError(string message)
-        {
-            ErrorInfoBar.Message = message;
-            ErrorInfoBar.IsOpen = true;
-            SuccessInfoBar.IsOpen = false;
-        }
-
-        private void ShowSuccess(string message)
-        {
-            SuccessInfoBar.Message = message;
-            SuccessInfoBar.IsOpen = true;
-            ErrorInfoBar.IsOpen = false;
-        }
-        public void Update(ProfileState state)
-        {
-            DispatcherQueue.TryEnqueue(() =>
-            {
-                switch (state)
+                var toggle = new ToggleSwitch
                 {
-                    case ProfileState.Loading:
-                        ShowLoading(true);
-                        break;
+                    Header = pref.Category,
+                    IsOn = pref.PushEnabled,
+                    Tag = pref,
+                    Margin = new Thickness(0, 10, 0, 10)
+                };
 
-                    case ProfileState.UpdateSuccess:
-                        ShowLoading(false);
-                        if (_viewModel.ProfileInfo != null)
-                            PopulateUI();
-                        break;
+                toggle.Toggled += NotificationToggle_Toggled;
+                NotificationPreferencesPanel.Children.Add(toggle);
+            }
 
-                    case ProfileState.Error:
-                        ShowLoading(false);
-                        ShowError("Failed to load profile.");
-                        break;
-                }
-            });
+            _isPopulating = false; // We are done drawing
         }
+
+
+
     }
 }
