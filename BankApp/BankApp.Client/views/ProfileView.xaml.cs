@@ -22,6 +22,8 @@ namespace BankApp.Client.Views
         private string _pending2FAType = "";
         private bool _isChangingPasswordFlow = false;
         private bool _is2FAFlow = false;
+        private bool _isPopulating = false;
+        private bool _isUpdatingToggle = false;
 
 
         public ProfileView()
@@ -334,12 +336,31 @@ namespace BankApp.Client.Views
 
         private async void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            // 1. Ignore the event if we are just drawing the UI
+            if (_isPopulating) return;
+
             if (sender is ToggleSwitch toggle && toggle.Tag is NotificationPreference pref)
+            {
                 pref.PushEnabled = toggle.IsOn;
 
-            await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
-        }
+                // 2. Set the flag to block the UI from fully refreshing
+                _isUpdatingToggle = true;
 
+                bool success = await _viewModel.UpdateNotificationPreferences(_viewModel.NotificationPreferences);
+
+                // 3. Clear the flag when the API call finishes
+                _isUpdatingToggle = false;
+
+                if (!success)
+                {
+                    // Optional: If the API fails, visually flip the switch back to its old state
+                    _isPopulating = true;
+                    toggle.IsOn = !toggle.IsOn;
+                    pref.PushEnabled = toggle.IsOn;
+                    _isPopulating = false;
+                }
+            }
+        }
         // ─── Navigation ─────────────────────────
 
         private void DashboardNavButton_Click(object sender, RoutedEventArgs e)
@@ -412,6 +433,18 @@ namespace BankApp.Client.Views
         {
             DispatcherQueue.TryEnqueue(() =>
             {
+                // --- INTERCEPTOR: Block full-page reloads if we are just toggling a switch ---
+                if (_isUpdatingToggle)
+                {
+                    if (state == ProfileState.Error)
+                    {
+                        ShowError("Failed to save notification preferences.");
+                    }
+                    // Ignore Loading and UpdateSuccess so the screen doesn't wipe and redraw!
+                    return;
+                }
+                // ----------------------------------------------------------------------------
+
                 switch (state)
                 {
                     case ProfileState.Loading:
@@ -489,21 +522,31 @@ namespace BankApp.Client.Views
 
         private void PopulateNotificationPreferences(List<NotificationPreference> prefs)
         {
+            _isPopulating = true; // Tell the app we are drawing the UI
+
             NotificationPreferencesPanel.Children.Clear();
 
-            if (prefs == null) return;
+            if (prefs == null)
+            {
+                _isPopulating = false;
+                return;
+            }
 
             foreach (var pref in prefs)
             {
                 var toggle = new ToggleSwitch
                 {
+                    Header = pref.Category,
                     IsOn = pref.PushEnabled,
-                    Tag = pref
+                    Tag = pref,
+                    Margin = new Thickness(0, 10, 0, 10)
                 };
 
                 toggle.Toggled += NotificationToggle_Toggled;
                 NotificationPreferencesPanel.Children.Add(toggle);
             }
+
+            _isPopulating = false; // We are done drawing
         }
 
 
