@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BankApp.Client.Extensions;
+using BankApp.Models.Extensions;
 using BankApp.Models.Enums;
 namespace BankApp.Server.DataAccess
 {
@@ -18,6 +18,25 @@ namespace BankApp.Server.DataAccess
         public NotificationPreferenceDAO(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
+        }
+
+        public bool Create(int userId, string category)
+        {
+            try
+            {
+                string insertQuery = @"INSERT INTO NotificationPreference (UserId, Category, PushEnabled, EmailEnabled, SmsEnabled)
+                                        VALUES
+                                        (@p0, @p1, 0, 0, 0);
+                                    ";
+
+                int rows = this._appDbContext.ExecuteNonQuery(insertQuery, [userId, category]);
+
+                return rows > 0;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public List<NotificationPreference> FindByUserId(int userId)
