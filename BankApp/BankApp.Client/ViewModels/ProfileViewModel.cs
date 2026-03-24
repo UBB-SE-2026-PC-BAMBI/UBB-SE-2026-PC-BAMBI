@@ -347,6 +347,40 @@ namespace BankApp.Client.ViewModels
             }
         }
 
+        public async Task<bool> VerifyPassword(string password)
+        {
+            try
+            {
+                State.SetValue(ProfileState.Loading);
+
+                if (ProfileInfo == null || ProfileInfo.UserId == null)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                bool? response = await _apiService.PostAsync<string, bool>(
+                    $"api/profile/{ProfileInfo.UserId}/verify-password", password);
+
+                bool result = response ?? false;
+
+                if (!result)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                State.SetValue(ProfileState.UpdateSuccess);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                State.SetValue(ProfileState.Error);
+                LogError(nameof(VerifyPassword), ex);
+                return false;
+            }
+        }
+
         public override void Dispose()
         {
             if (_disposed) return;
