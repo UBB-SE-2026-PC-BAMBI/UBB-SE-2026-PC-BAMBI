@@ -40,7 +40,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case LoginState.Success:
-                        App.NavigationService.NavigateTo<ProfileView>(); // TODO: replace with DashboardView
+                        App.NavigationService.NavigateTo<NavView>(); // goes to NavView
                         break;
 
                     case LoginState.Require2FA:

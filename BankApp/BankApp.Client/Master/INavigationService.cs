@@ -9,6 +9,7 @@ namespace BankApp.Client.Master
     public interface INavigationService
     {
         void NavigateTo<Page>();
+        void NavigateToContent<Page>();
         void GoBack();
         bool CanGoBack();
     }
