@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
+using BankApp.Client.Extensions;
 
 namespace BankApp.Client.Views
 {
@@ -163,7 +164,7 @@ namespace BankApp.Client.Views
 
                 var title = new TextBlock
                 {
-                    Text = pref.Category ?? string.Empty,
+                    Text = pref.Category.ToDisplayName(),
                     FontSize = 13.5,
                     FontFamily = new Microsoft.UI.Xaml.Media.FontFamily("Segoe UI Semibold"),
                     Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(Microsoft.UI.ColorHelper.FromArgb(255, 30, 41, 59))

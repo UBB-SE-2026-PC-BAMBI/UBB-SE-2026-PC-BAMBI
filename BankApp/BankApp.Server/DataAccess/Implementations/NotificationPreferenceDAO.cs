@@ -6,7 +6,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using BankApp.Client.Extensions;
+using BankApp.Models.Enums;
 namespace BankApp.Server.DataAccess
 {
      internal class NotificationPreferenceDAO : INotificationPreferenceDAO
@@ -33,7 +34,7 @@ namespace BankApp.Server.DataAccess
                 {
                     Id = Convert.ToInt32(data["Id"]),
                     UserId = Convert.ToInt32(data["UserId"]),
-                    Category = Convert.ToString(data["Category"]),
+                    Category = NotificationTypeExtensions.FromString(Convert.ToString(data["Category"])),
                     PushEnabled = Convert.ToBoolean(data["PushEnabled"]),
                     EmailEnabled = Convert.ToBoolean(data["EmailEnabled"]),
                     SmsEnabled = Convert.ToBoolean(data["SmsEnabled"]),
@@ -62,7 +63,7 @@ namespace BankApp.Server.DataAccess
                 {
                     this._appDbContext.ExecuteNonQuery(insertQuery, [
                             preference.UserId,
-                        preference.Category,
+                        preference.Category.ToString(),
                         preference.PushEnabled,
                         preference.EmailEnabled,
                         preference.SmsEnabled,
