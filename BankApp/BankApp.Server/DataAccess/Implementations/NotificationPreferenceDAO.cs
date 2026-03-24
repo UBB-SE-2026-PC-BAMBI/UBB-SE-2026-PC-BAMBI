@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BankApp.Client.Extensions;
+using BankApp.Models.Extensions;
 using BankApp.Models.Enums;
 namespace BankApp.Server.DataAccess
 {
