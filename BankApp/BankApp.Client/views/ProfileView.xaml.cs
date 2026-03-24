@@ -537,16 +537,38 @@ namespace BankApp.Client.Views
 
             foreach (var pref in prefs)
             {
+                var row = new Grid
+                {
+                    Margin = new Thickness(0, 6, 0, 6)
+                };
+
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                row.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+                var text = new TextBlock
+                {
+                    Text = NotificationTypeExtensions.ToDisplayName(pref.Category),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 13,
+                    Foreground = (Brush)this.Resources["TextPrimary"]
+                };
+
                 var toggle = new ToggleSwitch
                 {
-                    Header = NotificationTypeExtensions.ToDisplayName(pref.Category),
                     IsOn = pref.EmailEnabled,
                     Tag = pref,
-                    Margin = new Thickness(0, 5, 0, 5)
+                    VerticalAlignment = VerticalAlignment.Center
                 };
 
                 toggle.Toggled += NotificationToggle_Toggled;
-                NotificationPreferencesPanel.Children.Add(toggle);
+
+                Grid.SetColumn(text, 0);
+                Grid.SetColumn(toggle, 1);
+
+                row.Children.Add(text);
+                row.Children.Add(toggle);
+
+                NotificationPreferencesPanel.Children.Add(row);
             }
 
             _isPopulating = false; // We are done drawing
