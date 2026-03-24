@@ -5,15 +5,26 @@ namespace BankApp.Client.Master
     public class NavigationService : INavigationService
     {
         private Frame? _frame;
+        private Frame? _contentFrame;
 
         public void SetFrame(Frame frame)
         {
             _frame = frame;
         }
 
-        public void NavigateTo<Page>()
+        public void SetContentFrame(Frame frame)
         {
-            _frame?.Navigate(typeof(Page));
+            _contentFrame = frame;
+        }
+
+        public void NavigateTo<TPage>()
+        {
+            _frame?.Navigate(typeof(TPage));
+        }
+
+        public void NavigateToContent<TPage>()
+        {
+            _contentFrame?.Navigate(typeof(TPage));
         }
 
         public void GoBack()
