@@ -474,7 +474,7 @@
 
             <Setter Property="FontFamily"      Value="Segoe UI Semibold"/>
 
-            <Setter Property="CornerRadius"    Value="6"/>
+            <Setter Property="CornerRadius"    Value="7"/>
 
             <Setter Property="Template">
 
@@ -979,9 +979,9 @@
 
                                     <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
 
-                                        <GradientStop Color="#1A3C6E" Offset="0"/>
+                                        <GradientStop Color="#16213E" Offset="0"/>
 
-                                        <GradientStop Color="#2563EB" Offset="1"/>
+                                        <GradientStop Color="#4169E1" Offset="1"/>
 
                                     </LinearGradientBrush>
 
@@ -991,7 +991,7 @@
 
                                     <Border Width="64" Height="64" CornerRadius="32"
 
-                                            Background="#90EE90"
+                                            Background="#7393B3"
 
                                             HorizontalAlignment="Center"
 
@@ -1325,47 +1325,29 @@
 
                                     <!-- Buttons -->
 
-                                    <StackPanel Orientation="Horizontal" Spacing="10">
+                                    <Grid ColumnSpacing="10">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
+                                        <Button Grid.Column="0" 
+                                                x:Name="UpdateButton"
+                                                Style="{StaticResource OutlineButtonStyle}"
+                                                Content="Unlock Update"
+                                                HorizontalAlignment="Stretch"
+                                                Height="40"
+                                                Click="UpdateButton_Click"/>
 
-
-                                        <Button x:Name="UpdateButton"
-
-                Style="{StaticResource OutlineButtonStyle}"
-
-                Content="Update"
-
-                Width="120"
-
-                Click="UpdateButton_Click"/>
-
-
-
-                                        <StackPanel Orientation="Horizontal" Spacing="10">
-
-
-
-                                            <!-- Save button (step 2: save changes) -->
-
-                                            <Button x:Name="SaveButton"
-
-            Style="{StaticResource PrimaryButtonStyle}"
-
-            Content="Save Changes"
-
-            Width="160"
-
-            IsEnabled="False"
-
-            Click="SaveButton_Click"/>
-
-
-
-                                        </StackPanel>
-
-
-
-                                    </StackPanel>
+                                        <Button Grid.Column="1" 
+                                                x:Name="SaveButton"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Content="Save Changes"
+                                                HorizontalAlignment="Stretch"
+                                                Height="40"
+                                                IsEnabled="False"
+                                                Click="SaveButton_Click"/>          
+                                        </Grid>
 
 
 
@@ -1388,7 +1370,7 @@
                                     <Border Background="#FAFBFF" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="1" Padding="20">
                                         <StackPanel Spacing="20">
                                             <StackPanel Orientation="Horizontal">
-                                                <Border Width="32" Height="32" CornerRadius="8" Background="#EFF4FF" Margin="0,0,12,0">
+                                                <Border Width="36" Height="36" CornerRadius="10" Background="#EFF4FF" Margin="0,0,12,0">
                                                     <FontIcon Glyph="&#xE8EA;" FontSize="16" Foreground="#2563EB" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                                 </Border>
                                                 <StackPanel VerticalAlignment="Center">
