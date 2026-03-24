@@ -6,7 +6,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System.Collections.Generic;
-using BankApp.Client.Extensions;
+using BankApp.Models.Extensions;
 
 namespace BankApp.Client.Views
 {
