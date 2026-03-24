@@ -126,7 +126,6 @@ namespace BankApp.Client.ViewModels
 
         public async Task<bool> ChangePassword(string currentPassword, string newPassword)
         {
-            // TODO: Review the code. It's broken
             try
             {
                 State.SetValue(ProfileState.Loading);
@@ -325,7 +324,7 @@ namespace BankApp.Client.ViewModels
 
                 State.SetValue(ProfileState.Loading);
 
-                var result = await _apiService.PostAsync<List<NotificationPreference>, bool>(
+                var result = await _apiService.PutAsync<List<NotificationPreference>, bool>(
                     $"api/profile/{ProfileInfo.UserId}/notifications/preferences", preferences);
 
                 if (result)

@@ -82,11 +82,11 @@ namespace BankApp.Server.DataAccess
                 {
                     this._appDbContext.ExecuteNonQuery(insertQuery, [
                             preference.UserId,
-                        preference.Category.ToString(),
+                        NotificationTypeExtensions.ToDisplayName(preference.Category),
                         preference.PushEnabled,
                         preference.EmailEnabled,
                         preference.SmsEnabled,
-                        preference.MinAmountThreshold
+                        preference.MinAmountThreshold!
                         ]);
                 }
 

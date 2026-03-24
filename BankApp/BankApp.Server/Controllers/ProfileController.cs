@@ -104,10 +104,10 @@ namespace BankApp.Server.Controllers
             bool success = _profileService.UpdateNotificationPreferences(userId, prefs);
             if (!success)
             {
-                return BadRequest();
+                return BadRequest(false);
             }
 
-            return Ok();
+            return Ok(true);
         }
     }
 }

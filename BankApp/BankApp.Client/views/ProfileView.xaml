@@ -14,11 +14,10 @@
 
     Background="#F4F6FA">
 
+    
 
 
     <Page.Resources>
-
-
 
         <!-- ── Colour tokens ── -->
 
@@ -58,9 +57,9 @@
 
         <SolidColorBrush x:Key="TextControlBackgroundDisabled"    Color="#F1F5F9"/>
 
-
-
-
+        
+        <!-- Crazy toggle shit -->
+        
 
         <!-- ══════════════════════════════════════════════
 
@@ -1269,15 +1268,14 @@
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
 
                                         <Border Width="36" Height="36" CornerRadius="10"
+                                            Background="#EFF4FF" Margin="0,0,12,0">
 
-                                                Background="#FFF7ED" Margin="0,0,12,0">
-
-                                            <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe MDL2 Assets"
-
-                                                      FontSize="16" Foreground="#2563EB"
-
-                                                      HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+                                                                                <FontIcon Glyph="&#xE7E7;"
+                                                  FontFamily="Segoe MDL2 Assets"
+                                                  FontSize="16"
+                                                  Foreground="#2563EB"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"/>
                                         </Border>
 
                                         <StackPanel VerticalAlignment="Center">
