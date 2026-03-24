@@ -48,7 +48,9 @@ namespace BankApp.Client.Views
             ShowLoading(false);
 
             if (_viewModel.ProfileInfo != null)
+            {
                 PopulateUI();
+            }
 
             SetEditingEnabled(false);
         }
@@ -537,10 +539,10 @@ namespace BankApp.Client.Views
             {
                 var toggle = new ToggleSwitch
                 {
-                    Header = pref.Category,
-                    IsOn = pref.PushEnabled,
+                    Header = NotificationTypeExtensions.ToDisplayName(pref.Category),
+                    IsOn = pref.EmailEnabled,
                     Tag = pref,
-                    Margin = new Thickness(0, 10, 0, 10)
+                    Margin = new Thickness(0, 5, 0, 5)
                 };
 
                 toggle.Toggled += NotificationToggle_Toggled;

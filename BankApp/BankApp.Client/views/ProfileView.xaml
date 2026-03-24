@@ -60,206 +60,6 @@
 
 
 
-        <!-- ══════════════════════════════════════════════
-
-             SIDEBAR STYLES
-
-        ═════════════════════════════════════════════════ -->
-
-
-
-        <Style x:Key="NavItemStyle" TargetType="Button">
-
-            <Setter Property="Background"                 Value="Transparent"/>
-
-            <Setter Property="BorderThickness"            Value="0"/>
-
-            <Setter Property="HorizontalAlignment"        Value="Stretch"/>
-
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-
-            <Setter Property="Padding"                    Value="20,10"/>
-
-            <Setter Property="FontSize"                   Value="13"/>
-
-            <Setter Property="FontFamily"                 Value="Segoe UI"/>
-
-            <Setter Property="CornerRadius"               Value="6"/>
-
-            <Setter Property="Margin"                     Value="8,2"/>
-
-            <Setter Property="Template">
-
-                <Setter.Value>
-
-                    <ControlTemplate TargetType="Button">
-
-                        <Border x:Name="Root" Background="{TemplateBinding Background}"
-
-                                CornerRadius="{TemplateBinding CornerRadius}"
-
-                                Padding="{TemplateBinding Padding}">
-
-                            <VisualStateManager.VisualStateGroups>
-
-                                <VisualStateGroup x:Name="CommonStates">
-
-                                    <VisualState x:Name="Normal"/>
-
-                                    <VisualState x:Name="PointerOver">
-
-                                        <Storyboard>
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
-
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1A3A5C"/>
-
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CP" Storyboard.TargetProperty="Foreground">
-
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#D0E4F7"/>
-
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-
-                                        <Storyboard>
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
-
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#152E4D"/>
-
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-
-                            <ContentPresenter x:Name="CP"
-
-                                              Content="{TemplateBinding Content}"
-
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-
-                                              VerticalAlignment="Center"
-
-                                              Foreground="#B0C4DE"/>
-
-                        </Border>
-
-                    </ControlTemplate>
-
-                </Setter.Value>
-
-            </Setter>
-
-        </Style>
-
-
-
-        <Style x:Key="NavItemActiveStyle" TargetType="Button">
-
-            <Setter Property="Background"                 Value="#2563EB"/>
-
-            <Setter Property="BorderThickness"            Value="0"/>
-
-            <Setter Property="HorizontalAlignment"        Value="Stretch"/>
-
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-
-            <Setter Property="Padding"                    Value="20,10"/>
-
-            <Setter Property="FontSize"                   Value="13"/>
-
-            <Setter Property="FontFamily"                 Value="Segoe UI"/>
-
-            <Setter Property="CornerRadius"               Value="6"/>
-
-            <Setter Property="Margin"                     Value="8,2"/>
-
-            <Setter Property="Template">
-
-                <Setter.Value>
-
-                    <ControlTemplate TargetType="Button">
-
-                        <Border x:Name="Root" Background="{TemplateBinding Background}"
-
-                                CornerRadius="{TemplateBinding CornerRadius}"
-
-                                Padding="{TemplateBinding Padding}">
-
-                            <VisualStateManager.VisualStateGroups>
-
-                                <VisualStateGroup x:Name="CommonStates">
-
-                                    <VisualState x:Name="Normal"/>
-
-                                    <VisualState x:Name="PointerOver">
-
-                                        <Storyboard>
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
-
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1D55D4"/>
-
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-
-                                        <Storyboard>
-
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Root" Storyboard.TargetProperty="Background">
-
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="#1848BC"/>
-
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-
-                            <ContentPresenter x:Name="CP"
-
-                                              Content="{TemplateBinding Content}"
-
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-
-                                              VerticalAlignment="Center"
-
-                                              Foreground="White"/>
-
-                        </Border>
-
-                    </ControlTemplate>
-
-                </Setter.Value>
-
-            </Setter>
-
-        </Style>
-
 
 
         <!-- ══════════════════════════════════════════════
@@ -841,37 +641,16 @@
     </Page.Resources>
 
 
-
-    <!-- ══════════════════════════════════════════
-
-         ROOT — sidebar + scrollable main
-
-    ═════════════════════════════════════════════ -->
-
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Border x:Name="SidebarContainer" 
-            Grid.Column="0" 
-            Background="#1A3C6E" 
-            VerticalAlignment="Stretch">
-            <TextBlock Text="Navbar will go here" 
-                   Foreground="White" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"
-                   Opacity="0.5"/>
-        </Border>
 
 
         <!-- ════════════════════  MAIN CONTENT  ════════════════════ -->
 
-        <ScrollViewer Grid.Column="1"
+        <ScrollViewer
               VerticalScrollBarVisibility="Auto"
               HorizontalScrollBarVisibility="Disabled"
               VerticalScrollMode="Enabled"
@@ -1358,8 +1137,8 @@
                                 <StackPanel x:Name="PanelSecurity" Visibility="Collapsed" Spacing="14">
 
                                     <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                        <Border Width="36" Height="36" CornerRadius="10" Background="#FEF2F2" Margin="0,0,12,0">
-                                            <FontIcon Glyph="&#xE72E;" FontSize="16" Foreground="#EF4444" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <Border Width="36" Height="36" CornerRadius="10" Background="#EFF4FF" Margin="0,0,12,0">
+                                            <FontIcon Glyph="&#xE72E;" FontSize="16" Foreground="#2563EB" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Border>
                                         <StackPanel VerticalAlignment="Center">
                                             <TextBlock Text="Security Settings" FontSize="15" FontFamily="Segoe UI Semibold" Foreground="#1E293B"/>
@@ -1495,7 +1274,7 @@
 
                                             <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe MDL2 Assets"
 
-                                                      FontSize="16" Foreground="#F59E0B"
+                                                      FontSize="16" Foreground="#2563EB"
 
                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
@@ -1529,7 +1308,7 @@
 
                                 </StackPanel>
 
-
+                                
 
                             </Grid>
 
