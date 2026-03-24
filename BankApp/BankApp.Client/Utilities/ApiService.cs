@@ -11,7 +11,7 @@ namespace BankApp.Client.Utilities
         private string? _token;
         private int? _currentUserId;
 
-        public ApiService(string baseUrl = "http://172.20.10.5:5024/")
+        public ApiService(string baseUrl = "http://localhost:5024/")
         {
             _httpClient = new HttpClient
             {
