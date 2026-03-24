@@ -60,7 +60,6 @@ namespace BankApp.Client.Views
         {
             UserNameText.Text = _viewModel.CurrentUser?.FullName ?? string.Empty;
             TransactionsList.ItemsSource = _viewModel.RecentTransactions;
-            UpdateNotificationBadge(_viewModel.UnreadNotificationCount);
             BuildCardDots();
             ShowCard(_currentCardIndex);
         }
@@ -120,18 +119,6 @@ namespace BankApp.Client.Views
             }
         }
 
-        private void UpdateNotificationBadge(int count)
-        {
-            if (count <= 0)
-            {
-                NotificationBadge.Visibility = Visibility.Collapsed;
-                return;
-            }
-
-            NotificationBadgeText.Text = count > 99 ? "99+" : count.ToString();
-            NotificationBadge.Visibility = Visibility.Visible;
-        }
-
         private void PrevCardButton_Click(object sender, RoutedEventArgs e)
         {
             if (_currentCardIndex > 0)
@@ -163,24 +150,6 @@ namespace BankApp.Client.Views
         private async void TxHistoryButton_Click(object sender, RoutedEventArgs e)
         {
             await ShowAlertAsync("Transaction History", "Transaction History feature works!");
-        }
-
-        private void NavItem_PointerPressed(object sender, PointerRoutedEventArgs e)
-        {
-            // TODO: navigate to respective views when implemented - for later
-        }
-
-        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
-        {
-            //await App.ApiService.PostAsync("/api/auth/logout", null); to configure later (bogdan)
-            App.ApiService.ClearToken();
-            App.NavigationService.NavigateTo<LoginView>();
-        }
-
-        private async void ProfileButton_Click(object sender, RoutedEventArgs e)
-        {
-            await ShowAlertAsync("Profile", "WE GOING TO PROFILE VIEW YOOHOOO!!!");
-            App.NavigationService.NavigateTo<DashboardView>();  // TODO: CHANGE DASHBOARDVIEW WITH PROFILE lelele
         }
 
         private void ShowError(string msg)
