@@ -5,6 +5,7 @@ using BankApp.Server.Services.Infrastructure.Implementations;
 using BankApp.Server.Services.Infrastructure.Interfaces;
 using BankApp.Server.Services.Interfaces;
 using BankApp.Server.Utilities;
+using Google.Apis.Auth;
 
 namespace BankApp.Server.Services.Implementations
 {
@@ -85,27 +86,74 @@ namespace BankApp.Server.Services.Implementations
             return new RegisterResponse { Success = true };
         }
 
-        public LoginResponse OAuthLogin(OAuthLoginRequest request)
+        public async Task<LoginResponse> OAuthLoginAsync(OAuthLoginRequest request)
         {
-            OAuthLink? link = _authRepository.FindOAuthLink(request.Provider, request.ProviderToken);
-            if (link == null)
+            if (request.Provider.Equals("Google", StringComparison.OrdinalIgnoreCase))
             {
-                return new LoginResponse { Success = false, Error = "OAuth account not linked or not found. Please register." };
+                GoogleJsonWebSignature.Payload payload;
+                try
+                {
+                    payload = await GoogleJsonWebSignature.ValidateAsync(request.ProviderToken);
+                }
+                catch (InvalidJwtException)
+                {
+                    return new LoginResponse { Success = false, Error = "Invalid Google authentication token." };
+                }
+
+                string providerUserId = payload.Subject;
+                string email = payload.Email;
+                string fullName = payload.Name;
+
+                OAuthLink? link = _authRepository.FindOAuthLink(request.Provider, providerUserId);
+                User? user = null;
+
+                if (link != null)
+                {
+                    user = _authRepository.FindUserById(link.UserId);
+                }
+
+                if (user == null)
+                {
+                    user = _authRepository.FindUserByEmail(email);
+                    if (user == null)
+                    {
+                        string randomPassword = Guid.NewGuid().ToString() + "A1a!";
+                        user = new User
+                        {
+                            Email = email,
+                            PasswordHash = _hashService.GetHash(randomPassword),
+                            FullName = fullName,
+                            PreferredLanguage = "en",
+                            Is2FAEnabled = false,
+                            IsLocked = false,
+                            FailedLoginAttempts = 0
+                        };
+
+                        if (!_authRepository.CreateUser(user))
+                            return new LoginResponse { Success = false, Error = "Failed to create user account." };
+
+                        user = _authRepository.FindUserByEmail(email);
+                    }
+
+                    OAuthLink newLink = new OAuthLink
+                    {
+                        UserId = user!.Id,
+                        Provider = request.Provider,
+                        ProviderUserId = providerUserId,
+                        ProviderEmail = email
+                    };
+                    _authRepository.CreateOAuthLink(newLink);
+                }
+
+                LoginResponse? lockCheck = CheckAccountLock(user);
+                if (lockCheck != null) return lockCheck;
+
+                if (user.Is2FAEnabled) return Handle2FA(user);
+
+                return CompleteLogin(user);
             }
 
-            User? user = _authRepository.FindUserById(link.UserId);
-            if (user == null)
-            {
-                return new LoginResponse { Success = false, Error = "Linked user account no longer exists." };
-            }
-
-            LoginResponse? lockCheck = CheckAccountLock(user);
-            if (lockCheck != null)
-            {
-                return lockCheck;
-            }
-
-            return CompleteLogin(user);
+            return new LoginResponse { Success = false, Error = "Unsupported OAuth Provider." };
         }
 
         public RegisterResponse OAuthRegister(OAuthRegisterRequest request)

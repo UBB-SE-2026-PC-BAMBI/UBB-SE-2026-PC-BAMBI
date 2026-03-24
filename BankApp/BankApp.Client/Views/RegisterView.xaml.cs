@@ -45,6 +45,10 @@ namespace BankApp.Client.Views
                         ClearForm();
                         break;
 
+                    case RegisterState.AutoLoggedIn:
+                        App.NavigationService.NavigateTo<DashboardView>();
+                        break;
+
                     case RegisterState.EmailAlreadyExists:
                         ShowError("This email is already registered.");
                         break;
