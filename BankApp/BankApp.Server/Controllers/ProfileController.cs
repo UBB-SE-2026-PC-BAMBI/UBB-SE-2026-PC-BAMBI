@@ -109,5 +109,27 @@ namespace BankApp.Server.Controllers
 
             return Ok();
         }
+
+        // GET: api/profile/{userId}/sessions
+        [HttpGet("{userId}/sessions")]
+        public IActionResult GetActiveSessions(int userId)
+        {
+            List<Session> sessions = _profileService.GetActiveSessions(userId);
+            return Ok(sessions);
+        }
+
+        // DELETE: api/profile/{userId}/sessions/{sessionId}
+        [HttpDelete("{userId}/sessions/{sessionId}")]
+        public IActionResult RevokeSession(int userId, int sessionId)
+        {
+            bool success = _profileService.RevokeSession(userId, sessionId);
+
+            if (!success)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
     }
 }

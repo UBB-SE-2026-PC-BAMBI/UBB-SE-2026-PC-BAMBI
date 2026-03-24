@@ -144,5 +144,27 @@ namespace BankApp.Server.Services.Implementations
 
             return _userRepository.UpdateNotificationPreferences(userId, prefs);
         }
+
+        public List<Session> GetActiveSessions(int userId)
+        {
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                return new List<Session>();
+            }
+
+            return _userRepository.GetActiveSessions(userId);
+        }
+
+        public bool RevokeSession(int userId, int sessionId)
+        {
+            User? user = _userRepository.FindById(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            _userRepository.RevokeSession(sessionId);
+            return true;
+        }
     }
 }

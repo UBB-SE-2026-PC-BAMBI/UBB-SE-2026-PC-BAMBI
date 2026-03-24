@@ -15,5 +15,7 @@ namespace BankApp.Server.Services.Interfaces
         bool UnlinkOAuth(int userId, string provider);
         List<NotificationPreference> GetNotificationPreferences(int userId);
         bool UpdateNotificationPreferences(int userId, List<NotificationPreference> prefs);
+        List<Session> GetActiveSessions(int userId);
+        bool RevokeSession(int userId, int sessionId);
     }
 }
