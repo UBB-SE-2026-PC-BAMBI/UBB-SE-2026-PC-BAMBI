@@ -1,6 +1,4 @@
-﻿using BankApp.Models.Enums;
-
-namespace BankApp.Server.Repositories.Implementations;
+﻿namespace BankApp.Server.Repositories.Implementations;
 
 using BankApp.Models.Entities;
 using BankApp.Server.DataAccess.Interfaces;
@@ -31,11 +29,6 @@ public class UserRepository : IUserRepository
         return _userDao.Update(user);
     }
 
-    public bool UpdatePassword(int userId, string newPasswordHash)
-    {
-        return _userDao.UpdatePassword(userId, newPasswordHash);
-    }
-
     public List<Session> GetActiveSessions(int userId)
     {
         return _sessionDao.FindByUserId(userId);
@@ -63,7 +56,7 @@ public class UserRepository : IUserRepository
 
     public List<NotificationPreference> GetNotificationPreferences(int userId)
     {
-        return _notificationPreferenceDao.FindByUserId(userId);
+       return _notificationPreferenceDao.FindByUserId(userId);
     }
 
     public bool UpdateNotificationPreferences(int userId, List<NotificationPreference> prefs)

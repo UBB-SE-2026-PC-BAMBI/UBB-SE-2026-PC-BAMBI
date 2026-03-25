@@ -10,6 +10,7 @@ using BankApp.Server.Services.Interfaces;
 using BankApp.Server.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -66,7 +67,6 @@ builder.Services.AddScoped<IJWTService>(_ => new JWTService(jwtSecret!));
 builder.Services.AddScoped<IOTPService, OTPService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-
 // Repositories
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -80,13 +80,13 @@ builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
-
-app.UseExceptionHandler(a => a.Run(async context =>
-{
-    context.Response.StatusCode = 500;
-context.Response.ContentType = "application/json";
-await context.Response.WriteAsJsonAsync(new { error = "Something went wrong." });
-}));
+// Global exception for all endpoints
+//app.UseExceptionHandler(a => a.Run(async context =>
+//{
+//    context.Response.StatusCode = 500;
+//    context.Response.ContentType = "application/json";
+//    await context.Response.WriteAsJsonAsync(new { error = "Something went wrong." });
+//}));
 
 if (app.Environment.IsDevelopment())
 {
@@ -96,20 +96,5 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 //app.UseMiddleware<SessionValidationMiddleware>();
-
-app.Use(async (context, next) =>
-{
-    try
-    {
-        await next();
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"UNHANDLED: {ex.Message}");
-        Console.WriteLine($"Stack: {ex.StackTrace}");
-        throw;
-    }
-});
-
 app.MapControllers();
 app.Run();

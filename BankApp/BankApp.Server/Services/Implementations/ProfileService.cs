@@ -29,14 +29,7 @@ namespace BankApp.Server.Services.Implementations
 
         public UpdateProfileResponse UpdatePersonalInfo(UpdateProfileRequest request)
         {
-            if (request.UserId == null)
-            {
-                return new UpdateProfileResponse(false, "Something went wrong. Please try again.");
-            }
-
-            int userId = request.UserId.Value;
-
-            User? user = _userRepository.FindById(userId);
+            User? user = _userRepository.FindById(request.UserId);
             if (user == null)
             {
                 return new UpdateProfileResponse(false, "User not found.");
@@ -80,7 +73,7 @@ namespace BankApp.Server.Services.Implementations
             if (_hashService.Verify(request.CurrentPassword, user.PasswordHash))
             {
                 user.PasswordHash = _hashService.GetHash(request.NewPassword);
-                _userRepository.UpdatePassword(user.Id, user.PasswordHash);
+                _userRepository.UpdateUser(user);
                 return new ChangePasswordResponse(true, "Password changed successfully.");
             }
             else
@@ -143,19 +136,6 @@ namespace BankApp.Server.Services.Implementations
             }
 
             return _userRepository.UpdateNotificationPreferences(userId, prefs);
-        }
-
-        public bool VerifyPassword(int userId, string password)
-        {
-            User? user = _userRepository.FindById(userId);
-
-            if (user == null)
-            {
-                // ACTUAL last time making sure, should never happen though
-                return false;
-            }
-
-            return _hashService.Verify(password, user.PasswordHash);
         }
     }
 }
