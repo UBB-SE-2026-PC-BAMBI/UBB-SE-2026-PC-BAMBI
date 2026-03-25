@@ -1,5 +1,4 @@
-﻿using System.Management;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using BankApp.Server.Services.Interfaces;
 using BankApp.Models.DTOs.Profile;
 using BankApp.Models.Entities;
@@ -12,12 +11,14 @@ namespace BankApp.Server.Controllers
     {
         private readonly IProfileService _profileService;
         public ProfileController(IProfileService profileService) { _profileService = profileService; }
+        private int GetAuthenticatedUserId() => (int)HttpContext.Items["UserId"]!;
 
-        // GET: api/profile/{userId}
-        // Serializes: GetProfileResponse
-        [HttpGet("{userId}")]
-        public IActionResult GetProfile(int userId)
+        // GET: api/profile
+        [HttpGet]
+        public IActionResult GetProfile()
         {
+            int userId = GetAuthenticatedUserId();
+
             User? user = _profileService.GetUserById(userId);
             if (user == null)
             {
@@ -27,15 +28,12 @@ namespace BankApp.Server.Controllers
             return Ok(new GetProfileResponse(true, "Successfully retrieved profile information.", user));
         }
 
-        // PUT: api/profile/{userId}
-        // Serializes: UpdateProfileResponse
-        [HttpPut("{userId}")]
-        public IActionResult UpdateProfile(int userId, [FromBody] UpdateProfileRequest request)
+        // PUT: api/profile
+        [HttpPut]
+        public IActionResult UpdateProfile([FromBody] UpdateProfileRequest request)
         {
-            if (userId != request.UserId)
-            {
-                return BadRequest(new UpdateProfileResponse(false, "URL user id and current user mismatch."));
-            }
+            int userId = GetAuthenticatedUserId();
+            request.UserId = userId; // override whatever the client sent
 
             UpdateProfileResponse response = _profileService.UpdatePersonalInfo(request);
 
@@ -47,15 +45,12 @@ namespace BankApp.Server.Controllers
             return Ok(response);
         }
 
-        // PUT: api/profile/{userId}/password
-        // Serializes: ChangePasswordResponse
-        [HttpPut("{userId}/password")]
-        public IActionResult ChangePassword(int userId, [FromBody] ChangePasswordRequest request)
+        // PUT: api/profile/password
+        [HttpPut("password")]
+        public IActionResult ChangePassword([FromBody] ChangePasswordRequest request)
         {
-            if (userId != request.UserId)
-            {
-                return BadRequest(new UpdateProfileResponse(false, "URL user id and current user mismatch."));
-            }
+            int userId = GetAuthenticatedUserId();
+            request.UserId = userId; // override whatever the client sent
 
             ChangePasswordResponse response = _profileService.ChangePassword(request);
 
@@ -67,11 +62,12 @@ namespace BankApp.Server.Controllers
             return Ok(response);
         }
 
-        // GET: api/profile/{userId}/oauthlinks
-        // Serializes: List<OAuthLink>
-        [HttpGet("{userId}/oauthlinks")]
-        public IActionResult GetOAuthLinks(int userId)
+        // GET: api/profile/oauthlinks
+        [HttpGet("oauthlinks")]
+        public IActionResult GetOAuthLinks()
         {
+            int userId = GetAuthenticatedUserId();
+
             List<OAuthLink> links = _profileService.GetOAuthLinks(userId);
 
             if (links.Count == 0)
@@ -82,11 +78,12 @@ namespace BankApp.Server.Controllers
             return Ok(links);
         }
 
-        // GET: api/profile/{userId}/notifications/preferences
-        // Serializes: List<NotificationPreference>
-        [HttpGet("{userId}/notifications/preferences")]
-        public IActionResult GetNotificationPreferences(int userId)
+        // GET: api/profile/notifications/preferences
+        [HttpGet("notifications/preferences")]
+        public IActionResult GetNotificationPreferences()
         {
+            int userId = GetAuthenticatedUserId();
+
             List<NotificationPreference> prefs = _profileService.GetNotificationPreferences(userId);
 
             if (prefs.Count == 0)
@@ -97,11 +94,12 @@ namespace BankApp.Server.Controllers
             return Ok(prefs);
         }
 
-        // PUT: api/profile/{userId}/notifications/preferences
-        // Serializes: bool
-        [HttpPut("{userId}/notifications/preferences")]
-        public IActionResult UpdateNotificationPreferences(int userId, [FromBody] List<NotificationPreference> prefs)
+        // PUT: api/profile/notifications/preferences
+        [HttpPut("notifications/preferences")]
+        public IActionResult UpdateNotificationPreferences([FromBody] List<NotificationPreference> prefs)
         {
+            int userId = GetAuthenticatedUserId();
+
             bool success = _profileService.UpdateNotificationPreferences(userId, prefs);
 
             if (!success)
@@ -112,11 +110,12 @@ namespace BankApp.Server.Controllers
             return Ok(true);
         }
 
-        // POST: api/profile/{userId}/verify-password
-        // Serializes: bool
-        [HttpPost("{userId}/verify-password")]
-        public IActionResult VerifyPassword(int userId, [FromBody] string password)
+        // POST: api/profile/verify-password
+        [HttpPost("verify-password")]
+        public IActionResult VerifyPassword([FromBody] string password)
         {
+            int userId = GetAuthenticatedUserId();
+
             bool success = _profileService.VerifyPassword(userId, password);
 
             if (!success)
@@ -126,9 +125,13 @@ namespace BankApp.Server.Controllers
 
             return Ok(true);
         }
-        [HttpPut("{userId}/2fa/enable")]
-        public IActionResult Enable2FA(int userId, [FromBody] Enable2FARequest request)
+
+        // PUT: api/profile/2fa/enable
+        [HttpPut("2fa/enable")]
+        public IActionResult Enable2FA([FromBody] Enable2FARequest request)
         {
+            int userId = GetAuthenticatedUserId();
+
             bool success = _profileService.Enable2FA(userId, request.Method);
 
             if (!success)
@@ -137,9 +140,12 @@ namespace BankApp.Server.Controllers
             return Ok(new Toggle2FAResponse { Success = true });
         }
 
-        [HttpPut("{userId}/2fa/disable")]
-        public IActionResult Disable2FA(int userId)
+        // PUT: api/profile/2fa/disable
+        [HttpPut("2fa/disable")]
+        public IActionResult Disable2FA()
         {
+            int userId = GetAuthenticatedUserId();
+
             bool success = _profileService.Disable2FA(userId);
 
             if (!success)

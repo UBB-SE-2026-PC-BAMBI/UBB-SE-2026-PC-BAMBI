@@ -11,25 +11,25 @@ namespace BankApp.Server.Controllers
         private readonly IDashboardService _dashService;
         public DashboardController(IDashboardService dashService) { _dashService = dashService; }
 
-        [HttpGet("{userId}")]
-        public IActionResult GetDashboard(int userId)
+        [HttpGet]
+        public IActionResult GetDashboard()
         {
             try
             {
+                int userId = (int)HttpContext.Items["UserId"]!;
+
                 DashboardResponse dashboardData = _dashService.GetDashboardData(userId);
                 if (dashboardData == null)
                 {
-                    return NotFound(new { message = $"User with Id = {userId} was not found." });
-
+                    return NotFound(new { message = "Dashboard data not found." });
                 }
 
                 return Ok(dashboardData);
-
             }
             catch (Exception ex)
             {
                 return StatusCode(500,
-                    new { error = "An error occured while fetching the dashboard data."});
+                    new { error = "An error occured while fetching the dashboard data." });
             }
         }
     }

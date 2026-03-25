@@ -41,7 +41,7 @@ namespace BankApp.Client.ViewModels
                 }
 
                 DashboardResponse? response = await _apiService.GetAsync<DashboardResponse>(
-                    $"/api/dashboard/{userId}");
+                    $"/api/dashboard/");
 
                 if (response == null)
                 {
