@@ -47,7 +47,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case TwoFactorState.Success:
-                        App.NavigationService.NavigateTo<DashboardView>();
+                        App.NavigationService.NavigateTo<NavView>();
                         break;
 
                     case TwoFactorState.InvalidOTP:
