@@ -159,5 +159,18 @@ namespace BankApp.Server.Services.Implementations
 
             return _userRepository.UpdateNotificationPreferences(userId, prefs);
         }
+
+        public bool VerifyPassword(int userId, string password)
+        {
+            User? user = _userRepository.FindById(userId);
+
+            if (user == null)
+            {
+                // ACTUAL last time making sure, should never happen though
+                return false;
+            }
+
+            return _hashService.Verify(password, user.PasswordHash);
+        }
     }
 }

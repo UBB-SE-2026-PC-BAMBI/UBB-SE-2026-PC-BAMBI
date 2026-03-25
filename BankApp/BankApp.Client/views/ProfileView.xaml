@@ -657,7 +657,7 @@
               VerticalContentAlignment="Top">
 
             <Grid Margin="28,22,28,28" VerticalAlignment="Top">
-                
+
                 <Grid.RowDefinitions>
 
                     <RowDefinition Height="Auto"/>
@@ -1125,8 +1125,8 @@
                                                 HorizontalAlignment="Stretch"
                                                 Height="40"
                                                 IsEnabled="False"
-                                                Click="SaveButton_Click"/>          
-                                        </Grid>
+                                                Click="SaveButton_Click"/>
+                                    </Grid>
 
 
 
@@ -1291,7 +1291,7 @@
 
                                         <Border Width="36" Height="36" CornerRadius="10"
 
-                                                Background="#FFF7ED" Margin="0,0,12,0">
+                                                Background="#EFF4FF" Margin="0,0,12,0">
 
                                             <FontIcon Glyph="&#xE7E7;" FontFamily="Segoe MDL2 Assets"
 
@@ -1329,7 +1329,7 @@
 
                                 </StackPanel>
 
-                                
+
 
                             </Grid>
 
@@ -1357,7 +1357,7 @@
 
                        PrimaryButtonText="Continue"
 
-                       CloseButtonText="Cancel"
+                       SecondaryButtonText="Cancel"
 
                        DefaultButton="Primary"
 
@@ -1368,6 +1368,16 @@
             <ContentDialog.Resources>
 
                 <SolidColorBrush x:Key="ContentDialogBackground" Color="#F8FAFC"/>
+                <SolidColorBrush x:Key="ContentDialogForeground" Color="#1E293B"/>
+                <SolidColorBrush x:Key="ButtonForeground" Color="#1E293B"/>
+
+                <Style x:Key="DialogSecondaryButtonStyle" TargetType="Button" BasedOn="{StaticResource OutlineButtonStyle}">
+                    <Setter Property="MinWidth" Value="90"/>
+                </Style>
+
+                <Style x:Key="DialogPrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                    <Setter Property="MinWidth" Value="110"/>
+                </Style>
 
             </ContentDialog.Resources>
 

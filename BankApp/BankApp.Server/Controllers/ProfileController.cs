@@ -98,17 +98,33 @@ namespace BankApp.Server.Controllers
         }
 
         // PUT: api/profile/{userId}/notifications/preferences
-        // Serializes: -
+        // Serializes: bool
         [HttpPut("{userId}/notifications/preferences")]
         public IActionResult UpdateNotificationPreferences(int userId, [FromBody] List<NotificationPreference> prefs)
         {
             bool success = _profileService.UpdateNotificationPreferences(userId, prefs);
+
             if (!success)
             {
-                return BadRequest();
+                return BadRequest(false);
             }
 
-            return Ok();
+            return Ok(true);
+        }
+
+        // POST: api/profile/{userId}/verify-password
+        // Serializes: bool
+        [HttpPost("{userId}/verify-password")]
+        public IActionResult VerifyPassword(int userId, [FromBody] string password)
+        {
+            bool success = _profileService.VerifyPassword(userId, password);
+
+            if (!success)
+            {
+                return BadRequest(false);
+            }
+
+            return Ok(true);
         }
         [HttpPut("{userId}/2fa/enable")]
         public IActionResult Enable2FA(int userId, [FromBody] Enable2FARequest request)
