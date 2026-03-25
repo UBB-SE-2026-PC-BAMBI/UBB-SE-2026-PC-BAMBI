@@ -6,6 +6,7 @@ using BankApp.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Text.Core;
 
 namespace BankApp.Client.ViewModels
 {
@@ -163,25 +164,20 @@ namespace BankApp.Client.ViewModels
             {
                 State.SetValue(ProfileState.Loading);
 
-                var request = new { Method = method.ToString() };
+                var request = new { Method = method };
 
-                var result = await _apiService.PostAsync<object, bool>(
+                var result = await _apiService.PutAsync<object, Toggle2FAResponse>(
                     $"api/profile/{ProfileInfo.UserId}/2fa/enable", request);
 
-                if (result)
+                if (result?.Success == true)
                 {
-                    /*
-                    CurrentUser.Is2FAEnabled = true;
-                    CurrentUser.Preferred2FAMethod = method.ToString();
-                    */
+                    ProfileInfo.Is2FAEnabled = true;
                     State.SetValue(ProfileState.UpdateSuccess);
-                }
-                else
-                {
-                    State.SetValue(ProfileState.Error);
+                    return true;
                 }
 
-                return result;
+                State.SetValue(ProfileState.Error);
+                return false;
             }
             catch (Exception ex)
             {
@@ -189,38 +185,29 @@ namespace BankApp.Client.ViewModels
                 LogError(nameof(EnableTwoFactor), ex);
                 return false;
             }
+            return false;
+
         }
 
-        public async Task<bool> DisableTwoFactor(TwoFactorMethod method)
+        public async Task<bool> DisableTwoFactor()
         {
             try
             {
-                /*
-                if (!CurrentUser.Is2FAEnabled)
-                    return false;
-
                 State.SetValue(ProfileState.Loading);
 
-                var request = new { Method = method.ToString() };
+                var result = await _apiService.PutAsync<object, Toggle2FAResponse>(
+                    $"api/profile/{ProfileInfo.UserId}/2fa/disable", new { });
 
-                var result = await _apiService.PostAsync<object, bool>(
-                    $"api/profile/{CurrentUser.Id}/2fa/disable", request);
-
-                if (result)
+                if (result?.Success == true)
                 {
-                    CurrentUser.Is2FAEnabled = false;
-                    CurrentUser.Preferred2FAMethod = null;
+                    ProfileInfo.Is2FAEnabled = false;
                     State.SetValue(ProfileState.UpdateSuccess);
-                }
-                else
-                {
-                    State.SetValue(ProfileState.Error);
+                    return true;
                 }
 
-                return result;*/
-                return true;
+                State.SetValue(ProfileState.Error);
+                return false;
             }
-
             catch (Exception ex)
             {
                 State.SetValue(ProfileState.Error);
