@@ -5,7 +5,6 @@ namespace BankApp.Server.Repositories.Interfaces
     {
         User? FindById(int userId);
         bool UpdateUser(User user);
-        bool UpdatePassword(int userId, string newPasswordHash);
         List<Session> GetActiveSessions(int userId);
         void RevokeSession(int sessionId);
         List<OAuthLink> GetLinkedProviders(int userId);

@@ -50,35 +50,17 @@ namespace BankApp.Client.Utilities
 
         public async Task<TResponse?> PostAsync<TRequest, TResponse>(string endpoint, TRequest data)
         {
-            try
-            {
-                var response = await _httpClient.PostAsJsonAsync(endpoint, data);
-                if (response.IsSuccessStatusCode)
-                    return await response.Content.ReadFromJsonAsync<TResponse>();
+            var response = await _httpClient.PostAsJsonAsync(endpoint, data);
+            if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<TResponse>();
-            }
-            catch (Exception ex)
-            {
-                // Put a breakpoint here and check ex.Message
-                Console.WriteLine($"HTTP ERROR: {ex.Message}");
-                Console.WriteLine($"Inner: {ex.InnerException?.Message}");
-                throw;
-            }
+
+            // Try to read error response
+            return await response.Content.ReadFromJsonAsync<TResponse>();
         }
 
         public async Task<TResponse?> GetAsync<TResponse>(string endpoint)
         {
             var response = await _httpClient.GetAsync(endpoint);
-            return await response.Content.ReadFromJsonAsync<TResponse>();
-        }
-
-        public async Task<TResponse?> PutAsync<TRequest, TResponse>(string endpoint, TRequest data)
-        {
-            var response = await _httpClient.PutAsJsonAsync(endpoint, data);
-            if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<TResponse>();
-
-            // Try to read error response
             return await response.Content.ReadFromJsonAsync<TResponse>();
         }
     }

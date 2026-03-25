@@ -1,8 +1,6 @@
 ﻿using BankApp.Server.Repositories.Interfaces;
 using BankApp.Server.DataAccess.Interfaces;
 using BankApp.Models.Entities;
-using BankApp.Models.Enums;
-using BankApp.Models.Extensions;
 
 namespace BankApp.Server.Repositories.Implementations
 {
@@ -12,16 +10,13 @@ namespace BankApp.Server.Repositories.Implementations
         private readonly ISessionDAO _sessionDao;
         private readonly IOAuthLinkDAO _oAuthLinkDao;
         private readonly IPasswordResetTokenDAO _passwordResetTokenDao;
-        private readonly INotificationPreferenceDAO _notificationPreferenceDao;
 
-        public AuthRepository(IUserDAO userDao, ISessionDAO sessionDao, IOAuthLinkDAO oAuthLinkDao,
-            IPasswordResetTokenDAO passwordResetTokenDao, INotificationPreferenceDAO notificationPreferenceDao)
+        public AuthRepository(IUserDAO userDao, ISessionDAO sessionDao, IOAuthLinkDAO oAuthLinkDao, IPasswordResetTokenDAO passwordResetTokenDao)
         {
             _userDao = userDao;
             _sessionDao = sessionDao;
             _oAuthLinkDao = oAuthLinkDao;
             _passwordResetTokenDao = passwordResetTokenDao;
-            _notificationPreferenceDao = notificationPreferenceDao;
         }
 
         // USER 
@@ -33,28 +28,7 @@ namespace BankApp.Server.Repositories.Implementations
 
         public bool CreateUser(User user)
         {
-            bool success = _userDao.Create(user);
-            if (!success)
-            {
-                return false;
-            }
-
-            User? createdUser = _userDao.FindByEmail(user.Email);
-            if (createdUser == null)
-            {
-                return false;
-            }
-
-            foreach (NotificationType type in Enum.GetValues(typeof(NotificationType)))
-            {
-                success = _notificationPreferenceDao.Create(createdUser.Id, NotificationTypeExtensions.ToDisplayName(type));
-                if (!success)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return _userDao.Create(user);
         }
 
         // OAUTH
