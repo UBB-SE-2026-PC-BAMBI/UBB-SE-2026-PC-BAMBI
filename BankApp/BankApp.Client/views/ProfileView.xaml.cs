@@ -136,8 +136,7 @@ namespace BankApp.Client.Views
                 return;
             }
 
-            // Logic for verification (hardcoded to true for your test)
-            bool verified = true;
+            bool verified = await _viewModel.VerifyPassword(VerifyCurrentPasswordBox.Password);
 
             if (!verified)
             {
@@ -344,7 +343,7 @@ namespace BankApp.Client.Views
 
             if (sender is ToggleSwitch toggle && toggle.Tag is NotificationPreference pref)
             {
-                pref.PushEnabled = toggle.IsOn;
+                pref.EmailEnabled = toggle.IsOn;
 
                 // 2. Set the flag to block the UI from fully refreshing
                 _isUpdatingToggle = true;
@@ -359,8 +358,12 @@ namespace BankApp.Client.Views
                     // Optional: If the API fails, visually flip the switch back to its old state
                     _isPopulating = true;
                     toggle.IsOn = !toggle.IsOn;
-                    pref.PushEnabled = toggle.IsOn;
+                    pref.EmailEnabled = toggle.IsOn;
                     _isPopulating = false;
+                }
+                else
+                {
+                    toggle.IsOn = pref.EmailEnabled; // force sync (important)
                 }
             }
         }
@@ -525,7 +528,7 @@ namespace BankApp.Client.Views
 
         private void PopulateNotificationPreferences(List<NotificationPreference> prefs)
         {
-            _isPopulating = true; // Tell the app we are drawing the UI
+            _isPopulating = true;
 
             NotificationPreferencesPanel.Children.Clear();
 
@@ -571,7 +574,7 @@ namespace BankApp.Client.Views
                 NotificationPreferencesPanel.Children.Add(row);
             }
 
-            _isPopulating = false; // We are done drawing
+            _isPopulating = false;
         }
 
 
