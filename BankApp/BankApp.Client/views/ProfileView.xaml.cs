@@ -81,6 +81,10 @@ namespace BankApp.Client.Views
             TwoFactorPhoneDisplay.Text = user.PhoneNumber ?? "";
             TwoFactorEmailDisplay.Text = user.Email ?? "";
 
+            _isPopulating = true;
+            TwoFactorToggle.IsOn = user.Is2FAEnabled;
+            _isPopulating = false;
+
             PopulateOAuthLinks(_viewModel.OAuthLinks);
             PopulateNotificationPreferences(_viewModel.NotificationPreferences);
             Update2FAVisuals();
@@ -297,12 +301,27 @@ namespace BankApp.Client.Views
         }
         private async void TwoFactorToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            //bool success = TwoFactorToggle.IsOn
-            //    ? await _viewModel.EnableTwoFactor(TwoFactorMethod.Phone)
-            //    : await _viewModel.DisableTwoFactor(TwoFactorMethod.Phone);
+            if (_isPopulating) return;
 
-            //if (!success)
-            //    ShowError("2FA update failed.");
+            bool success;
+
+            if (TwoFactorToggle.IsOn)
+            {
+              
+                success = await _viewModel.EnableTwoFactor(TwoFactorMethod.Email);
+            }
+            else
+            {
+                success = await _viewModel.DisableTwoFactor();
+            }
+
+            if (!success)
+            {
+                _isPopulating = true;
+                TwoFactorToggle.IsOn = !TwoFactorToggle.IsOn;
+                _isPopulating = false;
+                ShowError("Failed to update 2FA settings");
+            }
         }
 
         private async void TwoFactorEmailToggle_Toggled(object sender, RoutedEventArgs e)

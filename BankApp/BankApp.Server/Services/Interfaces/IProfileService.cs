@@ -9,7 +9,7 @@ namespace BankApp.Server.Services.Interfaces
         UpdateProfileResponse UpdatePersonalInfo(UpdateProfileRequest request);
         ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
         bool Enable2FA(int userId, TwoFactorMethod method);
-        bool Disable2FA(int userId, TwoFactorMethod method);
+        bool Disable2FA(int userId);
         List<OAuthLink> GetOAuthLinks(int userId);
         bool LinkOAuth(int userId, string provider);
         bool UnlinkOAuth(int userId, string provider);

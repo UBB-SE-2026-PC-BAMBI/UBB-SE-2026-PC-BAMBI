@@ -15,8 +15,11 @@ namespace BankApp.Models.DTOs.Profile
         public string? PhoneNumber { get; set; }
         public string? Address { get; set; }
         public string? Nationality { get; set; }
+        public bool Is2FAEnabled { get; set; }
 
         public ProfileInfo() { }
+
+
 
         public ProfileInfo(User user)
         {
@@ -28,6 +31,7 @@ namespace BankApp.Models.DTOs.Profile
                 PhoneNumber = user.PhoneNumber;
                 Address = user.Address;
                 Nationality = user.Nationality;
+                Is2FAEnabled = user.Is2FAEnabled;
             }
         }
     }
