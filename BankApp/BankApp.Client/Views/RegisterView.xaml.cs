@@ -46,7 +46,7 @@ namespace BankApp.Client.Views
                         break;
 
                     case RegisterState.AutoLoggedIn:
-                        App.NavigationService.NavigateTo<DashboardView>();
+                        App.NavigationService.NavigateTo<NavView>();
                         break;
 
                     case RegisterState.EmailAlreadyExists:
