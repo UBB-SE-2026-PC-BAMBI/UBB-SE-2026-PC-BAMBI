@@ -24,8 +24,6 @@ namespace BankApp.Client.ViewModels
         {
             _apiService = apiService;
             State = new Observable<ProfileState>(ProfileState.Idle);
-
-            _ = LoadProfile();
         }
 
         public async Task<bool> LoadProfile()
@@ -80,27 +78,34 @@ namespace BankApp.Client.ViewModels
 
         public async Task<bool> UpdatePersonalInfo(string phone, string address, string password)
         {
-            // TODO: Review the code. It's broken
             try
             {
-                if (string.IsNullOrWhiteSpace(phone) && string.IsNullOrWhiteSpace(address))
-                    return false;
-
                 State.SetValue(ProfileState.Loading);
 
-                var request = new UpdateProfileRequest
+                if (ProfileInfo == null || ProfileInfo.UserId == null)
                 {
-                    PhoneNumber = phone?.Trim(),
-                    Address = address?.Trim()
-                };
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
+                address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+
+                UpdateProfileRequest request = new UpdateProfileRequest(ProfileInfo.UserId, phone, address);
                 
-                var result = await _apiService.PostAsync<UpdateProfileRequest, bool>(
+                UpdateProfileResponse? response = await _apiService.PutAsync<UpdateProfileRequest, UpdateProfileResponse>(
                     $"api/profile/{ProfileInfo.UserId}", request);
 
-                if (result)
+                if (response == null)
                 {
-                    if (!string.IsNullOrWhiteSpace(phone)) ProfileInfo.PhoneNumber = phone.Trim();
-                    if (!string.IsNullOrWhiteSpace(address)) ProfileInfo.Address = address.Trim();
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                if (response.Success)
+                {
+                    ProfileInfo.PhoneNumber = (phone == null) ? null : phone.Trim();
+                    ProfileInfo.Address = (address == null) ? null : address.Trim();
                     State.SetValue(ProfileState.UpdateSuccess);
                 }
                 else
@@ -108,7 +113,7 @@ namespace BankApp.Client.ViewModels
                     State.SetValue(ProfileState.Error);
                 }
 
-                return result;
+                return response.Success;
             }
             catch (Exception ex)
             {
@@ -121,29 +126,29 @@ namespace BankApp.Client.ViewModels
 
         public async Task<bool> ChangePassword(string currentPassword, string newPassword)
         {
-            // TODO: Review the code. It's broken
             try
             {
-                if (string.IsNullOrWhiteSpace(currentPassword) ||
-                    string.IsNullOrWhiteSpace(newPassword))
-                    return false;
-
-                if (currentPassword == newPassword)
-                    return false;
-
                 State.SetValue(ProfileState.Loading);
 
-                var request = new ChangePasswordRequest
+                if (ProfileInfo == null || ProfileInfo.UserId == null)
                 {
-                    CurrentPassword = currentPassword,
-                    NewPassword = newPassword
-                };
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
 
-                var result = await _apiService.PostAsync<ChangePasswordRequest, bool>(
+                ChangePasswordRequest request = new ChangePasswordRequest(ProfileInfo.UserId.Value, currentPassword, newPassword);
+
+                ChangePasswordResponse? result = await _apiService.PutAsync<ChangePasswordRequest, ChangePasswordResponse>(
                     $"api/profile/{ProfileInfo.UserId}/password", request);
 
-                State.SetValue(result ? ProfileState.UpdateSuccess : ProfileState.Error);
-                return result;
+                if (result == null || !result.Success)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                State.SetValue(ProfileState.UpdateSuccess);
+                return result.Success;
             }
             catch (Exception ex)
             {
@@ -319,7 +324,7 @@ namespace BankApp.Client.ViewModels
 
                 State.SetValue(ProfileState.Loading);
 
-                var result = await _apiService.PostAsync<List<NotificationPreference>, bool>(
+                var result = await _apiService.PutAsync<List<NotificationPreference>, bool>(
                     $"api/profile/{ProfileInfo.UserId}/notifications/preferences", preferences);
 
                 if (result)
@@ -338,6 +343,40 @@ namespace BankApp.Client.ViewModels
             {
                 State.SetValue(ProfileState.Error);
                 LogError(nameof(UpdateNotificationPreferences), ex);
+                return false;
+            }
+        }
+
+        public async Task<bool> VerifyPassword(string password)
+        {
+            try
+            {
+                State.SetValue(ProfileState.Loading);
+
+                if (ProfileInfo == null || ProfileInfo.UserId == null)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                bool? response = await _apiService.PostAsync<string, bool>(
+                    $"api/profile/{ProfileInfo.UserId}/verify-password", password);
+
+                bool result = response ?? false;
+
+                if (!result)
+                {
+                    State.SetValue(ProfileState.Error);
+                    return false;
+                }
+
+                State.SetValue(ProfileState.UpdateSuccess);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                State.SetValue(ProfileState.Error);
+                LogError(nameof(VerifyPassword), ex);
                 return false;
             }
         }
