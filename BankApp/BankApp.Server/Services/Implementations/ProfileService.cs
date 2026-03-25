@@ -77,6 +77,11 @@ namespace BankApp.Server.Services.Implementations
                 return new ChangePasswordResponse(false, "User not found.");
             }
 
+            if (!ValidationUtil.IsStrongPassword(request.NewPassword))
+            {
+                return new ChangePasswordResponse(false, "Password must contain at least one digit, one uppercase and one special symbol.");
+            }
+
             if (_hashService.Verify(request.CurrentPassword, user.PasswordHash))
             {
                 user.PasswordHash = _hashService.GetHash(request.NewPassword);
