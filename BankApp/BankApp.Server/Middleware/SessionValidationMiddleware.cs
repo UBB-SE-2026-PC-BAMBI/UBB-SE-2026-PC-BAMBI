@@ -60,11 +60,7 @@ namespace BankApp.Server.Middleware
         {
             if (path == null) return false;
 
-            return path.Contains("/auth/login")
-                || path.Contains("/auth/register")
-                || path.Contains("/auth/forgot-password")
-                || path.Contains("/auth/reset-password")
-                || path.Contains("/auth/verify-otp")
+            return path.Contains("/auth/")
                 || path.Contains("/swagger")
                 || path.Contains("/test/");
         }

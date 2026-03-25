@@ -95,7 +95,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
-//app.UseMiddleware<SessionValidationMiddleware>();
+app.UseMiddleware<SessionValidationMiddleware>();
 
 app.Use(async (context, next) =>
 {
